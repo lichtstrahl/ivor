@@ -1,12 +1,12 @@
-package root.ivatio;
+package Answer;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 @Entity
-public class Employee {
-    @PrimaryKey
+public class Answer {
+    @PrimaryKey(autoGenerate = true)
     public long id;
-    public String name;
-    public int salary;
+    public String content;
+    public int power;
 }

@@ -3,4 +3,10 @@
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
     <color name="colorAccent">#FF4081</color>
+
+    <!-- LoginActivity -->
+    <color name="bgLogin">#837835</color>
+    <color name="ftLogin">#6d4c41</color>
+    <color name="bgButton">#d4e157</color>
+    <!-- ............. -->
 </resources>

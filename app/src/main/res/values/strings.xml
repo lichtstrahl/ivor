@@ -1,3 +1,22 @@
 <resources>
     <string name="app_name">ivatio</string>
+
+
+    <!-- LoginActivity -->
+    <string name="LoginLabel">Вход</string>
+    <string name="btnLogin">Войти</string>
+    <string name="btnRegister">Зарегестрироваться</string>
+
+    <!-- RegisterActivity -->
+    <string name="RegisterLabel">Регистрация</string>
+    <string name="realName">Реальное имя</string>
+    <string name="Login">Логин</string>
+    <string name="Password">Пароль</string>
+    <string name="RetryPassword">Повтор пароля</string>
+    <string name="Age">Возраст</string>
+    <string name="City">Город</string>
+    <string name="Email">em@il адрес</string>
+
+    <string name="fieldEmpty">Поле пустое</string>
+    <string name="nonEqual">Пароли не совпадают</string>
 </resources>

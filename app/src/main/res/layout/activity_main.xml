@@ -6,26 +6,43 @@
     android:layout_height="match_parent"
     android:orientation="vertical">
 
-    <TextView
-        android:id="@+id/viewX"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
-    <Button
-        android:id="@+id/btn"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content" />
 
     <Button
         android:id="@+id/buttonInsert"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="insert"/>
+        android:text="добавить вопрос"/>
 
     <Button
         android:id="@+id/buttonSelectAll"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="select all"/>
+        android:text="выбрать все вопросы"/>
+    <Button
+        android:id="@+id/buttonDeleteAll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Удалить вопросы"/>
+
+
+    <Button
+        android:id="@+id/buttonInsertAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="добавить ответ"/>
+
+    <Button
+        android:id="@+id/buttonSelectAllAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="выбрать все ответы"/>
+
+    <Button
+        android:id="@+id/buttonDeleteAllAnswer"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="удалить все ответы"/>
+
 
     <ListView
         android:id="@+id/listView"

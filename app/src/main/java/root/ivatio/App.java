@@ -3,6 +3,8 @@ package root.ivatio;
 import android.app.Application;
 import android.arch.persistence.room.Room;
 
+import com.facebook.stetho.Stetho;
+
 public class App extends Application {
     private static AppDatabase DB;
     private static String nameDB = "database";
@@ -18,5 +20,6 @@ public class App extends Application {
     public void onCreate() {
         super.onCreate();
         DB = Room.databaseBuilder(this, AppDatabase.class, nameDB).allowMainThreadQueries().build();
+        Stetho.initializeWithDefaults(this);
     }
 }
