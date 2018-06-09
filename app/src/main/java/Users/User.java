@@ -5,10 +5,13 @@ import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Calendar;
 
+import javax.mail.Transport;
+import javax.mail.internet.MimeMessage;
+
 @Entity
 public class User {
     @PrimaryKey(autoGenerate = true)
-    public long id = -1;
+    public long id;
     public String realName = null;
     public String login = null;
     public String pass = null;

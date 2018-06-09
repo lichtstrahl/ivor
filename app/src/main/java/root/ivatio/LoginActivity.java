@@ -11,6 +11,7 @@ import Users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import iv.lib.MyClass;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -34,6 +35,8 @@ public class LoginActivity extends AppCompatActivity {
     public void registerClick(Button b) {
         Intent intent = new Intent(this, RegisterActivity.class);
         startActivity(intent);
+
+        Toast.makeText(this, String.valueOf(MyClass.sum(2, 3)), Toast.LENGTH_SHORT).show();
     }
 
     @Override
