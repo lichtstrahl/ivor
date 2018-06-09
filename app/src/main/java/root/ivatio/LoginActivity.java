@@ -27,8 +27,11 @@ public class LoginActivity extends AppCompatActivity {
         User user = App.getDB().getUserDao().getUser(editLogin.getText().toString(), editPassword.getText().toString());
         if (user == null)
             Toast.makeText(this, "Пользователь не найден или пароль неверен", Toast.LENGTH_SHORT).show();
-        else
-            Toast.makeText(this, "Вход выполнен", Toast.LENGTH_SHORT).show();
+        else {
+            Intent intent = new Intent(this, MsgActivity.class);
+            intent.putExtra(App.USER_INDEX, user.id);
+            startActivity(intent);
+        }
     }
 
     @OnClick(R.id.buttonRegister)

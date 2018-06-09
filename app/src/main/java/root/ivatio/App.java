@@ -11,10 +11,14 @@ public class App extends Application {
     public static AppDatabase getDB() {
         return DB;
     }
-
     public static String getDBName() {
         return nameDB;
     }
+
+    public static long SUPER_USER_INDEX = 2;
+
+    // Коды для передачи парметров между Activity
+    public static final String USER_INDEX = "USER_INDEX";
 
     @Override
     public void onCreate() {
