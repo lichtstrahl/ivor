@@ -9,4 +9,9 @@
     <color name="ftLogin">#6d4c41</color>
     <color name="bgButton">#d4e157</color>
     <!-- ............. -->
+
+    <!-- MsgActivity -->
+    <color name="msgBg">#f57f17</color>
+    <color name="msgTxt">#bc5100</color>
+    <!-- ........... -->
 </resources>

@@ -48,6 +48,9 @@ dependencies {
     androidTestImplementation 'com.android.support.test:runner:1.0.2'
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
 
+    // ChatKit
+//    implementation 'com.github.stfalcon:chatkit:0.2.2'
+
     // Foreign API
     api project(path: ':lib')
 }
