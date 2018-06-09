@@ -69,6 +69,10 @@ public class MainActivity extends AppCompatActivity {
     public void deleteAllAnswer(Button b) {
         App.getDB().getAnswerDao().deleteAll();
         selectAllAnswer(null);
+
+
+
+
     }
 
     @Override
