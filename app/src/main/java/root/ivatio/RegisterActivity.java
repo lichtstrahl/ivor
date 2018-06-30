@@ -6,7 +6,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import Users.User;
+import BD.Users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

@@ -6,6 +6,7 @@
     <string name="LoginLabel">Вход</string>
     <string name="btnLogin">Войти</string>
     <string name="btnRegister">Зарегестрироваться</string>
+    <string name="btnReset">Сбросить БД</string>
 
     <!-- RegisterActivity -->
     <string name="RegisterLabel">Регистрация</string>

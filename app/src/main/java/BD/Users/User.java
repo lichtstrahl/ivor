@@ -1,12 +1,9 @@
-package Users;
+package BD.Users;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
 import java.util.Calendar;
-
-import javax.mail.Transport;
-import javax.mail.internet.MimeMessage;
 
 @Entity
 public class User {

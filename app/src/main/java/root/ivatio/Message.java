@@ -2,7 +2,7 @@ package root.ivatio;
 
 import java.util.Date;
 
-import Users.User;
+import BD.Users.User;
 
 public class Message {
     public User author;
