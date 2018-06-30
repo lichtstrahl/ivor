@@ -17,13 +17,14 @@ public class App extends Application {
     public static String getDBName() {
         return nameDB;
     }
-//  Здесь может быть расположен код для миграций, но пока
-//    public static final Migration migration_12 = new Migration(1, 2) {
-//        @Override
-//        public void migrate(@NonNull SupportSQLiteDatabase database) {
-//            database.execSQL("");
-//        }
-//    };
+    public static final Migration migration_12 = new Migration(1, 2) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            database.execSQL(
+                    "CREATE TABLE \"KeyWord\"(\"id\" Integer NOT NULL PRIMARY KEY AUTOINCREMENT,\"content\" Text NOT NULL );"
+            );
+        }
+    };
 
 
     // Коды для передачи парметров между Activity
@@ -32,13 +33,11 @@ public class App extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
-        DB = Room.databaseBuilder(this, AppDatabase.class, nameDB).allowMainThreadQueries().fallbackToDestructiveMigration().build();
+        DB = Room.databaseBuilder(this, AppDatabase.class, nameDB).allowMainThreadQueries().addMigrations(migration_12).build();
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
         builder.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this));
         builder.enableDumpapp(Stetho.defaultDumperPluginsProvider(this));
         Stetho.initialize(builder.build());
-
-//        Stetho.initializeWithDefaults(this);
-    }
+}
 }

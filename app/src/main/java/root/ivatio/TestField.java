@@ -1,7 +1,5 @@
 package root.ivatio;
 
-import java.util.Calendar;
-
 import BD.Answer.Answer;
 import BD.Communication.Communication;
 import BD.Mood.Mood;
