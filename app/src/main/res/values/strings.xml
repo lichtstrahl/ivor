@@ -20,4 +20,17 @@
 
     <string name="fieldEmpty">Поле пустое</string>
     <string name="nonEqual">Пароли не совпадают</string>
+
+    <string name="noAnswer">Нет слов. Не знаю, что сказать.</string>
+
+    <string name="titleKeyWordEdit">Выбери ответ (Answer) на который желаешь добавить ключеваое слово</string>
+    <string name="titleLoadAndSave">Имя файла</string>
+
+    <string name="selectTable">Выбор таблицы для редактирования</string>
+    <string name="tableNotFound">Таблица с таким именем не доступна</string>
+
+    <string name="question">Вопросы</string>
+    <string name="answer">Ответы</string>
+    <string name="append">Добавить</string>
+    <string name="connect">Соеденить</string>
 </resources>

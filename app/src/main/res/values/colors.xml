@@ -1,8 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <!-- Global properties -->
     <color name="colorPrimary">#3F51B5</color>
     <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#FF4081</color>
+    <color name="colorAccent">#00695c</color>
+    <!-- ............. -->
 
     <!-- LoginActivity -->
     <color name="bgLogin">#837835</color>
@@ -12,6 +14,7 @@
 
     <!-- MsgActivity -->
     <color name="msgBg">#f57f17</color>
+    <color name="msgIvorBg">#ffab91</color>
     <color name="msgTxt">#bc5100</color>
     <!-- ........... -->
 </resources>

@@ -1,8 +1,9 @@
 package root.ivatio;
 
+import java.util.Calendar;
 import java.util.Date;
 
-import BD.Users.User;
+import bd.Users.User;
 
 public class Message {
     public User author;
@@ -13,5 +14,11 @@ public class Message {
         this.author = user;
         this.content = content;
         this.time = time;
+    }
+
+    public Message(User user, String content) {
+        this.author = user;
+        this.content = content;
+        this.time = Calendar.getInstance().getTime();
     }
 }

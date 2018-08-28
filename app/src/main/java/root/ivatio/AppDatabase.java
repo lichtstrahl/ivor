@@ -3,20 +3,30 @@ package root.ivatio;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import BD.Answer.Answer;
-import BD.Answer.AnswerDao;
-import BD.Communication.Communication;
-import BD.Communication.CommunicationDao;
-import BD.KeyWord.KeyWord;
-import BD.KeyWord.KeyWordDao;
-import BD.Mood.Mood;
-import BD.Mood.MoodDao;
-import BD.Qustion.Question;
-import BD.Qustion.QuestionDao;
-import BD.Users.User;
-import BD.Users.UserDao;
+import bd.Answer.Answer;
+import bd.Answer.AnswerDao;
+import bd.Communication.Communication;
+import bd.Communication.CommunicationDao;
+import bd.CommunicationKey.CommunicationKey;
+import bd.CommunicationKey.CommunicationKeyDao;
+import bd.KeyWord.KeyWord;
+import bd.KeyWord.KeyWordDao;
+import bd.Mood.Mood;
+import bd.Mood.MoodDao;
+import bd.Qustion.Question;
+import bd.Qustion.QuestionDao;
+import bd.Users.User;
+import bd.Users.UserDao;
 
-@Database(entities = {Question.class, Answer.class, User.class, Communication.class, Mood.class, KeyWord.class}, version = 2)
+@Database(entities = {
+        Question.class,
+        Answer.class,
+        User.class,
+        Communication.class,
+        Mood.class,
+        KeyWord.class,
+        CommunicationKey.class},
+        version = 7)
 public abstract class AppDatabase extends RoomDatabase {
 //    public abstract
     public abstract QuestionDao getQuestionDao();
@@ -25,4 +35,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract CommunicationDao getCommunicationDao();
     public abstract MoodDao getMoodDao();
     public abstract KeyWordDao getKeyWordDao();
+    public abstract CommunicationKeyDao getCommunicationKeyDao();
 }

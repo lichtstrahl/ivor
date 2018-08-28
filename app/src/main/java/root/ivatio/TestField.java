@@ -1,10 +1,10 @@
 package root.ivatio;
 
-import BD.Answer.Answer;
-import BD.Communication.Communication;
-import BD.Mood.Mood;
-import BD.Qustion.Question;
-import BD.Users.User;
+import bd.Answer.Answer;
+import bd.Communication.Communication;
+import bd.Mood.Mood;
+import bd.Qustion.Question;
+import bd.Users.User;
 
 import static root.ivatio.App.getDB;
 
