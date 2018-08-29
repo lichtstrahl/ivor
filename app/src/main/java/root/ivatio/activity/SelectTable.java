@@ -52,10 +52,10 @@ class ItemClickListener implements AdapterView.OnItemClickListener {
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
         String tableName = (String)adapter.getItem(position);
-        if (tableName.equals("KeyWord")) {
+        if (tableName.equals("KeyWord") || tableName.equals("CommunicationKey")) {
             Intent intent = new Intent(context, KeyWordEditActivity.class);
             context.startActivity(intent);
-        } else if (tableName.equals("Question") || tableName.equals("Answer")) {
+        } else if (tableName.equals("Question") || tableName.equals("Answer") || tableName.equals("Communication")) {
             Intent intent = new Intent(context, AnswerAndQuestionEditActivity.class);
             context.startActivity(intent);
         } else

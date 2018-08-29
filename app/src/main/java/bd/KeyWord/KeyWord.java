@@ -12,12 +12,8 @@ public class KeyWord {
     public long id;
     @NonNull
     public String content;
-//    public long answerID;
-    public long correct;
-    public long power;
 
     public KeyWord(String content) {
         this.content = content;
-        this.power = 0;
     }
 }

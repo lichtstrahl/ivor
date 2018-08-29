@@ -70,6 +70,7 @@ public class MsgActivity extends AppCompatActivity {
     public void clickYes() {
         ivor.re_evalutionKeyWord(1, App.getDB().getAnswerDao().getAnswer(messages.get(messages.size()-1).content));
         buttonYes.setVisibility(View.INVISIBLE);
+        buttonNo.setVisibility(View.INVISIBLE);
     }
 
     @BindView(R.id.buttonNo)
@@ -78,6 +79,7 @@ public class MsgActivity extends AppCompatActivity {
     public void clickNo() {
         ivor.re_evalutionKeyWord(-1, App.getDB().getAnswerDao().getAnswer(messages.get(messages.size()-1).content));
         buttonNo.setVisibility(View.INVISIBLE);
+        buttonYes.setVisibility(View.INVISIBLE);
     }
 
     @Override

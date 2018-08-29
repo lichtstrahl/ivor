@@ -42,7 +42,10 @@ public class Ivor extends User {
 
         for (KeyWord word : keyWords) {
             List<CommunicationKey> list = App.getDB().getCommunicationKeyDao().getCommunications(word.id);
-            Answer answer = App.getDB().getAnswerDao().getAnswer(list.get(random.nextInt()).id);
+            if (list.size() == 0)
+                continue;
+            int r = random.nextInt(list.size());
+            Answer answer = App.getDB().getAnswerDao().getAnswer(list.get(r).id);
             if (answer != null) {
                 memoryWords.add(word);
                 return answer.content;
@@ -67,15 +70,21 @@ public class Ivor extends User {
     }
 
     public void re_evalutionKeyWord(int eval, Answer answer) {
-//        KeyWord lastKeyWord = getLastKeyWord();
-//        if (answer != null) {
-//            lastKeyWord.power++;
-//            lastKeyWord.answerID = answer.id;   // Что
-//            App.getDB().getKeyWordDao().update(lastKeyWord);
-//        }
+        KeyWord keyWord = memoryWords.get(memoryWords.size()-1);
+        CommunicationKey communicationKey = App.getDB().getCommunicationKeyDao().getCommunicationKey(keyWord.id, answer.id);
+        if (communicationKey != null) {
+            communicationKey.power++;
+            if (eval > 0)
+                communicationKey.correct++;
+            if (eval < 0)
+                communicationKey.correct--;
+            App.getDB().getCommunicationKeyDao().update(communicationKey);
+        }
     }
 
     public KeyWord getLastKeyWord() {
+        if (memoryWords.size() == 0)
+            return null;
         return memoryWords.get(memoryWords.size()-1);
     }
 }

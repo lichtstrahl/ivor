@@ -28,6 +28,9 @@ public interface KeyWordDao {
     @Query("SELECT * FROM KeyWord WHERE content= :content")
     KeyWord getWord(String content);
 
+    @Query("SELECT id FROM KeyWord WHERE content= :content")
+    long getWordID(String content);
+
 
     @Query("DELETE FROM KeyWord")
     void deleteAll();

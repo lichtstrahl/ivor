@@ -33,4 +33,6 @@
     <string name="answer">Ответы</string>
     <string name="append">Добавить</string>
     <string name="connect">Соеденить</string>
+    <string name="keyWord">Ключевое слово</string>
+    <string name="NULL">NULL</string>
 </resources>

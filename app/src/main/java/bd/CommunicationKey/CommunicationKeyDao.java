@@ -13,8 +13,11 @@ public interface CommunicationKeyDao {
     @Query("SELECT * FROM CommunicationKey")
     List<CommunicationKey> getAll();
 
-    @Query("SELECT * FROM COMMUNICATIONKEY WHERE keyID = :id")
-    List<CommunicationKey> getCommunications(long id);
+    @Query("SELECT * FROM COMMUNICATIONKEY WHERE keyID = :kid")
+    List<CommunicationKey> getCommunications(long kid);
+
+    @Query("SELECT * FROM COMMUNICATIONKEY WHERE KeyID = :kID AND answerID = :aID")
+    CommunicationKey getCommunicationKey(long kID, long aID);
 
     @Update
     void update(CommunicationKey communicationKey);

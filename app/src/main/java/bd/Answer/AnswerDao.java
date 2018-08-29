@@ -25,7 +25,7 @@ public interface AnswerDao {
     Answer getAnswer(String content);
 
     @Query("SELECT id FROM ANSWER WHERE content = :content")
-    long    getId(String content);
+    long getAnswerID(String content);
 
 
     @Update
