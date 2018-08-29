@@ -9,6 +9,7 @@
 
         <item name="colorControlActivated">@color/colorAccent</item>
         <item name="colorControlHighlight">#FFF</item>
+        <item name="cardViewStyle">@style/CardView</item>
     </style>
 
 

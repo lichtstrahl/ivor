@@ -13,6 +13,9 @@ public interface CommunicationKeyDao {
     @Query("SELECT * FROM CommunicationKey")
     List<CommunicationKey> getAll();
 
+    @Query("SELECT * FROM COMMUNICATIONKEY WHERE keyID = :id")
+    List<CommunicationKey> getCommunications(long id);
+
     @Update
     void update(CommunicationKey communicationKey);
     @Insert

@@ -98,6 +98,12 @@ public class App extends Application {
                     "");
         }
     };
+    private final Migration migration_78 = new Migration(7,8) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+
+        }
+    };
 
     // Коды для передачи парметров между Activity
     public static final String USER_INDEX = "USER_INDEX";
@@ -107,7 +113,7 @@ public class App extends Application {
         super.onCreate();
         DB = Room.databaseBuilder(this, AppDatabase.class, nameDB)
                 .allowMainThreadQueries()
-                .addMigrations(migration_12, migration_23, migration_34, migration_45, migration_56, migration_67)
+                .addMigrations(migration_12, migration_23, migration_34, migration_45, migration_56, migration_67, migration_78)
                 .build();
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);

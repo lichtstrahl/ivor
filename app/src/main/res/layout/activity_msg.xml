@@ -42,6 +42,30 @@
                     android:layout_weight="1"
                     android:textSize="25sp"
                     android:text="23 years old"/>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:orientation="horizontal">
+
+                    <ImageButton
+                        android:id="@+id/buttonYes"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/holo_green_dark"
+                        app:srcCompat="@drawable/ic_check_circle_yes"/>
+
+                    <ImageButton
+                        android:id="@+id/buttonNo"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:backgroundTint="@android:color/holo_red_dark"
+                        app:srcCompat="@drawable/ic_check_circle_no" />
+                </LinearLayout>
+
             </LinearLayout>
             <LinearLayout
                 android:layout_width="wrap_content"

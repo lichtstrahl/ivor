@@ -8,8 +8,6 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
-import static android.icu.text.MessagePattern.ArgType.SELECT;
-
 @Dao
 public interface KeyWordDao {
     @Insert
@@ -27,8 +25,9 @@ public interface KeyWordDao {
     @Query("SELECT * FROM KeyWord WHERE id = :id")
     KeyWord getWord(long id);
 
-    @Query("SELECT answerID FROM KeyWord WHERE content = :content")
-    long getAnswer(String content);
+    @Query("SELECT * FROM KeyWord WHERE content= :content")
+    KeyWord getWord(String content);
+
 
     @Query("DELETE FROM KeyWord")
     void deleteAll();

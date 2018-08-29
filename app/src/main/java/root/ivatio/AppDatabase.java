@@ -26,7 +26,7 @@ import bd.Users.UserDao;
         Mood.class,
         KeyWord.class,
         CommunicationKey.class},
-        version = 7)
+        version = 8)
 public abstract class AppDatabase extends RoomDatabase {
 //    public abstract
     public abstract QuestionDao getQuestionDao();

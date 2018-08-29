@@ -55,7 +55,7 @@ class ItemAnswerClickListener implements AdapterView.OnItemClickListener {
     public void onItemClick(AdapterView<?> adapterView, View view, int i, long l) {
         if (!edit.getText().toString().isEmpty()) {
             String s = adapter.getItem(i).toString();
-            App.getDB().getKeyWordDao().insert(new KeyWord(edit.getText().toString(), App.getDB().getAnswerDao().getId(s)));
+            App.getDB().getKeyWordDao().insert(new KeyWord(edit.getText().toString()));
             edit.setText("");
         }
     }

@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
+import android.view.View;
 import android.widget.AutoCompleteTextView;
 import android.widget.ImageButton;
 import android.widget.ListView;
@@ -22,6 +23,7 @@ import java.util.Date;
 import java.util.Locale;
 
 import Ivor.Ivor;
+import bd.KeyWord.KeyWord;
 import bd.Users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -32,7 +34,6 @@ import root.ivatio.MessageAdapter;
 import root.ivatio.R;
 
 public class MsgActivity extends AppCompatActivity {
-
     private User user;
     private Ivor ivor;
 
@@ -54,6 +55,29 @@ public class MsgActivity extends AppCompatActivity {
         messages.add(new Message(user, inputText.getText().toString(), getCurDate()));
         messages.add(ivor.send(inputText.getText().toString()));
         ((MessageAdapter) listView.getAdapter()).notifyDataSetInvalidated();
+
+        if (ivor.getLastKeyWord() != null) {
+            buttonNo.setVisibility(View.VISIBLE);
+            buttonYes.setVisibility(View.VISIBLE);
+        }
+
+        listView.scrollTo(0, listView.getTop());
+    }
+
+    @BindView(R.id.buttonYes)
+    ImageButton buttonYes;
+    @OnClick(R.id.buttonYes)
+    public void clickYes() {
+        ivor.re_evalutionKeyWord(1, App.getDB().getAnswerDao().getAnswer(messages.get(messages.size()-1).content));
+        buttonYes.setVisibility(View.INVISIBLE);
+    }
+
+    @BindView(R.id.buttonNo)
+    ImageButton buttonNo;
+    @OnClick(R.id.buttonNo)
+    public void clickNo() {
+        ivor.re_evalutionKeyWord(-1, App.getDB().getAnswerDao().getAnswer(messages.get(messages.size()-1).content));
+        buttonNo.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -71,6 +95,8 @@ public class MsgActivity extends AppCompatActivity {
         messages = new ArrayList<>();
         listView.setAdapter(new MessageAdapter(this, messages));
 
+        buttonNo.setVisibility(View.INVISIBLE);
+        buttonYes.setVisibility(View.INVISIBLE);
     }
 
     private Date getCurDate() {
