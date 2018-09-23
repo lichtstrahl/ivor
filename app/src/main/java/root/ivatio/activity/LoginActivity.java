@@ -13,7 +13,6 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import root.ivatio.App;
 import root.ivatio.R;
-import root.ivatio.TestField;
 
 import static root.ivatio.App.getDB;
 
@@ -40,15 +39,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonReset)
     public void resetClick(Button b) {
-        getDB().getQuestionDao().deleteAll();
-        getDB().getAnswerDao().deleteAll();
-        getDB().getCommunicationDao().deleteAll();
-        getDB().getUserDao().deleteAll();
-
-        TestField.fillQuestion();
-        TestField.fillAnswer();
-        TestField.fillCommunication();
-        TestField.fillUser();
+        Toast.makeText(this, getString(R.string.noAction), Toast.LENGTH_SHORT).show();
     }
 
     @OnClick(R.id.buttonRegister)

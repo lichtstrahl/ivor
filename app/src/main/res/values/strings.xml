@@ -22,6 +22,7 @@
     <string name="nonEqual">Пароли не совпадают</string>
 
     <string name="noAnswer">Нет слов. Не знаю, что сказать.</string>
+    <string name="noAction">Действий не задано</string>
 
     <string name="titleKeyWordEdit">Выбери ответ (Answer) на который желаешь добавить ключеваое слово</string>
     <string name="titleLoadAndSave">Имя файла</string>
