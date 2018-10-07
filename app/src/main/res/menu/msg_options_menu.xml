@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu
+    xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/menuModeStd"
+        android:title="@string/modeStd"/>
+    <item
+        android:id="@+id/menuModeIvorAskingKW"
+        android:title="@string/modeIvorSendKeyWord"/>
+    <item
+        android:id="@+id/menuModeAddKW"
+        android:title="@string/modeAddKeyWord" />
+
+</menu>

@@ -11,9 +11,9 @@ import android.widget.TextView;
 
 import java.util.List;
 
-import bd.Answer.Answer;
-import bd.CommunicationKey.CommunicationKey;
-import bd.KeyWord.KeyWord;
+import bd.answer.Answer;
+import bd.communication_key.CommunicationKey;
+import bd.key_word.KeyWord;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

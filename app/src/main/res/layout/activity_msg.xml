@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -8,25 +8,26 @@
     android:orientation="vertical">
 
     <android.support.v7.widget.CardView
-        xmlns:card_view="http://schemas.android.com/apk/res-auto"
+        android:id="@+id/card"
         android:layout_width="match_parent"
-        android:layout_height="150sp">
+        android:layout_height="wrap_content"
+        android:backgroundTint="@color/msgPSTxt">
 
-        <LinearLayout
+        <RelativeLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="horizontal">
+            android:layout_height="match_parent">
 
             <ImageView
                 android:id="@+id/personPhoto"
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:layout_weight="1"
-                android:src="@mipmap/baseline_account_circle_black_48dp"/>
+                android:layout_width="@dimen/extraIcon"
+                android:layout_height="@dimen/extraIcon"
+                android:layout_centerVertical="true"
+                android:src="@mipmap/baseline_account_circle_black_48dp"
+                android:contentDescription="@string/avatar"/>
             <LinearLayout
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_weight="2"
+                android:layout_toEndOf="@id/personPhoto"
                 android:orientation="vertical">
                 <TextView
                     android:id="@+id/personName"
@@ -34,16 +35,16 @@
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="35sp"
-                    android:text="Emma Wilson"/>
+                    tools:text="Emma Wilson"/>
                 <TextView
                     android:id="@+id/personAge"
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:layout_weight="1"
                     android:textSize="25sp"
-                    android:text="23 years old"/>
+                    tools:text="23 years old"/>
 
-                <LinearLayout
+                <RelativeLayout
                     android:layout_width="match_parent"
                     android:layout_height="match_parent"
                     android:layout_weight="1"
@@ -51,70 +52,54 @@
 
                     <ImageButton
                         android:id="@+id/buttonYes"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_width="@dimen/extraIcon"
+                        android:layout_height="@dimen/extraIcon"
+                        android:layout_alignParentEnd="true"
                         android:backgroundTint="@android:color/holo_green_dark"
-                        app:srcCompat="@drawable/ic_check_circle_yes"/>
+                        android:src="@drawable/ic_check_circle_yes"
+                        android:contentDescription="@string/buttonYes"/>
 
                     <ImageButton
                         android:id="@+id/buttonNo"
-                        android:layout_width="wrap_content"
-                        android:layout_height="wrap_content"
-                        android:layout_weight="1"
+                        android:layout_width="@dimen/extraIcon"
+                        android:layout_height="@dimen/extraIcon"
+                        android:layout_toStartOf="@id/buttonYes"
                         android:backgroundTint="@android:color/holo_red_dark"
-                        app:srcCompat="@drawable/ic_check_circle_no" />
-                </LinearLayout>
-
+                        android:src="@drawable/ic_check_circle_no"
+                        android:contentDescription="@string/buttonNo"/>
+                </RelativeLayout>
             </LinearLayout>
-            <LinearLayout
-                android:layout_width="wrap_content"
-                android:layout_height="match_parent"
-                android:orientation="vertical">
-                <ImageButton
-                    android:id="@+id/editDB"
-                    android:layout_weight="1"
-                    android:layout_width="wrap_content"
-                    android:layout_height="wrap_content"
-                    android:layout_gravity="center"
-                    android:src="@drawable/append"
-                    android:backgroundTint="#00000000"
-                    />
-            </LinearLayout>
-        </LinearLayout>
+        </RelativeLayout>
     </android.support.v7.widget.CardView>
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:orientation="vertical">
-        <ListView
-            android:id="@+id/list"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="10"
-            android:transcriptMode="alwaysScroll"
-            android:stackFromBottom="true"
-            android:background="@color/ftLogin">
-        </ListView>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:orientation="horizontal">
-            <AutoCompleteTextView
-                android:id="@+id/input"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="10"/>
-            <ImageButton
-                android:id="@+id/buttonSend"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_weight="1"
-                android:backgroundTint="#bcaaa4"
-                android:src="@drawable/send_to2"/>
-        </LinearLayout>
-    </LinearLayout>
 
-</LinearLayout>
+    <ListView
+        android:id="@+id/list"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/card"
+        android:layout_above="@id/input"
+        android:transcriptMode="alwaysScroll"
+        android:stackFromBottom="true"
+        android:background="@android:color/holo_green_light"
+        tools:listitem="@layout/list_msg_layout">
+    </ListView>
+    <EditText
+        android:id="@+id/input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_toStartOf="@id/buttonSend"
+        android:layout_alignParentStart="true"
+        android:inputType="text"/>
+    <ImageButton
+        android:id="@+id/buttonSend"
+        android:layout_width="@dimen/midleIcon"
+        android:layout_height="@dimen/midleIcon"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentEnd="true"
+        android:layout_centerInParent="true"
+        android:backgroundTint="@color/msgPSTxt"
+        android:src="@drawable/send_to2"
+        android:contentDescription="@string/buttonSend"/>
+</RelativeLayout>

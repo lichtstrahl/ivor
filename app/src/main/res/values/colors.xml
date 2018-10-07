@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <!-- Global properties -->
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
-    <color name="colorAccent">#00695c</color>
+    <color name="colorPrimary">#25ae79</color>
+    <color name="colorPrimaryDark">#669370</color>
+    <color name="colorAccent">#0e9f80</color>
     <!-- ............. -->
 
     <!-- LoginActivity -->
-    <color name="bgLogin">#837835</color>
+    <color name="bgLogin">#9ccc65</color>
     <color name="ftLogin">#6d4c41</color>
-    <color name="bgButton">#d4e157</color>
+    <color name="bgButton">#689f38</color>
     <!-- ............. -->
 
     <!-- MsgActivity -->
-    <color name="msgBg">#f57f17</color>
-    <color name="msgIvorBg">#ffab91</color>
-    <color name="msgTxt">#bc5100</color>
+    <color name="msgBg">#8bb956</color>
+    <color name="msgIvorBg">#689e38</color>
+    <color name="msgTxt">#386911</color>
+    <color name="msgPSTxt">#c5e1a5</color>
     <!-- ........... -->
 </resources>

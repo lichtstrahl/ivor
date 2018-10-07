@@ -7,7 +7,7 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import bd.Users.User;
+import bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -37,10 +37,6 @@ public class LoginActivity extends AppCompatActivity {
         }
     }
 
-    @OnClick(R.id.buttonReset)
-    public void resetClick(Button b) {
-        Toast.makeText(this, getString(R.string.noAction), Toast.LENGTH_SHORT).show();
-    }
 
     @OnClick(R.id.buttonRegister)
     public void registerClick(Button b) {

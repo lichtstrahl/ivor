@@ -10,27 +10,27 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 import java.util.Locale;
 
-import Ivor.Ivor;
+import ivor.Ivor;
 
 // Адаптер, который будет хранить сообщения
 public class MessageAdapter extends ArrayAdapter {
-    private Context context;
-    private ArrayList<Message> list;
+    private LayoutInflater inflater;
+    private List<Message> list;
 
-    public MessageAdapter(Context context, ArrayList data) {
+    public MessageAdapter(Context context, List<Message> data) {
         super(context, R.layout.list_msg_layout);
-        this.context = context;
+        this.inflater = LayoutInflater.from(context);
         this.list = data;
     }
     public MessageAdapter(Context context, Message[] data) {
         super(context, R.layout.list_msg_layout);
-        this.context = context;
-        list = new ArrayList();
-        for (int i = 0; i < data.length; i++)
-            list.add(data[i]);
+        this.inflater = LayoutInflater.from(context);
+        list = new ArrayList(Arrays.asList(data));
     }
 
     @Override
@@ -47,15 +47,13 @@ public class MessageAdapter extends ArrayAdapter {
     @Override
     public View getView(int position, @Nullable View convertView, @NonNull ViewGroup parent) {
         Message message = list.get(position);
-        LayoutInflater inflater = (LayoutInflater)context.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-
         if (message.author != null)
-            return createUserMessage(message, inflater, parent);
+            return createUserMessage(message, parent);
         else
-            return createIvorMessage(message, inflater, parent);
+            return createIvorMessage(message, parent);
     }
 
-    private View createUserMessage(Message message, LayoutInflater inflater, ViewGroup parent) {
+    private View createUserMessage(Message message, ViewGroup parent) {
         // Создаем View и наполняем её данными из описанного слоя элемента
         View view = inflater.inflate(R.layout.list_msg_layout, parent, false);
         TextView txt;
@@ -65,14 +63,13 @@ public class MessageAdapter extends ArrayAdapter {
         txt.setText(message.author.realName);
         txt = view.findViewById(R.id.time);
 
-        int ch = Calendar.getInstance().getTime().getHours();
-        int min = Calendar.getInstance().getTime().getMinutes();
+        int ch = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int min = Calendar.getInstance().get(Calendar.MINUTE);
         txt.setText(String.format(Locale.ENGLISH, "%02d:%02d", ch, min));
-
         return view;
     }
 
-    private View createIvorMessage(Message message, LayoutInflater inflater, ViewGroup parent) {
+    private View createIvorMessage(Message message, ViewGroup parent) {
         // Создаем View и наполняем её данными из описанного слоя элемента
         View view = inflater.inflate(R.layout.list_msg_layout_ivor, parent, false);
         TextView txt;
@@ -80,13 +77,30 @@ public class MessageAdapter extends ArrayAdapter {
         txt.setText(message.content);
 
         txt = view.findViewById(R.id.author);
-        txt.setText(Ivor.Name);
+        txt.setText(Ivor.getName());
         txt = view.findViewById(R.id.time);
 
-        int ch = Calendar.getInstance().getTime().getHours();
-        int min = Calendar.getInstance().getTime().getMinutes();
+        int ch = Calendar.getInstance().get(Calendar.HOUR_OF_DAY);
+        int min = Calendar.getInstance().get(Calendar.MINUTE);
         txt.setText(String.format(Locale.ENGLISH, "%02d:%02d", ch, min));
 
         return view;
+    }
+
+    public Message getLast() {
+        return list.isEmpty() ? null : list.get(list.size()-1);
+    }
+
+    public void append(Message message) {
+        if (message != null) {
+            list.add(message);
+            notifyDataSetChanged();
+        }
+    }
+
+    @Override
+    public void clear() {
+        list.clear();
+        super.clear();
     }
 }

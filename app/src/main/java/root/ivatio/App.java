@@ -5,27 +5,20 @@ import android.arch.persistence.db.SupportSQLiteDatabase;
 import android.arch.persistence.db.SupportSQLiteProgram;
 import android.arch.persistence.db.SupportSQLiteQuery;
 import android.arch.persistence.room.Room;
-import android.arch.persistence.room.RoomSQLiteQuery;
 import android.arch.persistence.room.migration.Migration;
 import android.database.Cursor;
 import android.support.annotation.NonNull;
-import android.support.annotation.RestrictTo;
-import android.widget.Toast;
 
 import com.facebook.stetho.Stetho;
 
-import java.io.File;
-import java.security.PrivateKey;
-import java.security.PrivilegedAction;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.regex.Pattern;
 
 public class App extends Application {
-    private static AppDatabase DB;
+    private static AppDatabase db;
     private static String nameDB = "database";
     public static AppDatabase getDB() {
-        return DB;
+        return db;
     }
     public static String getDBName() {
         return nameDB;
@@ -33,19 +26,19 @@ public class App extends Application {
     // Коды для передачи парметров между Activity
     public static final String USER_INDEX = "USER_INDEX";
 
-    private final Migration migration_12 = new Migration(1, 2) {
+    private final Migration migration12 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-
+            throw new UnsupportedOperationException();
         }
     };
 
     @Override
     public void onCreate() {
         super.onCreate();
-        DB = Room.databaseBuilder(this, AppDatabase.class, nameDB)
+        db = Room.databaseBuilder(this, AppDatabase.class, nameDB)
                 .allowMainThreadQueries()
-                .addMigrations(migration_12)
+                .addMigrations(migration12)
                 .build();
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
@@ -65,7 +58,7 @@ public class App extends Application {
 
             @Override
             public void bindTo(SupportSQLiteProgram statement) {
-
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
             }
 
             @Override
@@ -73,7 +66,7 @@ public class App extends Application {
                 return 0;
             }
         };
-        Cursor c = DB.query(query);
+        Cursor c = db.query(query);
         List<String> list = new ArrayList<>();
 
         if (c.moveToFirst()) {
@@ -83,6 +76,106 @@ public class App extends Application {
             }
         }
         return list;
+    }
+
+    public static void deleteDuplicates(final String tableName, final String[] col) {
+        final String bufTable = tableName+"_buf";
+        SupportSQLiteQuery copyTable = new SupportSQLiteQuery() {
+            @Override
+            public String getSql() {
+                return "CREATE TABLE " + bufTable + " AS SELECT * FROM " + tableName;
+            }
+
+            @Override
+            public void bindTo(SupportSQLiteProgram statement) {
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
+            }
+
+            @Override
+            public int getArgCount() {
+                return 0;
+            }
+        };
+        SupportSQLiteQuery clearTable = new SupportSQLiteQuery() {
+            @Override
+            public String getSql() {
+                return "DELETE FROM " + bufTable;
+            }
+
+            @Override
+            public void bindTo(SupportSQLiteProgram statement) {
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
+            }
+
+            @Override
+            public int getArgCount() {
+                return 0;
+            }
+        };
+        SupportSQLiteQuery insert = new SupportSQLiteQuery() {
+            @Override
+            public String getSql() {
+                String columns = "";
+                for (int i = 0; i < col.length-1; i++)
+                    col[i] = col[i].concat(", ");
+
+                StringBuilder builder = new StringBuilder();
+                for (String s : col)
+                    builder.append(s);
+                columns = builder.toString();
+
+
+                return "INSERT INTO " + bufTable + " SELECT * FROM " + tableName + "GROUP BY "+ columns +" \n";
+            }
+
+            @Override
+            public void bindTo(SupportSQLiteProgram statement) {
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
+            }
+
+            @Override
+            public int getArgCount() {
+                return 0;
+            }
+        };
+        SupportSQLiteQuery delOld = new SupportSQLiteQuery() {
+            @Override
+            public String getSql() {
+                return "DROP TABLE " + tableName;
+            }
+
+            @Override
+            public void bindTo(SupportSQLiteProgram statement) {
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
+            }
+
+            @Override
+            public int getArgCount() {
+                return 0;
+            }
+        };
+        SupportSQLiteQuery rename = new SupportSQLiteQuery() {
+            @Override
+            public String getSql() {
+                return "ALTER TABLE " + bufTable + "RENAME TO " + tableName;
+            }
+
+            @Override
+            public void bindTo(SupportSQLiteProgram statement) {
+                // Здесь ничего не происходит, потому что я не знаю, где это используется
+            }
+
+            @Override
+            public int getArgCount() {
+                return 0;
+            }
+        };
+
+        db.query(copyTable);
+        db.query(clearTable);
+        db.query(insert);
+        db.query(delOld);
+        db.query(rename);
     }
 
 }

@@ -3,20 +3,20 @@ package root.ivatio;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import bd.Answer.Answer;
-import bd.Answer.AnswerDao;
-import bd.Communication.Communication;
-import bd.Communication.CommunicationDao;
-import bd.CommunicationKey.CommunicationKey;
-import bd.CommunicationKey.CommunicationKeyDao;
-import bd.KeyWord.KeyWord;
-import bd.KeyWord.KeyWordDao;
-import bd.Mood.Mood;
-import bd.Mood.MoodDao;
-import bd.Qustion.Question;
-import bd.Qustion.QuestionDao;
-import bd.Users.User;
-import bd.Users.UserDao;
+import bd.answer.Answer;
+import bd.answer.AnswerDao;
+import bd.communication.Communication;
+import bd.communication.CommunicationDao;
+import bd.communication_key.CommunicationKey;
+import bd.communication_key.CommunicationKeyDao;
+import bd.key_word.KeyWord;
+import bd.key_word.KeyWordDao;
+import bd.mood.Mood;
+import bd.mood.MoodDao;
+import bd.qustion.Question;
+import bd.qustion.QuestionDao;
+import bd.users.User;
+import bd.users.UserDao;
 
 @Database(entities = {
         Question.class,

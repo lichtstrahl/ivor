@@ -1,7 +1,6 @@
 <resources>
     <string name="app_name">ivatio</string>
 
-
     <!-- LoginActivity -->
     <string name="LoginLabel">Вход</string>
     <string name="btnLogin">Войти</string>
@@ -18,10 +17,25 @@
     <string name="City">Город</string>
     <string name="Email">em@il адрес</string>
 
+    <!-- MsgActivity -->
+    <string name="buttonYes">Да</string>
+    <string name="buttonNo">Нет</string>
+    <string name="buttonSend">Отправка</string>
+    <string name="avatar">Аватарка</string>
+    <string name="swapRole">Смена ролей</string>
+
+
     <string name="fieldEmpty">Поле пустое</string>
     <string name="nonEqual">Пароли не совпадают</string>
 
-    <string name="noAnswer">Нет слов. Не знаю, что сказать.</string>
+    <!-- Ivor -->
+    <string name="ivorNoAnswer">Нет слов. Не знаю, что сказать.</string>
+    <string name="ivorModeIvorNowAsking">Итак, теперь я буду тебе называть слова, кторые знаю. А ты напишешь ответы, которые считаешь нужным. Согласен? Начнём.</string>
+    <string name="ivorModeUserNowAsking">Ура, наконец-то! С чего начнём?</string>
+    <string name="ivorSuccessfulAnswer">Ответ успешно принят. Продолжим. Что скажешь про:</string>
+    <string name="ivorModeAddKW">Хорошо, я слушаю новые ключевые слова</string>
+    <string name="ivorSuccessfulAppendKW">Ключевое слово успешно запомнено.</string>
+    <string name="ivorKWExisting">Ключевое слово уже существует!</string>
     <string name="noAction">Действий не задано</string>
 
     <string name="titleKeyWordEdit">Выбери ответ (Answer) на который желаешь добавить ключеваое слово</string>
@@ -30,10 +44,17 @@
     <string name="selectTable">Выбор таблицы для редактирования</string>
     <string name="tableNotFound">Таблица с таким именем не доступна</string>
 
+    <!-- DB  Tables -->
     <string name="question">Вопросы</string>
     <string name="answer">Ответы</string>
     <string name="append">Добавить</string>
     <string name="connect">Соеденить</string>
     <string name="keyWord">Ключевое слово</string>
+
     <string name="NULL">NULL</string>
+    <string name="dialog">Диалог</string>
+    <!-- MSG options menu -->
+    <string name="modeStd">Простой диалог</string>
+    <string name="modeIvorSendKeyWord">Ответы на KW</string>
+    <string name="modeAddKeyWord">Добавление KW</string>
 </resources>

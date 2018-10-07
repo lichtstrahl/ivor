@@ -1,19 +1,18 @@
 package root.ivatio.activity;
 
-import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.support.v7.app.AppCompatActivity;
 import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ListView;
 import android.widget.ScrollView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.List;
 
-import bd.Answer.Answer;
-import bd.Communication.Communication;
-import bd.Qustion.Question;
+import bd.answer.Answer;
+import bd.communication.Communication;
+import bd.qustion.Question;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;

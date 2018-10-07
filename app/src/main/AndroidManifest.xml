@@ -15,12 +15,16 @@
         <activity android:name=".activity.LoginActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
-
+                <action android:name="android.intent.action.VIEW"/>
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
         <activity android:name=".activity.RegisterActivity" />
-        <activity android:name=".activity.MsgActivity" />
+        <activity
+            android:name=".activity.MsgActivity"
+            android:screenOrientation="portrait"
+            android:theme="@style/MsgTheme"
+            />
         <activity android:name=".activity.KeyWordEditActivity" />
         <activity android:name=".activity.SelectTable" />
         <activity android:name=".activity.AnswerAndQuestionEditActivity"></activity>

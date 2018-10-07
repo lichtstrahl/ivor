@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="loginBtnW">200sp</dimen>
+    <dimen name="stdMargin">8dp</dimen>
+    <dimen name="stdPapping">8dp</dimen>
+
+    <!-- Icon -->
+    <dimen name="smallIcon">25dp</dimen>
+    <dimen name="midleIcon">35dp</dimen>
+    <dimen name="bigIcon">50dp</dimen>
+    <dimen name="extraIcon">65dp</dimen>
+
+    <!-- TextSize -->
+    <dimen name="msgTextSize">20sp</dimen>
+    <dimen name="smallText">12sp</dimen>
+    <dimen name="midleText">18sp</dimen>
+    <dimen name="bigText">24sp</dimen>
+    <dimen name="extraText">30sp</dimen>
+    <dimen name="xxText">40sp</dimen>
+    <dimen name="xxxText">50sp</dimen>
+</resources>
