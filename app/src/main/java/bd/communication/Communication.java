@@ -2,6 +2,7 @@ package bd.communication;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
+import android.arch.persistence.room.Ignore;
 import android.arch.persistence.room.PrimaryKey;
 
 import bd.answer.Answer;
@@ -11,16 +12,28 @@ import bd.qustion.Question;
         @ForeignKey(entity = Question.class, parentColumns = "id", childColumns = "questionID"),
         @ForeignKey(entity = Answer.class, parentColumns = "id", childColumns = "answerID")
 })
-public class Communication {
+public class Communication implements bd.Communication {
     @PrimaryKey(autoGenerate = true)
     public long id;
     public long questionID;
     public long answerID;
     public long correct;
+    public long power;
 
-    public Communication(long questionID, long answerID, long correct) {
+    public Communication(long questionID, long answerID) {
         this.questionID = questionID;
         this.answerID = answerID;
-        this.correct = correct;
+        this.correct = 0;
+        this.power = 0;
+    }
+
+    @Override
+    public int getType() {
+        return COMMUNICATION;
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

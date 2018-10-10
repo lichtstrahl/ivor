@@ -20,6 +20,7 @@
     <!-- MsgActivity -->
     <string name="buttonYes">Да</string>
     <string name="buttonNo">Нет</string>
+    <string name="buttonDelete">Удалить</string>
     <string name="buttonSend">Отправка</string>
     <string name="avatar">Аватарка</string>
     <string name="swapRole">Смена ролей</string>
@@ -30,19 +31,21 @@
 
     <!-- Ivor -->
     <string name="ivorNoAnswer">Нет слов. Не знаю, что сказать.</string>
-    <string name="ivorModeIvorNowAsking">Итак, теперь я буду тебе называть слова, кторые знаю. А ты напишешь ответы, которые считаешь нужным. Согласен? Начнём.</string>
-    <string name="ivorModeUserNowAsking">Ура, наконец-то! С чего начнём?</string>
-    <string name="ivorSuccessfulAnswer">Ответ успешно принят. Продолжим. Что скажешь про:</string>
-    <string name="ivorModeAddKW">Хорошо, я слушаю новые ключевые слова</string>
+    <string name="ivorModeSTD">Ура, наконец-то! С чего начнём?</string>
+    <string name="ivorModeUserSendNewKW">Хорошо, я слушаю новые ключевые слова</string>
+    <string name="ivorModeUserSendNewAnswerForKW">Итак, теперь я буду тебе называть слова, кторые знаю. А ты напишешь ответы, которые считаешь нужным. Согласен? Начнём.</string>
     <string name="ivorSuccessfulAppendKW">Ключевое слово успешно запомнено.</string>
     <string name="ivorKWExisting">Ключевое слово уже существует!</string>
+    <string name="ivorModeUserSendNewQuestion">Хорошо. Задавай свои вопросы.</string>
+    <string name="ivorModeUserSendNewAnswerForQ">Теперь я буду сама задавать тебе вопросы, а ты придумай, как на них отвечать.</string>
+    <string name="ivorSuccessfulAppendQ">Вопрос успешно добавлен.</string>
+    <string name="ivorQExisting">Такой вопрос уже существует.</string>
+    <string name="ivorSuccessfulAnswer">Ответ успешно принят. Продолжим. Что скажешь про:</string>
+    <string name="ivorSuccessfulDelete">Запись успешно удалена</string>
+
+
     <string name="noAction">Действий не задано</string>
-
-    <string name="titleKeyWordEdit">Выбери ответ (Answer) на который желаешь добавить ключеваое слово</string>
-    <string name="titleLoadAndSave">Имя файла</string>
-
-    <string name="selectTable">Выбор таблицы для редактирования</string>
-    <string name="tableNotFound">Таблица с таким именем не доступна</string>
+    <string name="deprecated">Не рекомендуется удалять ответы вручную!</string>
 
     <!-- DB  Tables -->
     <string name="question">Вопросы</string>
@@ -55,6 +58,8 @@
     <string name="dialog">Диалог</string>
     <!-- MSG options menu -->
     <string name="modeStd">Простой диалог</string>
-    <string name="modeIvorSendKeyWord">Ответы на KW</string>
+    <string name="modeUserSendAnswerForKeyWord">Ответы на KW</string>
     <string name="modeAddKeyWord">Добавление KW</string>
+    <string name="modeAddQuestion">Добавление Q</string>
+    <string name="modeUserSendAnswerForQuestion">Ответы на Q</string>
 </resources>

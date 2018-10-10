@@ -38,4 +38,3 @@ public interface KeyWordDao {
     @Query("DELETE FROM KeyWord")
     void deleteAll();
 }
-

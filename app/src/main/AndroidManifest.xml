@@ -25,9 +25,7 @@
             android:screenOrientation="portrait"
             android:theme="@style/MsgTheme"
             />
-        <activity android:name=".activity.KeyWordEditActivity" />
         <activity android:name=".activity.SelectTable" />
-        <activity android:name=".activity.AnswerAndQuestionEditActivity"></activity>
     </application>
 
 </manifest>

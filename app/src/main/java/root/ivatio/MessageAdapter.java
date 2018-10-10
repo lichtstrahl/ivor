@@ -97,6 +97,12 @@ public class MessageAdapter extends ArrayAdapter {
             notifyDataSetChanged();
         }
     }
+    public void append(List<Message> messages) {
+        if (messages != null) {
+            for (Message m : messages)
+                append(m);
+        }
+    }
 
     @Override
     public void clear() {

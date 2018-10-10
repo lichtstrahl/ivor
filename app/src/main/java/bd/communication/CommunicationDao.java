@@ -8,6 +8,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import bd.communication_key.CommunicationKey;
+
 @Dao
 public interface CommunicationDao {
     @Insert
@@ -20,8 +22,14 @@ public interface CommunicationDao {
     @Query("SELECT * FROM Communication")
     List<Communication> getAll();
 
-    @Query("SELECT * FROM Communication WHERE id = :id")
-    Communication getCommunication(long id);
+    @Query("DELETE FROM Communication WHERE id = :id")
+    int delete(long id);
+
+    @Query("SELECT * FROM Communication WHERE questionID = :questionID")
+    List<Communication> getCommunication(long questionID);
+
+    @Query("SELECT * FROM COMMUNICATION WHERE questionID = :questionID AND answerID = :answerID")
+    Communication getCommunication(long questionID, long answerID);
 
     @Query("DELETE FROM Communication")
     void deleteAll();

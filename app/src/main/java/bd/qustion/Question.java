@@ -8,10 +8,15 @@ public class Question {
     @PrimaryKey(autoGenerate = true)
     public long id;
     public String content;
-    public int power;
 
     public Question(String content) {
         this.content = content;
-        this.power = 0;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null)
+            return false;
+        return content.equals(((Question)obj).content);
     }
 }

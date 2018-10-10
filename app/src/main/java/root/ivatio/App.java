@@ -29,7 +29,13 @@ public class App extends Application {
     private final Migration migration12 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            throw new UnsupportedOperationException();
+            // Пустая миграция
+        }
+    };
+    private final Migration migration21 = new Migration(2, 1) {
+        @Override
+        public void migrate(@NonNull SupportSQLiteDatabase database) {
+            // Пустая миграция
         }
     };
 
@@ -38,7 +44,7 @@ public class App extends Application {
         super.onCreate();
         db = Room.databaseBuilder(this, AppDatabase.class, nameDB)
                 .allowMainThreadQueries()
-                .addMigrations(migration12)
+                .addMigrations(migration12, migration21)
                 .build();
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);

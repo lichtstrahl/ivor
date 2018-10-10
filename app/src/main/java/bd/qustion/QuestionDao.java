@@ -19,6 +19,12 @@ public interface QuestionDao {
     @Query("SELECT * FROM Question WHERE content = :content")
     Question getQuestion(String content);
 
+    @Query("SELECT * FROM Question WHERE id = :id")
+    Question getQuestion(long id);
+
+    @Query("SELECT id FROM Question")
+    long[] getAllID();
+
 
     @Insert
     long insert(Question q);    // id, куда произошла вставка

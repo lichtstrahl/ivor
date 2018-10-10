@@ -4,6 +4,7 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
+import bd.Communication;
 import bd.answer.Answer;
 import bd.key_word.KeyWord;
 
@@ -11,7 +12,7 @@ import bd.key_word.KeyWord;
         @ForeignKey(entity = KeyWord.class, parentColumns = "id", childColumns = "keyID"),
         @ForeignKey(entity = Answer.class, parentColumns = "id", childColumns = "answerID")
 })
-public class CommunicationKey {
+public class CommunicationKey implements Communication {
     @PrimaryKey(autoGenerate = true)
     public long id;
     public long keyID;
@@ -24,5 +25,15 @@ public class CommunicationKey {
         this.answerID = answerID;
         this.power = 0;
         this.correct = 0;
+    }
+
+    @Override
+    public int getType() {
+        return COMMUNICATION_KEY;
+    }
+
+    @Override
+    public long getID() {
+        return id;
     }
 }

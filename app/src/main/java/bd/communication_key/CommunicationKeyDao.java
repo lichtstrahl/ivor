@@ -19,6 +19,9 @@ public interface CommunicationKeyDao {
     @Query("SELECT * FROM COMMUNICATIONKEY WHERE KeyID = :kID AND answerID = :aID")
     CommunicationKey getCommunicationKey(long kID, long aID);
 
+    @Query("DELETE FROM CommunicationKey WHERE id = :id")
+    int delete(long id);
+
     @Update
     void update(CommunicationKey communicationKey);
     @Insert

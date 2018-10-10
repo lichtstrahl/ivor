@@ -6,9 +6,14 @@
         android:title="@string/modeStd"/>
     <item
         android:id="@+id/menuModeIvorAskingKW"
-        android:title="@string/modeIvorSendKeyWord"/>
+        android:title="@string/modeUserSendAnswerForKeyWord"/>
     <item
         android:id="@+id/menuModeAddKW"
         android:title="@string/modeAddKeyWord" />
-
+    <item
+        android:id="@+id/menuModeAddQuestion"
+        android:title="@string/modeAddQuestion"/>
+    <item
+        android:id="@+id/menuModeIvorAskingQ"
+        android:title="@string/modeUserSendAnswerForQuestion"/>
 </menu>

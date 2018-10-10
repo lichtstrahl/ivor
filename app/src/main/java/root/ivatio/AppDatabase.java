@@ -17,7 +17,7 @@ import bd.qustion.Question;
 import bd.qustion.QuestionDao;
 import bd.users.User;
 import bd.users.UserDao;
-
+//
 @Database(entities = {
         Question.class,
         Answer.class,
@@ -26,7 +26,8 @@ import bd.users.UserDao;
         Mood.class,
         KeyWord.class,
         CommunicationKey.class},
-        version = 2)
+        version = 1,
+        exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 //    public abstract
     public abstract QuestionDao getQuestionDao();

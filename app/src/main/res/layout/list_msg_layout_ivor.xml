@@ -5,7 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     xmlns:tools="http://schemas.android.com/tools"
-    android:layout_margin="20sp"
     android:backgroundTint="@color/msgIvorBg">
     
     <LinearLayout
@@ -20,7 +19,7 @@
             android:textSize="@dimen/msgTextSize"
             android:textColor="@color/msgTxt"
             android:layout_gravity="start"
-            android:layout_margin="8dp"/>
+            android:layout_margin="4dp"/>
 
         <LinearLayout
             android:layout_width="wrap_content"
