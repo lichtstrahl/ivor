@@ -3,6 +3,8 @@ package root.ivatio;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
+import bd.Command.Command;
+import bd.Command.CommandDao;
 import bd.answer.Answer;
 import bd.answer.AnswerDao;
 import bd.communication.Communication;
@@ -25,7 +27,8 @@ import bd.users.UserDao;
         Communication.class,
         Mood.class,
         KeyWord.class,
-        CommunicationKey.class},
+        CommunicationKey.class,
+        Command.class},
         version = 1,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
@@ -37,4 +40,5 @@ public abstract class AppDatabase extends RoomDatabase {
     public abstract MoodDao getMoodDao();
     public abstract KeyWordDao getKeyWordDao();
     public abstract CommunicationKeyDao getCommunicationKeyDao();
+    public abstract CommandDao getCommandDao();
 }

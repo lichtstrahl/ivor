@@ -86,4 +86,8 @@ Vapp/build/generated/source/apt/debug/root/ivatio/activity/SelectTable_ViewBindi
 “
 capp/build/generated/not_namespaced_r_class_sources/debug/processDebugResources/r/root/ivatio/R.java,2\6\2603760b1574b588208767d48d9eb81e9129c279
 W
-'app/src/main/java/bd/Communication.java,0\b\0bdaf74c61f51f547c748279fb91df9bc2a8abf7
+'app/src/main/java/ivor/IvorViewAPI.java,6\2\62f54f09878e079ce50f9d5dfecc7cc71d6e71ee
+Y
+)app/src/main/java/ivor/IvorPresenter.java,f\c\fc97804c772252fa27411f437601f1987c2ec33e
+Z
+*app/src/main/java/bd/CommunicationAPI.java,c\a\ca45fda20e6bc6dc2ea0cefb3e7096154f2a2da0

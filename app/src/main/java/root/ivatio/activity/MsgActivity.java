@@ -1,14 +1,20 @@
 package root.ivatio.activity;
 
+import android.content.Intent;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.SmsManager;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -16,26 +22,25 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import bd.answer.Answer;
-import bd.communication.Communication;
-import bd.communication_key.CommunicationKey;
-import bd.key_word.KeyWord;
-import bd.qustion.Question;
 import bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import ivor.Ivor;
+import ivor.IvorPresenter;
+import ivor.IvorViewAPI;
+import ivor.action.ActionCall;
+import ivor.action.ActionSendEmail;
+import ivor.action.ActionSendGPS;
+import ivor.action.ActionSendSMS;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
 
-
-
-public class MsgActivity extends AppCompatActivity {
+public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
-    private Ivor ivor;
+    private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
 
     @BindView(R.id.list)
@@ -45,136 +50,32 @@ public class MsgActivity extends AppCompatActivity {
     @BindView(R.id.input)
     EditText inputText;
 
-    @BindView(R.id.personName)
-    TextView nameView;
-    @BindView(R.id.personAge)
-    TextView ageView;
-
-
     @OnClick(R.id.buttonSend)
     public void sendClick() {
         messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
-        switch (curRole) {
-            case STD: {
-                messages.append(ivor.answer(inputText.getText().toString()));
-                messages.notifyDataSetChanged();
-                if (ivor.processingKeyWord() || ivor.processingQuestion()) {
-                    appendRating();
-                    buttonDelete.setVisibility(View.VISIBLE);
-                }
-                break;
-            }
-            case USER_SEND_ANSWER_FOR_KW: {
-                Answer answer = new Answer(inputText.getText().toString());
-                long answerID = App.getDB().getAnswerDao().insert(answer);
-                CommunicationKey comKey = new CommunicationKey(ivor.getLastKeyWord().id, answerID);
-                App.getDB().getCommunicationKeyDao().insert(comKey);
-                messages.append(ivor.send(R.string.ivorSuccessfulAnswer));
-                messages.append(ivor.sendRandomKeyWord());
-                break;
-            }
-            case USER_SEND_NEW_KW: {
-                KeyWord keyWord = new KeyWord(
-                        Ivor.StringProcessor.toStdFormat(inputText.getText().toString())
-                );
-                List<KeyWord> keyWords = App.getDB().getKeyWordDao().getAll();
-                if (!keyWords.contains(keyWord)) {
-                    App.getDB().getKeyWordDao().insert(keyWord);
-                    messages.append(ivor.send(R.string.ivorSuccessfulAppendKW));
-                } else
-                    messages.append(ivor.send(R.string.ivorKWExisting));
-                break;
-            }
-            case USER_SEND_NEW_Q: {
-                Question question = new Question(
-                        Ivor.StringProcessor.toStdFormat(inputText.getText().toString())
-                );
-                List<Question> questions = App.getDB().getQuestionDao().getAll();
-                if (!questions.contains(question)) {
-                    App.getDB().getQuestionDao().insert(question);
-                    messages.append(ivor.send(R.string.ivorSuccessfulAppendQ));
-                } else
-                    messages.append(ivor.send(R.string.ivorQExisting));
-                break;
-            }
-            case USER_SEND_ANSWER_FOR_Q: {
-                Answer answer = new Answer(inputText.getText().toString());
-                long answerID = App.getDB().getAnswerDao().insert(answer);
-                Communication communication = new Communication(ivor.getLastQuestion().id, answerID);
-                App.getDB().getCommunicationDao().insert(communication);
-                messages.append(ivor.send(R.string.ivorSuccessfulAnswer));
-                messages.append(ivor.sendRandomQuestion());
-                break;
-            }
-            default:
-        }
+        ivorPresenter.clickSend(curRole, inputText.getText().toString());
         inputText.setText("");
-
     }
 
     @BindView(R.id.buttonDelete)
     ImageButton buttonDelete;
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
-        messages.append(ivor.send(R.string.ivorSuccessfulDelete));
-        switch (curRole) {
-            case USER_SEND_ANSWER_FOR_KW:
-                App.getDB().getKeyWordDao().delete(ivor.getLastKeyWord());
-                messages.append(ivor.send(ivor.getRandomKeyWord().content));
-                break;
-            case USER_SEND_ANSWER_FOR_Q:
-                App.getDB().getQuestionDao().delete(ivor.getLastQuestion());
-                messages.append(ivor.send(ivor.getRandomQuestion().content));
-                break;
-            case STD:
-                Toast.makeText(this, R.string.deprecated, Toast.LENGTH_SHORT).show();
-                bd.Communication lastCom = ivor.getLastCommunication();
-                if(lastCom.getType() == bd.Communication.COMMUNICATION)
-                    App.getDB().getCommunicationDao().delete(lastCom.getID());
-                else
-                    App.getDB().getCommunicationKeyDao().delete(lastCom.getID());
-                break;
-            default:
-        }
+        ivorPresenter.clickDelete(curRole);
     }
 
     @BindView(R.id.buttonYes)
     ImageButton buttonYes;
     @OnClick(R.id.buttonYes)
     public void clickYes() {
-        if (ivor.processingKeyWord())
-            reEvalutionKeyWord(1);
-        if (ivor.processingQuestion())
-            reEvalutionQuestion(1);
-
+        ivorPresenter.clickEval(1);
     }
 
     @BindView(R.id.buttonNo)
     ImageButton buttonNo;
     @OnClick(R.id.buttonNo)
     public void clickNo() {
-        if (ivor.processingKeyWord())
-            reEvalutionKeyWord(-1);
-        if (ivor.processingQuestion())
-            reEvalutionQuestion(-1);
-    }
-
-    private void reEvalutionKeyWord(int eval) {
-        ivor.reEvaluationKeyWord(eval);
-        removeRating();
-    }
-    private void reEvalutionQuestion(int eval) {
-        ivor.reEvalutionQuestion(eval);
-        removeRating();
-    }
-
-    private void removeRating() {
-        buttonNo.setVisibility(View.INVISIBLE);
-        buttonYes.setVisibility(View.INVISIBLE);
-    }
-    private void appendRating() {
-        buttonNo.setVisibility(View.VISIBLE);
-        buttonYes.setVisibility(View.VISIBLE);
+        ivorPresenter.clickEval(-1);
     }
 
     @Override
@@ -183,23 +84,69 @@ public class MsgActivity extends AppCompatActivity {
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
 
-        user = App.getDB().getUserDao().getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
-        nameView.setText(user.realName);
-        ageView.setText(String.valueOf(user.age));
-
-        ivor = new Ivor(getResources());
-
-        messages = new MessageAdapter(this, new ArrayList<Message>());
+        user =App.getDB().getUserDao().getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
+        ivorPresenter = new IvorPresenter(
+                new Ivor(getResources(),
+                        new ActionCall(
+                            getString(R.string.cmdCall),
+                            x -> {
+                                if (x.isEmpty()) {
+                                    List<String> param = ivorPresenter.completeAction();
+                                    String dial = "tel:" + param.get(0);
+                                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                                } else
+                                    appendMessage(new Message(null, x));
+                            }),
+                        new ActionSendSMS(getString(R.string.cmdSendSMS),
+                            x -> {
+                            if (x.isEmpty()) {
+                                List<String> param = ivorPresenter.completeAction();
+                                SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(param.get(0), null, param.get(1), null, null);
+                                Toast.makeText(this, R.string.successfulSendSMS, Toast.LENGTH_SHORT).show();
+                            } else
+                                appendMessage(new Message(null, x));
+                            }),
+                        new ActionSendEmail(getString(R.string.cmdSendEmail), x-> {
+                            if (x.isEmpty()) {
+                                List<String> param = ivorPresenter.completeAction();
+                                Intent intent = new Intent(Intent.ACTION_SEND);
+                                intent.setType("plain/text");
+                                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {param.get(0)});
+                                intent.putExtra(Intent.EXTRA_SUBJECT, param.get(1));
+                                intent.putExtra(Intent.EXTRA_TEXT, param.get(2));
+                                this.startActivity(Intent.createChooser(intent, "Отправка ..."));
+                            } else
+                                appendMessage(new Message(null, x));
+                        }),
+                        new ActionSendGPS(getString(R.string.cmdSendGPS), x-> {
+                            if (x.isEmpty()) {
+                                List<String> param = ivorPresenter.completeAction();
+                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
+                                        Uri.parse("geo:" + param.get(0) + "," + param.get(1)));
+                                startActivity(intent);
+                            } else
+                                appendMessage(new Message(null, x));
+                        })
+                ),
+                this);
+        messages = new MessageAdapter(this, new ArrayList<>());
         listView.setAdapter(messages);
-
         removeRating();
-        setTitle(R.string.dialog);
+        setTitle(user.login + ", " + user.realName);
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        ivorPresenter.selectionCommunications();
     }
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        getMenuInflater().inflate(R.menu.msg_options_menu, menu);
+        if (user.isAdmin())
+            getMenuInflater().inflate(R.menu.msg_options_menu, menu);
         return true;
     }
 
@@ -209,40 +156,27 @@ public class MsgActivity extends AppCompatActivity {
         messages.clear();
         switch (item.getItemId()) {
             case R.id.menuModeStd:
-                curRole = ROLE.STD;
-                messages.append(ivor.send(R.string.ivorModeSTD));
-                buttonDelete.setVisibility(View.INVISIBLE);
+                ivorPresenter.setMenuModeStd();
                 break;
             case R.id.menuModeIvorAskingKW:
-                curRole = ROLE.USER_SEND_ANSWER_FOR_KW;
-                messages.append(ivor.send(R.string.ivorModeUserSendNewAnswerForKW));
-                messages.append(ivor.sendRandomKeyWord());
-                buttonDelete.setVisibility(View.VISIBLE);
+                ivorPresenter.setMenuModeIvorAskingKW();
                 break;
             case R.id.menuModeAddKW:
-                curRole = ROLE.USER_SEND_NEW_KW;
-                messages.append(ivor.send(R.string.ivorModeUserSendNewKW));
-                buttonDelete.setVisibility(View.INVISIBLE);
+                ivorPresenter.setMenuModeAddKW();
                 break;
             case R.id.menuModeAddQuestion:
-                curRole = ROLE.USER_SEND_NEW_Q;
-                messages.append(ivor.send(R.string.ivorModeUserSendNewQuestion));
-                buttonDelete.setVisibility(View.INVISIBLE);
+                ivorPresenter.setMenuModeAddQ();
                 break;
             case R.id.menuModeIvorAskingQ:
-                curRole = ROLE.USER_SEND_ANSWER_FOR_Q;
-                messages.append(ivor.send(R.string.ivorModeUserSendNewAnswerForQ));
-                messages.append(ivor.sendRandomQuestion());
-                buttonDelete.setVisibility(View.VISIBLE);
+                ivorPresenter.setMenuModeIvorAskingQ();
+                break;
+            case R.id.menuSelection:
+                ivorPresenter.selectionCommunications();
                 break;
             default:
         }
         removeRating();
         return true;
-    }
-
-    private Date getCurDate() {
-        return Calendar.getInstance().getTime();
     }
 
     public enum ROLE {
@@ -252,4 +186,49 @@ public class MsgActivity extends AppCompatActivity {
         USER_SEND_ANSWER_FOR_Q,
         USER_SEND_NEW_Q,
     }
+    /***************************************/
+    /** Реализация интерфейса IvorViewAPI **/
+    /***************************************/
+    @Override
+    public void removeRating() {
+        buttonNo.setVisibility(View.GONE);
+        buttonYes.setVisibility(View.GONE);
+    }
+    @Override
+    public void appendRating() {
+        buttonNo.setVisibility(View.VISIBLE);
+        buttonYes.setVisibility(View.VISIBLE);
+    }
+
+    @Override
+    public void appendMessage(Message msg) {
+        messages.append(msg);
+    }
+
+    private Date getCurDate() {
+        return Calendar.getInstance().getTime();
+    }
+
+    @Override
+    public void setRole(ROLE role) {
+        curRole = role;
+    }
+    @Override
+    public void switchButtonDelete(int visibility) {
+        if (visibility == View.VISIBLE && !user.isAdmin())
+            return;
+        buttonDelete.setVisibility(visibility);
+    }
+
+    @Override
+    public void showMessage(int res) {
+        Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
+    }
+
+
+    @Override
+    public void needEval() {
+        Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
+    }
+
 }

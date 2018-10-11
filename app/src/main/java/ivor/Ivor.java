@@ -8,41 +8,52 @@ import android.content.res.Resources;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
-import java.util.Set;
 
+import javax.annotation.Nullable;
+
+import bd.Command.Command;
+import bd.CommunicationAPI;
 import bd.answer.Answer;
 import bd.communication.Communication;
 import bd.communication_key.CommunicationKey;
 import bd.key_word.KeyWord;
 import bd.qustion.Question;
 import bd.users.User;
+import ivor.action.Action;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
-import root.ivatio.activity.MsgActivity;
 
 public class Ivor extends User {
     private static String name = "Ivor";
+    public static final int criticalCountEval = 50;
     private Resources resources;
-    private ArrayList<KeyWord>  memoryWords;
-    private ArrayList<Question> memoryQuestions;
-    private ArrayList<Answer>   memoryAnswers;
-    private ArrayList<bd.Communication> memoryCommunications;
+    private LinkedList<KeyWord> memoryWords;
+    private LinkedList<Question> memoryQuestions;
+    private LinkedList<Answer>   memoryAnswers;
+    private LinkedList<CommunicationAPI> memoryCommunicationAPIS;
+    private List<Action> actions;
+    private int countEval;
     private Random random;
     private boolean processingKeyWord;
     private boolean processingQuestion;
+    private Action curAction;
 
-    public Ivor(Resources resources) {
+    public Ivor(Resources resources, Action ... actions) {
         this.id = -1;
         this.resources = resources;
-        this.memoryWords = new ArrayList<>();
-        this.memoryQuestions = new ArrayList<>();
-        this.memoryAnswers = new ArrayList<>();
-        this.memoryCommunications = new ArrayList<>();
+        this.memoryWords = new LinkedList<>();
+        this.memoryQuestions = new LinkedList<>();
+        this.memoryAnswers = new LinkedList<>();
+        this.memoryCommunicationAPIS = new LinkedList<>();
         this.random = new Random();
         processingKeyWord = false;
+        countEval = 0;
+        this.actions = Arrays.asList(actions);
+        curAction = null;
     }
 
     public static String getName() {
@@ -51,11 +62,19 @@ public class Ivor extends User {
 
     private String processingMessage(String message) {
         String liteString = StringProcessor.toStdFormat(message);
-        Question q = isQuestion(liteString);
-        if (q != null)  // Обработка прямого вопроса
-            return processingQuestion(q);
-        else            // Обработка KeyWord
-            return processingKeyWords(StringProcessor.getKeyWords(liteString));
+        if (curAction == null) {
+            Command c = isCommand(liteString);
+            if (c != null) // Обработка команды
+                return processingCommand(c);
+            Question q = isQuestion(liteString);
+            if (q != null)  // Обработка прямого вопроса
+                return processingQuestion(q);
+            else            // Обработка KeyWord
+                return processingKeyWords(StringProcessor.getKeyWords(liteString));
+        } else {
+            curAction.put(liteString);
+            return curAction.next();
+        }
     }
 
     private Question isQuestion(String str) {
@@ -72,78 +91,108 @@ public class Ivor extends User {
         return null;
     }
 
-    // TODO То, что здесь происходит, должно решаться через JOIN!
+    private Command isCommand(String str) {
+        HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
+        List<Command> commands = App.getDB().getCommandDao().getAll();
+
+        for (Command cmd : commands) {
+            HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.cmd.split(" ")));
+            if (set.containsAll(cmdSet))
+                return cmd;
+        }
+        return null;
+    }
+
+    private String processingCommand(Command c) {
+        for (Action action : actions)
+            if (action.getCmd().equals(c.cmd)) {
+                curAction = action;
+                return action.next();
+            }
+
+        return resources.getString(R.string.noAction);
+    }
+
     private String processingQuestion(Question q) {
         processingKeyWord = false;
-        List<Communication> communications = App.getDB().getCommunicationDao().getCommunication(q.id);
-        if (!communications.isEmpty()) {
-            int r = new Random().nextInt(communications.size());
-            memoryQuestions.add(q);
-            Communication com = communications.get(r);
-            Answer answer = App.getDB().getAnswerDao().getAnswer(com.answerID);
-            memoryCommunications.add(com);
-            memoryAnswers.add(answer);
+        List<Answer> answers = App.getDB().getQuestionDao().getAnswerForQuestion(q.id);
+        if (!answers.isEmpty()) {
+            int r = random.nextInt(answers.size());
+            Answer answer = answers.get(r);
+            memory(answer).memory(q).memory(App.getDB().getCommunicationDao().getCommunication(q.id, answer.id));
             processingQuestion = true;
             return answer.content;
         }
-
         processingQuestion = false;
         return resources.getString(R.string.ivorNoAnswer);
     }
 
-
-
-    // TODO То, что здесь происходит, должно решаться через JOIN!
-    private String processingKeyWords(ArrayList<KeyWord> keyWords) {
+    private String processingKeyWords(List<KeyWord> keyWords) {
         processingQuestion = false;
         for (KeyWord word : keyWords) {
-            List<CommunicationKey> list = App.getDB().getCommunicationKeyDao().getCommunications(word.id);
-            if (list.isEmpty())
+            List<Answer> answers = App.getDB().getKeyWordDao().getAnswerForKeyWord(word.id);
+            if (answers.isEmpty())
                 continue;
-            int r = random.nextInt(list.size());
-            CommunicationKey com = list.get(r);
-            Answer answer = App.getDB().getAnswerDao().getAnswer(com.answerID);
-            if (answer != null) {
-                processingKeyWord = true;
-                memoryWords.add(word);
-                memoryAnswers.add(answer);
-                memoryCommunications.add(com);
-                return answer.content;
-            }
+            int r = random.nextInt(answers.size());
+            Answer answer = answers.get(r);
+            memory(answer).memory(word).memory(App.getDB().getCommunicationKeyDao().getCommunicationKey(word.id, answer.id));
+            processingKeyWord = true;
+            return answer.content;
         }
 
         processingKeyWord = false;
         return resources.getString(R.string.ivorNoAnswer);
     }
 
-    public Message answer(String request) {
+    private Ivor memory(Question q) {
+        memoryQuestions.add(q);
+        return this;
+    }
+    private Ivor memory(Answer a) {
+        memoryAnswers.add(a);
+        return this;
+    }
+    private Ivor memory(KeyWord kw) {
+        memoryWords.add(kw);
+        return this;
+    }
+    private Ivor memory(CommunicationAPI api) {
+        memoryCommunicationAPIS.add(api);
+        return this;
+    }
+
+    @Nullable
+    Message answer(String request) {
         return send(processingMessage(request));
     }
 
-    public Message send(String content) {
+    Message send(String content) {
+        if (content.isEmpty())
+            return null;
         return new Message(null, content);
     }
 
-    public Message send(int res) {
+    Message send(int res) {
         return new Message(null, resources.getString(res));
     }
 
 
-    public double compare(String str1, String str2) {
-        int n = str2.length();
-        int l = Math.min(str1.length(), str2.length());
-        int not = 0;
-        for (int i = 0; i < l; i++)
-            if (str1.charAt(i) != str2.charAt(i))
-                not++;
-        return Math.round((double)not / (double)n * 100.0);
+    public int getCountEval() {
+        return countEval;
     }
 
-    public void reEvaluationKeyWord(int eval) {
+    public List<String> resetAction() {
+        List<String> res = curAction.getParam();
+        curAction = null;
+        return res;
+    }
+
+    void reEvalutionKeyWord(int eval) {
         Answer answer = getLastAnswer();
         KeyWord keyWord = getLastKeyWord();
         CommunicationKey communicationKey = App.getDB().getCommunicationKeyDao().getCommunicationKey(keyWord.id, answer.id);
         if (communicationKey != null) {
+            countEval++;
             communicationKey.power++;
             if (eval > 0)
                 communicationKey.correct++;
@@ -152,11 +201,12 @@ public class Ivor extends User {
             App.getDB().getCommunicationKeyDao().update(communicationKey);
         }
     }
-    public void reEvalutionQuestion(int eval) {
+    void reEvalutionQuestion(int eval) {
         Answer answer = getLastAnswer();
         Question question = getLastQuestion();
         Communication communication = App.getDB().getCommunicationDao().getCommunication(question.id, answer.id);
         if (communication != null) {
+            countEval++;
             communication.power++;
             if (eval > 0)
                 communication.correct++;
@@ -167,90 +217,125 @@ public class Ivor extends User {
     }
 
 
-    public KeyWord getLastKeyWord() {
+    private KeyWord getLastKeyWord() {
         if (memoryWords.isEmpty())
             return null;
         return memoryWords.get(memoryWords.size()-1);
     }
-    public Question getLastQuestion() {
+    private Question getLastQuestion() {
         if (memoryQuestions.isEmpty())
             return null;
         return memoryQuestions.get(memoryQuestions.size()-1);
     }
 
-    public Answer getLastAnswer() {
+    private Answer getLastAnswer() {
         if (memoryAnswers.isEmpty())
             return null;
         return memoryAnswers.get(memoryAnswers.size()-1);
     }
 
-    public bd.Communication getLastCommunication() {
-        if (memoryCommunications.isEmpty())
+    private CommunicationAPI getLastCommunication() {
+        if (memoryCommunicationAPIS.isEmpty())
             return null;
-        return memoryCommunications.get(memoryCommunications.size()-1);
+        return memoryCommunicationAPIS.get(memoryCommunicationAPIS.size()-1);
     }
 
-
-    public KeyWord getFirstKeyWord() {
-        if (memoryWords.isEmpty())
-            return null;
-        return memoryWords.get(0);
-    }
-
-    public boolean haveKeyWords() {
-        return !memoryWords.isEmpty();
-    }
-
-    public Message sendRandomKeyWord() {
+    Message sendRandomKeyWord() {
         KeyWord r = getRandomKeyWord();
         memoryWords.add(r);
         return new Message(null, r.content);
     }
-    public KeyWord getRandomKeyWord() {
+    KeyWord getRandomKeyWord() {
         long[] allID = App.getDB().getKeyWordDao().getAllID();
-        long anyID = allID[new Random().nextInt(allID.length)];
+        long anyID = allID[random.nextInt(allID.length)];
         return App.getDB().getKeyWordDao().getWord(anyID);
     }
 
-    public Message sendRandomQuestion() {
+    Message sendRandomQuestion() {
         Question r = getRandomQuestion();
         memoryQuestions.add(r);
         return new Message(null, r.content);
     }
-    public Question getRandomQuestion() {
+    Question getRandomQuestion() {
         long[] allID = App.getDB().getQuestionDao().getAllID();
-        long anyID = allID[new Random().nextInt(allID.length)];
+        long anyID = allID[random.nextInt(allID.length)];
         return App.getDB().getQuestionDao().getQuestion(anyID);
     }
 
-    public boolean processingKeyWord() {
+    boolean processingKeyWord() {
         return processingKeyWord;
     }
-    public boolean processingQuestion() {
+    boolean processingQuestion() {
         return processingQuestion;
+    }
+    void deleteLastKeyWord() {
+        App.getDB().getKeyWordDao().delete(getLastKeyWord());
+    }
+    void deleteLastQuestion() {
+        App.getDB().getQuestionDao().delete(getLastQuestion());
+    }
+
+    /** Удаление не только Communication, но и CommunicationKey, если она была последней*/
+    void deleteLastCommunication() {
+        CommunicationAPI lastCom = getLastCommunication();
+        if(lastCom.getType() == CommunicationAPI.COMMUNICATION)
+            App.getDB().getCommunicationDao().delete(lastCom.getID());
+        else
+            App.getDB().getCommunicationKeyDao().delete(lastCom.getID());
+    }
+
+    void appendNewAnswerForLastKW(Answer answer) {
+        long answerID = App.getDB().getAnswerDao().insert(answer);
+        KeyWord lastKeyWord = getLastKeyWord();
+        if (lastKeyWord == null)
+            return;
+        CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answerID);
+        App.getDB().getCommunicationKeyDao().insert(comKey);
+    }
+    void appendNewAnswerForLastQ(Answer answer) {
+        long answerID = App.getDB().getAnswerDao().insert(answer);
+        Question lastQuestion = getLastQuestion();
+        if (lastQuestion == null)
+            return;
+        Communication communication = new Communication(lastQuestion.id, answerID);
+        App.getDB().getCommunicationDao().insert(communication);
+    }
+    boolean appendNewKeyWord(KeyWord keyWord) {
+        List<KeyWord> keyWords = App.getDB().getKeyWordDao().getAll();
+        if (!keyWords.contains(keyWord)) {
+            App.getDB().getKeyWordDao().insert(keyWord);
+            return  true;
+        }
+        return false;
+    }
+    boolean appendNewQuestion(Question question) {
+        List<Question> questions = App.getDB().getQuestionDao().getAll();
+        if (!questions.contains(question)) {
+            App.getDB().getQuestionDao().insert(question);
+            return true;
+        }
+        return false;
+    }
+
+    public void resetCountEval() {
+        countEval = 0;
+    }
+
+    public void selection() {
+        App.getDB().getCommunicationKeyDao().magicalDelete();
+        App.getDB().getCommunicationDao().magicalDelete();
     }
 
     public static class StringProcessor {
-        public static boolean stringContainsWord(String str, String word) {
-            return str.contains(word);
+        private StringProcessor() {
+            throw new IllegalStateException("Это вспомогательный класс. Создание экземпляра не требуется.");
         }
-        public static String stringDeleteChars(String str, String chars) {
+
+        static String stringDeleteChars(String str, String chars) {
             return str.replaceAll(chars, "");
         }
 
-        // Насколько совпадают строки. В прцоентах
-        public static double compareString(String s1, String s2) {
-            int n = Math.min(s1.length(), s2.length());
-            if (n == 0)
-                return 0;
-            int k = 0;
-            for (int i = 0; i < n; i++)
-                if (s1.charAt(i) == s2.charAt(i))
-                    k++;
-            return k/Math.max(s1.length(), s2.length());
-        }
-
-        public static ArrayList<KeyWord> getKeyWords(String string) {
+        static List<KeyWord> getKeyWords(String string) {
             ArrayList<KeyWord> list = new ArrayList<>();
             for (KeyWord word : App.getDB().getKeyWordDao().getAll())
                 if (string.contains(word.content))
@@ -258,7 +343,7 @@ public class Ivor extends User {
             return list;
         }
 
-        public static ArrayList<KeyWord> getAllocatedKeyWords(String string) {
+        public static List<KeyWord> getAllocatedKeyWords(String string) {
             ArrayList<KeyWord> words = new ArrayList<>();
 
             // Тройным знаком "#" выделяются ключевые слова

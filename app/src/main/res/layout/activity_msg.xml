@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -16,32 +15,6 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent">
-            <ImageView
-                android:id="@+id/personPhoto"
-                android:layout_width="@dimen/bigIcon"
-                android:layout_height="@dimen/bigIcon"
-                android:layout_centerVertical="true"
-                android:src="@mipmap/baseline_account_circle_black_48dp"
-                android:contentDescription="@string/avatar"/>
-            <TextView
-                android:id="@+id/personName"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/personPhoto"
-                android:layout_toStartOf="@id/buttonDelete"
-                android:textSize="@dimen/midleText"
-                tools:text="Emma Wilson"/>
-            <TextView
-                android:id="@+id/personAge"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:layout_toEndOf="@id/personPhoto"
-                android:layout_below="@id/personName"
-                android:layout_toStartOf="@id/buttonDelete"
-                android:textSize="@dimen/smallText"
-                tools:text="23 years old"/>
-
-
             <ImageButton
                 android:id="@+id/buttonDelete"
                 android:layout_width="@dimen/bigIcon"
@@ -51,7 +24,7 @@
                 android:src="@drawable/ic_delete"
                 android:backgroundTint="@android:color/black"
                 android:contentDescription="@string/buttonDelete"
-                android:visibility="invisible"/>
+                android:visibility="gone"/>
             <ImageButton
                 android:id="@+id/buttonYes"
                 android:layout_width="@dimen/bigIcon"
@@ -60,7 +33,8 @@
                 android:backgroundTint="@android:color/holo_green_dark"
                 android:scaleType="centerCrop"
                 android:src="@drawable/ic_check_circle_yes"
-                android:contentDescription="@string/buttonYes"/>
+                android:contentDescription="@string/buttonYes"
+                android:visibility="gone"/>
 
             <ImageButton
                 android:id="@+id/buttonNo"
@@ -70,7 +44,8 @@
                 android:backgroundTint="@android:color/holo_red_dark"
                 android:src="@drawable/ic_check_circle_no"
                 android:scaleType="centerCrop"
-                android:contentDescription="@string/buttonNo"/>
+                android:contentDescription="@string/buttonNo"
+                android:visibility="gone"/>
 
         </RelativeLayout>
     </android.support.v7.widget.CardView>
@@ -84,7 +59,7 @@
         android:layout_above="@id/input"
         android:transcriptMode="alwaysScroll"
         android:stackFromBottom="true"
-        android:background="@android:color/holo_green_light"
+        android:background="@color/msgPSTxt"
         tools:listitem="@layout/list_msg_layout">
     </ListView>
     <EditText

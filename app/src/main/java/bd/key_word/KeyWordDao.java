@@ -8,6 +8,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import bd.answer.Answer;
+
 @Dao
 public interface KeyWordDao {
     @Insert
@@ -33,6 +35,12 @@ public interface KeyWordDao {
 
     @Query("SELECT id FROM KeyWord")
     long[] getAllID();
+
+    @Query("SELECT * FROM Answer WHERE id IN ( " +
+            "SELECT answerID FROM CommunicationKey WHERE keyID = :keyID " +
+            ")")
+    List<Answer> getAnswerForKeyWord(long keyID);
+
 
 
     @Query("DELETE FROM KeyWord")

@@ -28,6 +28,7 @@
 
     <string name="fieldEmpty">Поле пустое</string>
     <string name="nonEqual">Пароли не совпадают</string>
+    <string name="successfulSelection">Удаление наиболее некорректных ответов произведено"</string>
 
     <!-- Ivor -->
     <string name="ivorNoAnswer">Нет слов. Не знаю, что сказать.</string>
@@ -42,10 +43,17 @@
     <string name="ivorQExisting">Такой вопрос уже существует.</string>
     <string name="ivorSuccessfulAnswer">Ответ успешно принят. Продолжим. Что скажешь про:</string>
     <string name="ivorSuccessfulDelete">Запись успешно удалена</string>
+    <string name="ivorSuccessfulSelection">Ура! Теперь разговор со мной будет ещё реалистичнее. Давно пора было избавиться от мусора в голове.</string>
 
 
+    <!-- Toast -->
     <string name="noAction">Действий не задано</string>
     <string name="deprecated">Не рекомендуется удалять ответы вручную!</string>
+    <string name="needEval">Необходимо оценить большее количество ответов</string>
+    <string name="successfulSendSMS">СМС успешно отправлено</string>
+    <string name="successfullSendEmail">Email успешно отправлен</string>
+
+
 
     <!-- DB  Tables -->
     <string name="question">Вопросы</string>
@@ -62,4 +70,11 @@
     <string name="modeAddKeyWord">Добавление KW</string>
     <string name="modeAddQuestion">Добавление Q</string>
     <string name="modeUserSendAnswerForQuestion">Ответы на Q</string>
+    <string name="selection">Селекция данных</string>
+
+    <!-- Команды -->
+    <string name="cmdCall">позвонить</string>
+    <string name="cmdSendSMS">отправить sms</string>
+    <string name="cmdSendEmail">отправить email</string>
+    <string name="cmdSendGPS">отметить координаты</string>
 </resources>

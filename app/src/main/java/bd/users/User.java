@@ -2,20 +2,23 @@ package bd.users;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
+import android.content.Intent;
 
+import java.io.Serializable;
 import java.util.Calendar;
 
 @Entity
-public class User {
+public class User implements Serializable {
     @PrimaryKey(autoGenerate = true)
     public long id;
     public String realName = null;
     public String login = null;
     public String pass = null;
-    public int age = -1;
+    public Integer age = null;
     public String city = null;
     public String email = null;
     public String lastEntry = null;
+    public Integer admin = null;
 
     public static UserBuilder getUserBuilder() {
         return new User(). new UserBuilder();
@@ -58,6 +61,10 @@ public class User {
             else
                 return null;
         }
+    }
+
+    public boolean isAdmin() {
+        return admin != null;
     }
 
 }

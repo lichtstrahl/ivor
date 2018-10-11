@@ -8,6 +8,8 @@ import android.arch.persistence.room.Update;
 
 import java.util.List;
 
+import bd.answer.Answer;
+
 @Dao
 public interface QuestionDao {
     @Query("SELECT * FROM Question")
@@ -25,6 +27,10 @@ public interface QuestionDao {
     @Query("SELECT id FROM Question")
     long[] getAllID();
 
+    @Query("SELECT * FROM Answer WHERE id IN ( " +
+            "SELECT answerID FROM Communication WHERE questionID = :qID " +
+            ")")
+    List<Answer> getAnswerForQuestion(long qID);
 
     @Insert
     long insert(Question q);    // id, куда произошла вставка

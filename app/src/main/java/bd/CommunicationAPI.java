@@ -1,6 +1,6 @@
 package bd;
 
-public interface Communication {
+public interface CommunicationAPI {
     int COMMUNICATION = 0;
     int COMMUNICATION_KEY = 1;
     int getType();

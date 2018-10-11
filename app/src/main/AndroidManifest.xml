@@ -3,6 +3,10 @@
     package="root.ivatio">
 
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.CALL_PHONE"/>
+    <uses-permission android:name="android.permission.SEND_SMS"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
 
     <application
         android:name=".App"
@@ -25,7 +29,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/MsgTheme"
             />
-        <activity android:name=".activity.SelectTable" />
     </application>
 
 </manifest>

@@ -29,15 +29,45 @@ public class App extends Application {
     private final Migration migration12 = new Migration(1, 2) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Пустая миграция
-        }
+            createTriggers(database);
+           }
     };
     private final Migration migration21 = new Migration(2, 1) {
         @Override
         public void migrate(@NonNull SupportSQLiteDatabase database) {
-            // Пустая миграция
+            createTriggers(database);
+            database.query("");
         }
     };
+
+    private void createTriggers(SupportSQLiteDatabase database) {
+        database.query("CREATE TRIGGER IF NOT EXISTS \"deleteAnswer\" AFTER DELETE ON Answer FOR EACH ROW Begin DELETE FROM Communication WHERE answerID = OLD.id; DELETE FROM CommunicationKey WHERE answerID = OLD.id; END\t");
+        database.query("CREATE TRIGGER IF NOT EXISTS \"deleteKeyWord\" AFTER DELETE ON KeyWord FOR EACH ROW Begin DELETE FROM CommunicationKey WHERE keyID = OLD.id; END\t");
+        database.query("CREATE TRIGGER IF NOT EXISTS \"deleteQuestion\" AFTER DELETE ON Question FOR EACH ROW Begin DELETE FROM Communication WHERE questionID = OLD.id; END\t");
+        // Удаление Answer-ов, на которые больше нет ссылок, так как больше нет способов создать эти ссылки
+        database.query("CREATE TRIGGER IF NOT EXISTS \"deleteCommunication\" AFTER DELETE ON Communication FOR EACH ROW \n" +
+                "Begin \n" +
+                "DELETE FROM Answer\n" +
+                "WHERE id  NOT IN (\n" +
+                    "SELECT answerID\n" +
+                    "FROM Communication\n" +
+                ") AND id NOT IN (\n" +
+                    "SELECT answerID \n" +
+                    "FROM CommunicationKey\n" +
+                ");\n" +
+                "END\t");
+        database.query("CREATE TRIGGER IF NOT EXISTS \"deleteCommunicationKey\" AFTER DELETE ON CommunicationKey FOR EACH ROW \n" +
+                "Begin \n" +
+                "DELETE FROM Answer\n" +
+                "WHERE id  NOT IN (\n" +
+                    "SELECT answerID\n" +
+                    "FROM Communication\n" +
+                ") AND id NOT IN (\n" +
+                    "SELECT answerID \n" +
+                    "FROM CommunicationKey\n" +
+                ");\n" +
+                "END\t");
+    }
 
     @Override
     public void onCreate() {
