@@ -7,6 +7,8 @@ import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
 import android.util.Log;
 import android.view.Menu;
@@ -44,7 +46,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private ROLE curRole = ROLE.STD;
 
     @BindView(R.id.list)
-    ListView listView;
+    RecyclerView listView;
     MessageAdapter messages;
 
     @BindView(R.id.input)
@@ -55,6 +57,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
         ivorPresenter.clickSend(curRole, inputText.getText().toString());
         inputText.setText("");
+        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
     }
 
     @BindView(R.id.buttonDelete)
@@ -132,6 +135,9 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                 this);
         messages = new MessageAdapter(this, new ArrayList<>());
         listView.setAdapter(messages);
+        RecyclerView.LayoutManager lManager = new LinearLayoutManager(this);
+        ((LinearLayoutManager) lManager).setStackFromEnd(true);
+        listView.setLayoutManager(lManager);
         removeRating();
         setTitle(user.login + ", " + user.realName);
     }
