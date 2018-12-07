@@ -49,6 +49,7 @@ public class LoginService extends IntentService {
                     }
 
                     LoginActivity.receiveLoginStatus(this, LoginStatus.NOT_FOUND);
+                    return;
                 }
             }
             LoginActivity.receiveLoginStatus(this, LoginStatus.IO_ERROR);

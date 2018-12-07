@@ -82,4 +82,7 @@
     <string name="NUll_BODY">Пришел некорректный ответ с сервера</string>
     <string name="IO_EXCEPTION_RESPONSE">Ошибка при разборе данных от сервера. Проверьте интернет.</string>
     <string name="USER_NOT_FOUND">Пользователь с такими логином и паролем не найден</string>
+
+    <!-- RegisterActivity -->
+    <string name="userSuccessfulAppend">Пользователь успешно добавлен</string>
 </resources>

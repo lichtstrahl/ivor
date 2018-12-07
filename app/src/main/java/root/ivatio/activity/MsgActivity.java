@@ -35,7 +35,7 @@ import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
-
+// TODO Убрать обращение к локальной БД в onCreate
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private static final String INTENT_USER_ID = "args:user_id";
     private User user;
@@ -52,10 +52,10 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
-
-        user = App.getStorageAPI().getUser(getIntent().getLongExtra(INTENT_USER_ID, -1));
+        long id = getIntent().getLongExtra(INTENT_USER_ID, -1);
+        user = App.getStorageAPI().getUser(id);
         ivorPresenter = new IvorPresenter(
-                new Ivor(getResources(),
+                        new Ivor(getResources(),
                         new ActionCall(
                                 getString(R.string.cmdCall),
                                 x -> {
@@ -105,7 +105,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         ((LinearLayoutManager) lManager).setStackFromEnd(true);
         listView.setLayoutManager(lManager);
         removeRating();
-        setTitle(user.login + ", " + user.realName);
+//        setTitle(user.login + ", " + user.realName);
     }
 
     public static void start(Context context, long id) {

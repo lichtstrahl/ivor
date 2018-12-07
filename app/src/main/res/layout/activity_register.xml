@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -10,6 +10,7 @@
     android:background="@color/bgLogin">
 
         <TextView
+            android:id="@+id/labelRegister"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/RegisterLabel"
@@ -19,62 +20,62 @@
 
         <EditText
             android:id="@+id/editName"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_centerHorizontal="true"
+            android:layout_below="@id/labelRegister"
             android:hint="@string/realName"
             android:inputType="textPersonName" />
 
         <EditText
             android:id="@+id/editEmail"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editName"
+            android:layout_centerHorizontal="true"
             android:hint="@string/Email"
             android:inputType="textEmailAddress" />
 
         <EditText
             android:id="@+id/editAge"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editEmail"
+            android:layout_centerHorizontal="true"
             android:hint="@string/Age"
             android:inputType="number" />
 
         <EditText
             android:id="@+id/editCity"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editAge"
+            android:layout_centerHorizontal="true"
             android:hint="@string/City" />
 
         <EditText
             android:id="@+id/editLogin"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editCity"
+            android:layout_centerHorizontal="true"
             android:hint="@string/Login" />
 
         <EditText
             android:id="@+id/editPassword"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editLogin"
+            android:layout_centerHorizontal="true"
             android:hint="@string/Password"
             android:inputType="textPassword" />
 
         <EditText
             android:id="@+id/editRetryPassword"
-            android:layout_width="match_parent"
+            android:layout_width="@dimen/stdWidthInput"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="50sp"
-            android:layout_marginRight="50sp"
+            android:layout_below="@id/editPassword"
+            android:layout_centerHorizontal="true"
             android:hint="@string/RetryPassword"
             android:inputType="textPassword" />
 
@@ -83,10 +84,20 @@
             android:id="@+id/buttonRegister"
             android:layout_width="200sp"
             android:layout_height="wrap_content"
-            android:layout_gravity="center_horizontal"
+            android:layout_below="@id/editRetryPassword"
+            android:layout_centerHorizontal="true"
             android:backgroundTint="@color/bgButton"
             android:textColor="@android:color/white"
             android:text="@string/btnRegister" />
 
+        <ProgressBar
+            android:id="@+id/progressRegister"
+            android:layout_width="@dimen/progressBarSize"
+            android:layout_height="@dimen/progressBarSize"
+            android:layout_alignTop="@id/buttonRegister"
+            android:layout_alignBottom="@id/buttonRegister"
+            android:layout_toEndOf="@id/buttonRegister"
+            android:visibility="gone"/>
 
-</LinearLayout>
+
+</RelativeLayout>

@@ -76,6 +76,5 @@ public class User implements Serializable {
     public boolean isAdmin() {
         return admin != null;
     }
-
 }
 

@@ -21,5 +21,5 @@
 
     <!-- Login Activity -->
     <dimen name="progressBarSize">50dp</dimen>
-    <dimen name="widthInputLogin">200dp</dimen>
+    <dimen name="stdWidthInput">250dp</dimen>
 </resources>

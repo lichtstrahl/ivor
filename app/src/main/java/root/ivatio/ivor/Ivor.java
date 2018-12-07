@@ -44,7 +44,7 @@ public class Ivor extends User {
     private static StorageAPI storageAPI = App.getStorageAPI();
 
     public Ivor(Resources resources, Action ... actions) {
-        this.id = -1;
+        this.id = Long.valueOf(-1);
         this.resources = resources;
         this.memoryWords = new LinkedList<>();
         this.memoryQuestions = new LinkedList<>();

@@ -19,7 +19,7 @@
         android:textColor="@color/ftLogin" />
     <EditText
         android:id="@+id/editLogin"
-        android:layout_width="@dimen/widthInputLogin"
+        android:layout_width="@dimen/stdWidthInput"
         android:layout_height="wrap_content"
         android:layout_below="@id/labelEntry"
         android:layout_centerHorizontal="true"
@@ -27,7 +27,7 @@
 
     <EditText
         android:id="@+id/editPassword"
-        android:layout_width="@dimen/widthInputLogin"
+        android:layout_width="@dimen/stdWidthInput"
         android:layout_height="wrap_content"
         android:layout_below="@id/editLogin"
         android:layout_centerHorizontal="true"
