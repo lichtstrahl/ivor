@@ -77,4 +77,9 @@
     <string name="cmdSendSMS">отправить sms</string>
     <string name="cmdSendEmail">отправить email</string>
     <string name="cmdSendGPS">отметить координаты</string>
+
+    <!-- LoginService <-> LoginActivity -->
+    <string name="NUll_BODY">Пришел некорректный ответ с сервера</string>
+    <string name="IO_EXCEPTION_RESPONSE">Ошибка при разборе данных от сервера. Проверьте интернет.</string>
+    <string name="USER_NOT_FOUND">Пользователь с такими логином и паролем не найден</string>
 </resources>

@@ -3,20 +3,31 @@ package root.ivatio.bd.users;
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import java.io.Serializable;
 import java.util.Calendar;
 
 @Entity
 public class User implements Serializable {
+    @SerializedName("id")
     @PrimaryKey(autoGenerate = true)
     public long id;
+    @SerializedName("realName")
     public String realName = null;
+    @SerializedName("login")
     public String login = null;
+    @SerializedName("pass")
     public String pass = null;
+    @SerializedName("age")
     public Integer age = null;
+    @SerializedName("city")
     public String city = null;
+    @SerializedName("email")
     public String email = null;
+    @SerializedName("lastEntry")
     public String lastEntry = null;
+    @SerializedName("admin")
     public Integer admin = null;
 
     public static UserBuilder getUserBuilder() {

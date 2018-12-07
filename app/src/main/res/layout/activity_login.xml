@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -9,6 +9,7 @@
     android:background="@color/bgLogin">
 
     <TextView
+        android:id="@+id/labelEntry"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:textSize="@dimen/xxxText"
@@ -18,34 +19,48 @@
         android:textColor="@color/ftLogin" />
     <EditText
         android:id="@+id/editLogin"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/widthInputLogin"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50sp"
-        android:layout_marginRight="50sp"/>
+        android:layout_below="@id/labelEntry"
+        android:layout_centerHorizontal="true"
+        />
+
     <EditText
         android:id="@+id/editPassword"
-        android:layout_width="match_parent"
+        android:layout_width="@dimen/widthInputLogin"
         android:layout_height="wrap_content"
-        android:layout_marginLeft="50sp"
-        android:layout_marginRight="50sp"
+        android:layout_below="@id/editLogin"
+        android:layout_centerHorizontal="true"
         android:inputType="textPassword"/>
 
     <Button
         android:id="@+id/buttonLogin"
         android:layout_width="@dimen/loginBtnW"
         android:layout_height="wrap_content"
-        android:layout_gravity="center"
+        android:layout_below="@id/editPassword"
+        android:layout_centerHorizontal="true"
         android:backgroundTint="@color/bgButton"
         android:text="@string/btnLogin"
         android:textColor="@android:color/white"/>
+
+    <ProgressBar
+        android:id="@+id/progressLogin"
+        android:layout_width="@dimen/progressBarSize"
+        android:layout_height="@dimen/progressBarSize"
+        android:layout_alignTop="@id/buttonLogin"
+        android:layout_alignBottom="@id/buttonLogin"
+        android:layout_toEndOf="@id/buttonLogin"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/buttonRegister"
         android:layout_width="@dimen/loginBtnW"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
+        android:layout_below="@id/buttonLogin"
+        android:layout_centerHorizontal="true"
         android:backgroundTint="@color/bgButton"
         android:text="@string/btnRegister"
         android:textColor="@android:color/white"/>
 
-</LinearLayout>
+</RelativeLayout>

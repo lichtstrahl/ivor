@@ -11,6 +11,7 @@ import com.facebook.stetho.Stetho;
 
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
+import root.ivatio.network.UserAPI;
 import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StorageAPI;
 
@@ -20,6 +21,7 @@ public class App extends Application {
     public static final String USER_INDEX = "USER_INDEX";
     private static final LocalStorageAPI localAPI = new LocalStorageAPI();
     private static Retrofit retrofit;
+    private static UserAPI userAPI;
 
     private final Migration migration12 = new Migration(1, 2) {
         @Override
@@ -73,9 +75,11 @@ public class App extends Application {
                 .build();
 
         retrofit = new Retrofit.Builder()
-                .baseUrl()
+                .baseUrl(BuildConfig.BASE_URL)
                 .addConverterFactory(GsonConverterFactory.create())
                 .build();
+        userAPI = retrofit.create(UserAPI.class);
+
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
         builder.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this));
@@ -91,9 +95,17 @@ public class App extends Application {
         return localAPI;
     }
 
+    public static UserAPI getUserAPI() {
+        return userAPI;
+    }
+
 
     public static void logI(String msg) {
         Log.i(BuildConfig.GLOBAL_TAG, msg);
+    }
+
+    public static void logW(String msg) {
+        Log.w(BuildConfig.GLOBAL_TAG, msg);
     }
 
     public static void logE(String msg) {

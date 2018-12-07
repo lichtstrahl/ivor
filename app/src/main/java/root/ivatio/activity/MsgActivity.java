@@ -1,5 +1,6 @@
 package root.ivatio.activity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
@@ -36,45 +37,15 @@ import root.ivatio.MessageAdapter;
 import root.ivatio.R;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
+    private static final String INTENT_USER_ID = "args:user_id";
     private User user;
     private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
-
     @BindView(R.id.list)
     RecyclerView listView;
     MessageAdapter messages;
-
     @BindView(R.id.input)
     EditText inputText;
-
-    @OnClick(R.id.buttonSend)
-    public void sendClick() {
-        messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
-        ivorPresenter.clickSend(curRole, inputText.getText().toString());
-        inputText.setText("");
-        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
-    }
-
-    @BindView(R.id.buttonDelete)
-    ImageButton buttonDelete;
-    @OnClick(R.id.buttonDelete)
-    public void clickDelete() {
-        ivorPresenter.clickDelete(curRole);
-    }
-
-    @BindView(R.id.buttonYes)
-    ImageButton buttonYes;
-    @OnClick(R.id.buttonYes)
-    public void clickYes() {
-        ivorPresenter.clickEval(1);
-    }
-
-    @BindView(R.id.buttonNo)
-    ImageButton buttonNo;
-    @OnClick(R.id.buttonNo)
-    public void clickNo() {
-        ivorPresenter.clickEval(-1);
-    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -82,29 +53,29 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
 
-        user = App.getStorageAPI().getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
+        user = App.getStorageAPI().getUser(getIntent().getLongExtra(INTENT_USER_ID, -1));
         ivorPresenter = new IvorPresenter(
                 new Ivor(getResources(),
                         new ActionCall(
-                            getString(R.string.cmdCall),
-                            x -> {
-                                if (x.isEmpty()) {
-                                    List<String> param = ivorPresenter.completeAction();
-                                    String dial = "tel:" + param.get(0);
-                                    startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
-                                } else
-                                    appendMessage(new Message(null, x));
-                            }),
+                                getString(R.string.cmdCall),
+                                x -> {
+                                    if (x.isEmpty()) {
+                                        List<String> param = ivorPresenter.completeAction();
+                                        String dial = "tel:" + param.get(0);
+                                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                                    } else
+                                        appendMessage(new Message(null, x));
+                                }),
                         new ActionSendSMS(getString(R.string.cmdSendSMS),
-                            x -> {
-                            if (x.isEmpty()) {
-                                List<String> param = ivorPresenter.completeAction();
-                                SmsManager smsManager = SmsManager.getDefault();
-                                smsManager.sendTextMessage(param.get(0), null, param.get(1), null, null);
-                                Toast.makeText(this, R.string.successfulSendSMS, Toast.LENGTH_SHORT).show();
-                            } else
-                                appendMessage(new Message(null, x));
-                            }),
+                                x -> {
+                                    if (x.isEmpty()) {
+                                        List<String> param = ivorPresenter.completeAction();
+                                        SmsManager smsManager = SmsManager.getDefault();
+                                        smsManager.sendTextMessage(param.get(0), null, param.get(1), null, null);
+                                        Toast.makeText(this, R.string.successfulSendSMS, Toast.LENGTH_SHORT).show();
+                                    } else
+                                        appendMessage(new Message(null, x));
+                                }),
                         new ActionSendEmail(getString(R.string.cmdSendEmail), x-> {
                             if (x.isEmpty()) {
                                 List<String> param = ivorPresenter.completeAction();
@@ -135,6 +106,42 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         listView.setLayoutManager(lManager);
         removeRating();
         setTitle(user.login + ", " + user.realName);
+    }
+
+    public static void start(Context context, long id) {
+        Intent msgIntent = new Intent(context, MsgActivity.class);
+        msgIntent.putExtra(INTENT_USER_ID, id);
+        context.startActivity(msgIntent);
+    }
+
+
+    @OnClick(R.id.buttonSend)
+    public void sendClick() {
+        messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
+        ivorPresenter.clickSend(curRole, inputText.getText().toString());
+        inputText.setText("");
+        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
+    }
+    @BindView(R.id.buttonDelete)
+    ImageButton buttonDelete;
+
+    @OnClick(R.id.buttonDelete)
+    public void clickDelete() {
+        ivorPresenter.clickDelete(curRole);
+    }
+    @BindView(R.id.buttonYes)
+    ImageButton buttonYes;
+
+    @OnClick(R.id.buttonYes)
+    public void clickYes() {
+        ivorPresenter.clickEval(1);
+    }
+    @BindView(R.id.buttonNo)
+    ImageButton buttonNo;
+
+    @OnClick(R.id.buttonNo)
+    public void clickNo() {
+        ivorPresenter.clickEval(-1);
     }
 
     @Override
