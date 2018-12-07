@@ -1,0 +1,11 @@
+
+Gsquid:S1948"+Make "curAction" transient or serializable.(İ›ş‡8Å‹ãæ,
+Tsquid:S1197"8Move the array designator from the variable to the type.(ÍÇÅ£8Å‹ãæ,
+Usquid:S3400"9Remove this method and declare a constant for this value.(À¼ÒÌ8Å‹ãæ,
+wsquid:S00115"ZRename this constant name to match the regular expression '^[A-Z][A-Z0-9]*(_[A-Z0-9]+)*$'.(ÀÔ‰Ä8Å‹ãæ,
+esquid:S2259"DA "NullPointerException" could be thrown; "answer" is nullable here.(ßß•şÿÿÿÿ8Å‹ãæ,
+asquid:S2259"EA "NullPointerException" could be thrown; "keyWord" is nullable here.(Èëñ–8Å‹ãæ,
+Esquid:S1948")Make "actions" transient or serializable.(ôµ8Å‹ãæ,
+`squid:S2259"DA "NullPointerException" could be thrown; "answer" is nullable here.(Èëñ–8Å‹ãæ,
+gsquid:S2259"FA "NullPointerException" could be thrown; "question" is nullable here.(ßß•şÿÿÿÿ8Å‹ãæ,
+asquid:S2259"EA "NullPointerException" could be thrown; "lastCom" is nullable here.(ï‡Ğ„8Å‹ãæ,

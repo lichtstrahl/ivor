@@ -1,0 +1,102 @@
+
+csquid:S1192"IDefine a constant instead of duplicating this literal "Question" 4 times.(Š¿úÿÿÿÿÿ
+gsquid:S1192"MDefine a constant instead of duplicating this literal " Expected:\n" 7 times.(¢æİ¾ıÿÿÿÿ
+bsquid:S1192"HDefine a constant instead of duplicating this literal "KeyWord" 4 times.(¼üÿÿÿÿÿ
+bsquid:S1192"HDefine a constant instead of duplicating this literal "content" 6 times.(ªÏ‹óÿÿÿÿÿ
+csquid:S1192"NDefine a constant instead of duplicating this literal "Communication" 3 times.(‹àÜ
+]squid:S1192"IDefine a constant instead of duplicating this literal "answerID" 8 times.(˜’£3
+[squid:S1192"FDefine a constant instead of duplicating this literal "keyID" 3 times.(Çª–‰
+\squid:S1192"GDefine a constant instead of duplicating this literal "Answer" 5 times.(€°‘‰
+dsquid:S1192"JDefine a constant instead of duplicating this literal " Found:\n" 7 times.(¯Æùùùÿÿÿÿ
+ksquid:S1192"QDefine a constant instead of duplicating this literal "CommunicationKey" 3 times.(ëàÕ®ùÿÿÿÿ
+`squid:S1192"KDefine a constant instead of duplicating this literal "questionID" 3 times.(Íæÿˆ
+^squid:S1192"IDefine a constant instead of duplicating this literal "INTEGER" 19 times.(í¡Æ…
+`squid:S1192"FDefine a constant instead of duplicating this literal "power" 6 times.(å³¶´ıÿÿÿÿ
+dsquid:S1192"JDefine a constant instead of duplicating this literal "NO ACTION" 8 times.(ÿÂôÍúÿÿÿÿ
+bsquid:S1192"HDefine a constant instead of duplicating this literal "correct" 4 times.(¿ßâ÷ÿÿÿÿÿ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(Ÿ¼ª‚
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(×Ïèœ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(îİÆÀ
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(²ÊÊşÿÿÿÿ
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(õûÕ¨ıÿÿÿÿ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(«ëôİ
+msquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(‹´
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(äÅÏÃúÿÿÿÿ
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(–±ÊÙøÿÿÿÿ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(íÛªÍ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(€â‘
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(×ĞÂÁ
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ğú”şÿÿÿÿ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ø£•„
+msquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").( ù
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(İ°Ì²
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(“›¥ 
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(«‰Äç
+ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(º“Íüÿÿÿÿ
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(„Ÿ¨ó
+nsquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(‹Í
+tsquid:S1488"_Immediately return this expression instead of assigning it to the temporary variable "_helper".(ªêª”
+lsquid:S3776"RRefactor this method to reduce its Cognitive Complexity from 24 to the 15 allowed.(Òëàúÿÿÿÿ
+csquid:S00101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(­­Çï
+msquid:S00116"WRename this field "_questionDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(…Í³Î
+ksquid:S00116"URename this field "_answerDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„…ÄĞ
+nsquid:S00116"SRename this field "_userDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ì¬øåúÿÿÿÿ
+wsquid:S00116"\Rename this field "_communicationDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ù²×şÿÿÿÿ
+isquid:S00116"SRename this field "_moodDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(·ç¯“
+qsquid:S00116"VRename this field "_keyWordDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½âÎºıÿÿÿÿ
+tsquid:S00116"_Rename this field "_communicationKeyDao" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(³˜ØR
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÑÒë–
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(½›Ó¥ÿÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àùü
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ŞíßÛüÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(œÜœÅıÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Á‹Ìá
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ÿ¼ª‚
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(×Ïèœ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(îİÆÀ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Š¿úÿÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(â‰ûŸ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(²ÊÊşÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(õûÕ¨ıÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(«ëôİ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(€°‘‰
+fsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¨ÛŞL
+fsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‹´
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(äÅÏÃúÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(–±ÊÙøÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ùÉä‘
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ş«šÁüÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(íÛªÍ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(€â‘
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(×ĞÂÁ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‹àÜ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÇıÇŠ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ğú”şÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ø£•„
+fsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.( ù
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‡«
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ØÄÕÓ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(İ°Ì²
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(“›¥ 
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(«‰Äç
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¼üÿÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷Êâ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(º“Íüÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(„Ÿ¨ó
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(‹Í
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ëàÕ®ùÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ı†ùöÿÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¸ıŞŸûÿÿÿÿ
+gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ªêª”
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(­ê×¶ùÿÿÿÿ
+lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ØÚ¨ÿÿÿÿÿ
+rsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(–çÀ/
+ssquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(ú®Ú±
+xsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(ôİÕıÿÿÿÿ
+xsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(¤î˜Óüÿÿÿÿ
+…squid:UselessImportCheck"^Remove this unused import 'android.arch.persistence.db.SupportSQLiteOpenHelper.Configuration'.(Î½“Êûÿÿÿÿ
+ysquid:UselessImportCheck"RRemove this unused import 'android.arch.persistence.room.RoomOpenHelper.Delegate'.(©®˜‡ÿÿÿÿÿ
+vsquid:UselessImportCheck"ORemove this unused import 'android.arch.persistence.room.util.TableInfo.Index'.(Ş¶ğÃùÿÿÿÿ
+€squid:UselessImportCheck"YRemove this unused import 'android.arch.persistence.db.SupportSQLiteOpenHelper.Callback'.(‰·‹®şÿÿÿÿ
+wsquid:UselessImportCheck"PRemove this unused import 'android.arch.persistence.room.util.TableInfo.Column'.(´Ç©íıÿÿÿÿ
+vsquid:UselessImportCheck"TRemove this unused import 'android.arch.persistence.room.util.TableInfo.ForeignKey'.(µòÙ
