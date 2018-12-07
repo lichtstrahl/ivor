@@ -3,7 +3,7 @@ package root.ivatio;
 import java.util.Calendar;
 import java.util.Date;
 
-import bd.users.User;
+import root.ivatio.bd.users.User;
 
 public class Message {
     public User author;

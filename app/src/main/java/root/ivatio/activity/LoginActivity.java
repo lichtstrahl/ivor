@@ -7,27 +7,23 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import root.ivatio.App;
 import root.ivatio.R;
-
-import static root.ivatio.App.getDB;
+import root.ivatio.bd.users.User;
+import root.ivatio.util.StorageAPI;
 
 public class LoginActivity extends AppCompatActivity {
-
     @BindView(R.id.editLogin)
     EditText editLogin;
-
     @BindView(R.id.editPassword)
     EditText editPassword;
 
-
     @OnClick(R.id.buttonLogin)
     public void loginClick(Button b) {
-        User user = getDB().getUserDao().getUser(editLogin.getText().toString(), editPassword.getText().toString());
+        User user = StorageAPI.getUser(editLogin.getText().toString(), editPassword.getText().toString());
         if (user == null)
             Toast.makeText(this, "Пользователь не найден или пароль неверен", Toast.LENGTH_SHORT).show();
         else {
@@ -36,7 +32,6 @@ public class LoginActivity extends AppCompatActivity {
             startActivity(intent);
         }
     }
-
 
     @OnClick(R.id.buttonRegister)
     public void registerClick(Button b) {

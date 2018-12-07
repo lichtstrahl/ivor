@@ -6,12 +6,13 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import bd.users.User;
+import root.ivatio.bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import root.ivatio.App;
 import root.ivatio.R;
+import root.ivatio.util.StorageAPI;
 
 public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.editName)
@@ -53,7 +54,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .buildPassword(editPassword.getText().toString())
                     .buildTimeEntry()
                     .build();
-            App.getDB().getUserDao().insert(newUser);
+            StorageAPI.insertUser(newUser);
             finish();
         } else
             Toast.makeText(this, getResources().getString(R.string.nonEqual), Toast.LENGTH_SHORT).show();

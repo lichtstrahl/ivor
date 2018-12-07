@@ -1,22 +1,17 @@
 package root.ivatio.activity;
 
 import android.content.Intent;
-import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.telephony.SmsManager;
-import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -24,21 +19,22 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import bd.users.User;
+import root.ivatio.bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import ivor.Ivor;
-import ivor.IvorPresenter;
-import ivor.IvorViewAPI;
-import ivor.action.ActionCall;
-import ivor.action.ActionSendEmail;
-import ivor.action.ActionSendGPS;
-import ivor.action.ActionSendSMS;
+import root.ivatio.ivor.Ivor;
+import root.ivatio.ivor.IvorPresenter;
+import root.ivatio.ivor.IvorViewAPI;
+import root.ivatio.ivor.action.ActionCall;
+import root.ivatio.ivor.action.ActionSendEmail;
+import root.ivatio.ivor.action.ActionSendGPS;
+import root.ivatio.ivor.action.ActionSendSMS;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
+import root.ivatio.util.StorageAPI;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
@@ -87,7 +83,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
 
-        user =App.getDB().getUserDao().getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
+        user = StorageAPI.getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
         ivorPresenter = new IvorPresenter(
                 new Ivor(getResources(),
                         new ActionCall(
@@ -124,9 +120,9 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                         }),
                         new ActionSendGPS(getString(R.string.cmdSendGPS), x-> {
                             if (x.isEmpty()) {
-                                List<String> param = ivorPresenter.completeAction();
+                                ivorPresenter.completeAction();
                                 Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                        Uri.parse("geo:" + param.get(0) + "," + param.get(1)));
+                                        Uri.parse("geo:0,0?q="+user.city));
                                 startActivity(intent);
                             } else
                                 appendMessage(new Message(null, x));

@@ -31,7 +31,7 @@
     <string name="successfulSelection">Удаление наиболее некорректных ответов произведено"</string>
 
     <!-- Ivor -->
-    <string name="ivorNoAnswer">Нет слов. Не знаю, что сказать.</string>
+    <string name="ivorNoAnswer">Слушай, давай поговорим о чем-нибудь другом...</string>
     <string name="ivorModeSTD">Ура, наконец-то! С чего начнём?</string>
     <string name="ivorModeUserSendNewKW">Хорошо, я слушаю новые ключевые слова</string>
     <string name="ivorModeUserSendNewAnswerForKW">Итак, теперь я буду тебе называть слова, кторые знаю. А ты напишешь ответы, которые считаешь нужным. Согласен? Начнём.</string>

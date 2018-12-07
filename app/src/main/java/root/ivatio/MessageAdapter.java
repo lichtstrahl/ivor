@@ -15,15 +15,15 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
-import ivor.Ivor;
+import root.ivatio.ivor.Ivor;
 
 // Адаптер, который будет хранить сообщения
 public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageViewHolder> {
     private LayoutInflater inflater;
     private List<Message> list;
     private Resources res;
-    private final int IVOR_MSG = 1;
-    private final int USER_MSG = 2;
+    private static final int IVOR_MSG = 1;
+    private static final int USER_MSG = 2;
 
     public MessageAdapter(Context context, List<Message> data) {
         this.inflater = LayoutInflater.from(context);

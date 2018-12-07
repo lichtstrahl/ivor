@@ -3,22 +3,22 @@ package root.ivatio;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import bd.Command.Command;
-import bd.Command.CommandDao;
-import bd.answer.Answer;
-import bd.answer.AnswerDao;
-import bd.communication.Communication;
-import bd.communication.CommunicationDao;
-import bd.communication_key.CommunicationKey;
-import bd.communication_key.CommunicationKeyDao;
-import bd.key_word.KeyWord;
-import bd.key_word.KeyWordDao;
-import bd.mood.Mood;
-import bd.mood.MoodDao;
-import bd.qustion.Question;
-import bd.qustion.QuestionDao;
-import bd.users.User;
-import bd.users.UserDao;
+import root.ivatio.bd.Command.Command;
+import root.ivatio.bd.Command.CommandDao;
+import root.ivatio.bd.answer.Answer;
+import root.ivatio.bd.answer.AnswerDao;
+import root.ivatio.bd.communication.Communication;
+import root.ivatio.bd.communication.CommunicationDao;
+import root.ivatio.bd.communication_key.CommunicationKey;
+import root.ivatio.bd.communication_key.CommunicationKeyDao;
+import root.ivatio.bd.key_word.KeyWord;
+import root.ivatio.bd.key_word.KeyWordDao;
+import root.ivatio.bd.mood.Mood;
+import root.ivatio.bd.mood.MoodDao;
+import root.ivatio.bd.qustion.Question;
+import root.ivatio.bd.qustion.QuestionDao;
+import root.ivatio.bd.users.User;
+import root.ivatio.bd.users.UserDao;
 //
 @Database(entities = {
         Question.class,
