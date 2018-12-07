@@ -2,7 +2,6 @@ package root.ivatio.util;
 
 import java.util.List;
 
-import root.ivatio.App;
 import root.ivatio.bd.Command.Command;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.communication.Communication;
@@ -11,113 +10,59 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 
-public class StorageAPI {
-    public static void insertUser(User newUser) {
-        App.getDB().getUserDao().insert(newUser);
-    }
 
-    public static User getUser(long id) {
-        return App.getDB().getUserDao().getUser(id);
-    }
+public interface StorageAPI {
+    void insertUser(User newUser);
 
-    public static User getUser(String login, String pass) {
-        return App.getDB().getUserDao().getUser(login, pass);
-    }
+    User getUser(long id);
 
-    public static void selectionCommunication() {
-        App.getDB().getCommunicationDao().magicalDelete();
-    }
+    User getUser(String login, String pass);
 
-    public static void selectionCommunicationKey() {
-        App.getDB().getCommunicationKeyDao().magicalDelete();
-    }
+    void selectionCommunication();
 
-    public static List<Question> getQuestions() {
-        return App.getDB().getQuestionDao().getAll();
-    }
+    void selectionCommunicationKey();
 
-    public static Question getQuestion(long id) {
-        return App.getDB().getQuestionDao().getQuestion(id);
-    }
+    List<Question> getQuestions();
 
-    public static void insertQuestion(Question q) {
-        App.getDB().getQuestionDao().insert(q);
-    }
+    Question getQuestion(long id);
 
+    void insertQuestion(Question q);
 
-    public static List<KeyWord> getKeyWords() {
-        return App.getDB().getKeyWordDao().getAll();
-    }
+    List<KeyWord> getKeyWords();
 
-    public static KeyWord getKeyWord(long id) {
-        return App.getDB().getKeyWordDao().getWord(id);
-    }
+    KeyWord getKeyWord(long id);
 
-    public static void insertKeyWord(KeyWord word) {
-        App.getDB().getKeyWordDao().insert(word);
-    }
+    void insertKeyWord(KeyWord word);
 
-    public static long insertAnswer(Answer a) {
-        return App.getDB().getAnswerDao().insert(a);
-    }
+    long insertAnswer(Answer a);
 
-    public static void insertCommunication(Communication c) {
-        App.getDB().getCommunicationDao().insert(c);
-    }
+    void insertCommunication(Communication c);
 
-    public static void insertCommunicationKey(CommunicationKey c) {
-        App.getDB().getCommunicationKeyDao().insert(c);
-    }
+    void insertCommunicationKey(CommunicationKey c);
 
-    public static List<Command> getCommands() {
-        return App.getDB().getCommandDao().getAll();
-    }
+    List<Command> getCommands();
 
-    public static List<Answer> getAnswerForQuestion(long id) {
-        return App.getDB().getQuestionDao().getAnswerForQuestion(id);
-    }
+    List<Answer> getAnswerForQuestion(long id);
 
-    public static Communication getCommunication(long qID, long aID) {
-        return App.getDB().getCommunicationDao().getCommunication(qID, aID);
-    }
+    Communication getCommunication(long qID, long aID);
 
-    public static List<Answer> getAnswerForKeyWord(long id) {
-        return App.getDB().getKeyWordDao().getAnswerForKeyWord(id);
-    }
+    List<Answer> getAnswerForKeyWord(long id);
 
-    public static CommunicationKey getCommunicationKey(long wID, long aID) {
-        return App.getDB().getCommunicationKeyDao().getCommunicationKey(wID, aID);
-    }
+    CommunicationKey getCommunicationKey(long wID, long aID);
 
-    public static void updateCommunicationKey(CommunicationKey key) {
-        App.getDB().getCommunicationKeyDao().update(key);
-    }
+    void updateCommunicationKey(CommunicationKey key);
 
-    public static void updateCommunication(Communication com) {
-        App.getDB().getCommunicationDao().update(com);
-    }
+    void updateCommunication(Communication com);
 
-    public static long[] getKeyWordsID() {
-        return App.getDB().getKeyWordDao().getAllID();
-    }
+    long[] getKeyWordsID();
 
-    public static long[] getQuestionsID() {
-        return App.getDB().getQuestionDao().getAllID();
-    }
+    long[] getQuestionsID();
 
-    public static void deleteQuestion(Question q) {
-        App.getDB().getQuestionDao().delete(q);
-    }
+    void deleteQuestion(Question q);
 
-    public static void deleteCommunication(long id) {
-        App.getDB().getCommunicationDao().delete(id);
-    }
+    void deleteCommunication(long id);
 
-    public static void deleteCommunicationKey(long id) {
-        App.getDB().getCommunicationKeyDao().delete(id);
-    }
+    void deleteCommunicationKey(long id);
 
-    public static void deleteKeyWord(KeyWord word) {
-        App.getDB().getKeyWordDao().delete(word);
-    }
+    void deleteKeyWord(KeyWord word);
 }

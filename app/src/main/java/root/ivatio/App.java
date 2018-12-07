@@ -9,12 +9,17 @@ import android.util.Log;
 
 import com.facebook.stetho.Stetho;
 
-import java.io.File;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+import root.ivatio.util.LocalStorageAPI;
+import root.ivatio.util.StorageAPI;
 
 public class App extends Application {
     private static AppDatabase db;
     private static String nameDB = "database";
     public static final String USER_INDEX = "USER_INDEX";
+    private static final LocalStorageAPI localAPI = new LocalStorageAPI();
+    private static Retrofit retrofit;
 
     private final Migration migration12 = new Migration(1, 2) {
         @Override
@@ -67,6 +72,11 @@ public class App extends Application {
                 .addMigrations(migration12, migration21)
                 .build();
 
+        retrofit = new Retrofit.Builder()
+                .baseUrl()
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
         builder.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this));
         builder.enableDumpapp(Stetho.defaultDumperPluginsProvider(this));
@@ -76,6 +86,11 @@ public class App extends Application {
     public static AppDatabase getDB() {
         return db;
     }
+
+    public static StorageAPI getStorageAPI() {
+        return localAPI;
+    }
+
 
     public static void logI(String msg) {
         Log.i(BuildConfig.GLOBAL_TAG, msg);

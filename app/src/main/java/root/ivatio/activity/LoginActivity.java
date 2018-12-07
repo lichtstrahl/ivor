@@ -13,7 +13,6 @@ import butterknife.OnClick;
 import root.ivatio.App;
 import root.ivatio.R;
 import root.ivatio.bd.users.User;
-import root.ivatio.util.StorageAPI;
 
 public class LoginActivity extends AppCompatActivity {
     @BindView(R.id.editLogin)
@@ -23,7 +22,7 @@ public class LoginActivity extends AppCompatActivity {
 
     @OnClick(R.id.buttonLogin)
     public void loginClick(Button b) {
-        User user = StorageAPI.getUser(editLogin.getText().toString(), editPassword.getText().toString());
+        User user = App.getStorageAPI().getUser(editLogin.getText().toString(), editPassword.getText().toString());
         if (user == null)
             Toast.makeText(this, "Пользователь не найден или пароль неверен", Toast.LENGTH_SHORT).show();
         else {

@@ -10,6 +10,7 @@ android {
         versionName "1.0"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
         buildConfigField("String", "GLOBAL_TAG", "\"Ivor\"")
+        buildConfigField("String", "BASE_URL", "\"ivor-server-21\"")
     }
     buildTypes {
         release {

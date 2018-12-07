@@ -1,0 +1,34 @@
+{
+  "name": "communicationkey",
+  "plural": "communicationkeys",
+  "base": "PersistedModel",
+  "idInjection": true,
+  "options": {
+    "validateUpsert": true
+  },
+  "properties": {
+    "id": {
+      "type": "number"
+    },
+    "keyID": {
+      "type": "number",
+      "required": true
+    },
+    "answerID": {
+      "type": "number",
+      "required": true
+    },
+    "power": {
+      "type": "number",
+      "required": true
+    },
+    "correct": {
+      "type": "number",
+      "required": true
+    }
+  },
+  "validations": [],
+  "relations": {},
+  "acls": [],
+  "methods": {}
+}

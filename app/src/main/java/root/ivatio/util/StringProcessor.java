@@ -11,13 +11,13 @@ public class StringProcessor {
         throw new IllegalStateException("Это вспомогательный класс. Создание экземпляра не требуется.");
     }
 
-    static String stringDeleteChars(String str, String chars) {
+    public static String stringDeleteChars(String str, String chars) {
         return str.replaceAll(chars, "");
     }
 
-    static List<KeyWord> getKeyWords(String string) {
+    public static List<KeyWord> getKeyWords(String string) {
         ArrayList<KeyWord> list = new ArrayList<>();
-        for (KeyWord word : StorageAPI.getKeyWords())
+        for (KeyWord word : App.getStorageAPI().getKeyWords())
             if (string.contains(word.content))
                 list.add(word);
         return list;

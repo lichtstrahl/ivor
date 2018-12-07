@@ -13,6 +13,9 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import root.ivatio.App;
+import root.ivatio.Message;
+import root.ivatio.R;
 import root.ivatio.bd.Command.Command;
 import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
@@ -24,9 +27,6 @@ import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
 import root.ivatio.util.StorageAPI;
 import root.ivatio.util.StringProcessor;
-import root.ivatio.App;
-import root.ivatio.Message;
-import root.ivatio.R;
 
 public class Ivor extends User {
     public static final int criticalCountEval = 50;
@@ -41,6 +41,7 @@ public class Ivor extends User {
     private boolean processingKeyWord;
     private boolean processingQuestion;
     private Action curAction;
+    private static StorageAPI storageAPI = App.getStorageAPI();
 
     public Ivor(Resources resources, Action ... actions) {
         this.id = -1;
@@ -70,7 +71,7 @@ public class Ivor extends User {
             if (q != null)  // Обработка прямого вопроса
                 return processingQuestion(q);
             else            // Обработка KeyWord
-                return processingKeyWords(StringProcessor.getAllocatedKeyWords(liteString));
+                return processingKeyWords(StringProcessor.getKeyWords(liteString));
         } else {
             curAction.put(liteString);
             return curAction.next();
@@ -81,7 +82,7 @@ public class Ivor extends User {
         String []words = str.split(" ");
         HashSet<String> set = new HashSet<>(Arrays.asList(words));
         // Обработка Question
-        List<Question> questions = StorageAPI.getQuestions();
+        List<Question> questions = storageAPI.getQuestions();
         for (Question q : questions) {
             String[] qwords = q.content.split(" ");
             HashSet<String> qSet = new HashSet<>(Arrays.asList(qwords));
@@ -93,7 +94,7 @@ public class Ivor extends User {
 
     private Command isCommand(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
-        List<Command> commands = StorageAPI.getCommands();
+        List<Command> commands = storageAPI.getCommands();
         for (Command cmd : commands) {
             HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.cmd.split(" ")));
             if (set.containsAll(cmdSet))
@@ -115,11 +116,11 @@ public class Ivor extends User {
 
     private String processingQuestion(Question q) {
         processingKeyWord = false;
-        List<Answer> answers = StorageAPI.getAnswerForQuestion(q.id);
+        List<Answer> answers = storageAPI.getAnswerForQuestion(q.id);
         if (!answers.isEmpty()) {
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
-            memory(answer).memory(q).memory(StorageAPI.getCommunication(q.id, answer.id));
+            memory(answer).memory(q).memory(storageAPI.getCommunication(q.id, answer.id));
             processingQuestion = true;
             return answer.content;
         }
@@ -130,12 +131,12 @@ public class Ivor extends User {
     private String processingKeyWords(List<KeyWord> keyWords) {
         processingQuestion = false;
         for (KeyWord word : keyWords) {
-            List<Answer> answers = StorageAPI.getAnswerForKeyWord(word.id);
+            List<Answer> answers = storageAPI.getAnswerForKeyWord(word.id);
             if (answers.isEmpty())
                 continue;
             int r = random.nextInt(answers.size());
             Answer answer = answers.get(r);
-            memory(answer).memory(word).memory(StorageAPI.getCommunicationKey(word.id, answer.id));
+            memory(answer).memory(word).memory(storageAPI.getCommunicationKey(word.id, answer.id));
             processingKeyWord = true;
             return answer.content;
         }
@@ -190,7 +191,7 @@ public class Ivor extends User {
     void reEvalutionKeyWord(int eval) {
         Answer answer = getLastAnswer();
         KeyWord keyWord = getLastKeyWord();
-        CommunicationKey communicationKey = StorageAPI.getCommunicationKey(keyWord.id, answer.id);
+        CommunicationKey communicationKey = storageAPI.getCommunicationKey(keyWord.id, answer.id);
         if (communicationKey != null) {
             countEval++;
             communicationKey.power++;
@@ -198,13 +199,13 @@ public class Ivor extends User {
                 communicationKey.correct++;
             if (eval < 0)
                 communicationKey.correct--;
-            StorageAPI.updateCommunicationKey(communicationKey);
+            storageAPI.updateCommunicationKey(communicationKey);
         }
     }
     void reEvalutionQuestion(int eval) {
         Answer answer = getLastAnswer();
         Question question = getLastQuestion();
-        Communication communication = StorageAPI.getCommunication(question.id, answer.id);
+        Communication communication = storageAPI.getCommunication(question.id, answer.id);
         if (communication != null) {
             countEval++;
             communication.power++;
@@ -212,7 +213,7 @@ public class Ivor extends User {
                 communication.correct++;
             if (eval < 0)
                 communication.correct--;
-            StorageAPI.updateCommunication(communication);
+            storageAPI.updateCommunication(communication);
         }
     }
 
@@ -246,9 +247,9 @@ public class Ivor extends User {
         return new Message(null, r.content);
     }
     KeyWord getRandomKeyWord() {
-        long[] allID = StorageAPI.getKeyWordsID();
+        long[] allID = storageAPI.getKeyWordsID();
         long anyID = allID[random.nextInt(allID.length)];
-        return StorageAPI.getKeyWord(anyID);
+        return storageAPI.getKeyWord(anyID);
     }
 
     Message sendRandomQuestion() {
@@ -257,9 +258,9 @@ public class Ivor extends User {
         return new Message(null, r.content);
     }
     Question getRandomQuestion() {
-        long[] allID = StorageAPI.getQuestionsID();
+        long[] allID = storageAPI.getQuestionsID();
         long anyID = allID[random.nextInt(allID.length)];
-        return StorageAPI.getQuestion(anyID);
+        return storageAPI.getQuestion(anyID);
     }
 
     boolean processingKeyWord() {
@@ -269,49 +270,49 @@ public class Ivor extends User {
         return processingQuestion;
     }
     void deleteLastKeyWord() {
-        StorageAPI.deleteKeyWord(getLastKeyWord());
+        storageAPI.deleteKeyWord(getLastKeyWord());
     }
     void deleteLastQuestion() {
-        StorageAPI.deleteQuestion(getLastQuestion());
+        storageAPI.deleteQuestion(getLastQuestion());
     }
 
     /** Удаление не только Communication, но и CommunicationKey, если она была последней*/
     void deleteLastCommunication() {
         CommunicationAPI lastCom = getLastCommunication();
         if(lastCom.getType() == CommunicationAPI.COMMUNICATION)
-            StorageAPI.deleteCommunication(lastCom.getID());
+            storageAPI.deleteCommunication(lastCom.getID());
         else
-            StorageAPI.deleteCommunicationKey(lastCom.getID());
+            storageAPI.deleteCommunicationKey(lastCom.getID());
     }
 
     void appendNewAnswerForLastKW(Answer answer) {
-        long answerID = StorageAPI.insertAnswer(answer);
+        long answerID = storageAPI.insertAnswer(answer);
         KeyWord lastKeyWord = getLastKeyWord();
         if (lastKeyWord == null)
             return;
         CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answerID);
-        StorageAPI.insertCommunicationKey(comKey);
+        storageAPI.insertCommunicationKey(comKey);
     }
     void appendNewAnswerForLastQ(Answer answer) {
-        long answerID = StorageAPI.insertAnswer(answer);
+        long answerID = storageAPI.insertAnswer(answer);
         Question lastQuestion = getLastQuestion();
         if (lastQuestion == null)
             return;
         Communication communication = new Communication(lastQuestion.id, answerID);
-        StorageAPI.insertCommunication(communication);
+        storageAPI.insertCommunication(communication);
     }
     boolean appendNewKeyWord(KeyWord keyWord) {
-        List<KeyWord> keyWords = StorageAPI.getKeyWords();
+        List<KeyWord> keyWords = storageAPI.getKeyWords();
         if (!keyWords.contains(keyWord)) {
-            StorageAPI.insertKeyWord(keyWord);
+            storageAPI.insertKeyWord(keyWord);
             return  true;
         }
         return false;
     }
     boolean appendNewQuestion(Question question) {
-        List<Question> questions = StorageAPI.getQuestions();
+        List<Question> questions = storageAPI.getQuestions();
         if (!questions.contains(question)) {
-            StorageAPI.insertQuestion(question);
+            storageAPI.insertQuestion(question);
             return true;
         }
         return false;
@@ -322,7 +323,7 @@ public class Ivor extends User {
     }
 
     public void selection() {
-        StorageAPI.selectionCommunication();
-        StorageAPI.selectionCommunicationKey();
+        storageAPI.selectionCommunication();
+        storageAPI.selectionCommunicationKey();
     }
 }

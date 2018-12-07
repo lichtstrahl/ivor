@@ -1,0 +1,12 @@
+{
+  "mysqlDS": {
+    "host": "127.0.0.1",
+    "port": 3306,
+    "url": "",
+    "database": "ivor_db",
+    "password": "i1g9o9r7",
+    "name": "mysqlDS",
+    "user": "root",
+    "connector": "mysql"
+  }
+}

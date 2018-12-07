@@ -34,7 +34,6 @@ import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
-import root.ivatio.util.StorageAPI;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
@@ -83,7 +82,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
 
-        user = StorageAPI.getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
+        user = App.getStorageAPI().getUser(getIntent().getLongExtra(App.USER_INDEX, -1));
         ivorPresenter = new IvorPresenter(
                 new Ivor(getResources(),
                         new ActionCall(
