@@ -1,29 +1,0 @@
-
-csquid:S1192"IDefine a constant instead of duplicating this literal "answerID" 3 times.(±­€ëıÿÿÿÿ
-bsquid:S1192"HDefine a constant instead of duplicating this literal "correct" 3 times.(Á­×üÿÿÿÿ
-`squid:S1192"FDefine a constant instead of duplicating this literal "power" 3 times.(§ö»ùÿÿÿÿÿ
-Zsquid:S1192"FDefine a constant instead of duplicating this literal "keyID" 3 times.(ˆÍÓT
-ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ëÿ¿¯ùÿÿÿÿ
-ssquid:S2293"YReplace the type specification in this constructor call with the diamond operator ("<>").(ëÿ¿¯ùÿÿÿÿ
-csquid:S00101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(­ïã
-esquid:S00116"ORename this field "__db" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(àÛôÇ
-Šsquid:S00116"oRename this field "__insertionAdapterOfCommunicationKey" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(÷ñµØùÿÿÿÿ
-„squid:S00116"nRename this field "__deletionAdapterOfCommunicationKey" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(—Êÿ‡
-‡squid:S00116"lRename this field "__updateAdapterOfCommunicationKey" to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(¨½Ö©ùÿÿÿÿ
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ºÅÊùÿÿÿÿ
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(İ×—³ùÿÿÿÿ
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(äŠ•
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ëÿ¿¯ùÿÿÿÿ
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÕˆÃ
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Ú†í
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(šºî€
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(äŠ•
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ëÿ¿¯ùÿÿÿÿ
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÕˆÃ
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(Î«§üÿÿÿÿ
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(šºî€
-gsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(äŠ•
-lsquid:S00117"QRename this local variable to match the regular expression '^[a-z][a-zA-Z0-9]*$'.(ÊÖ¡µøÿÿÿÿ
-ssquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(ú®Ú±
-xsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(ôİÕıÿÿÿÿ
-xsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(¤î˜Óüÿÿÿÿ

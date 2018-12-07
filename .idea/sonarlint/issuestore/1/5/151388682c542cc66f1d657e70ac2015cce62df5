@@ -1,5 +1,0 @@
-
-zsquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(ú®Ú±8™®İõä,
-ysquid:UselessImportCheck"QRemove this unnecessary import: java.lang classes are always implicitly imported.(–çÀ/8™®İõä,
-asquid:HiddenFieldCheck":Rename "target" which hides the field declared at line 18.(£ÁÏ8™®İõä,
-jsquid:S00101"MRename this class name to match the regular expression '^[A-Z][a-zA-Z0-9]*$'.(ÄÂË 8™®İõä,
