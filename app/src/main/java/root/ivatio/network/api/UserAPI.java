@@ -7,7 +7,6 @@ import retrofit2.Call;
 import retrofit2.http.Body;
 import retrofit2.http.GET;
 import retrofit2.http.POST;
-import root.ivatio.activity.RegisterActivity;
 import root.ivatio.bd.users.User;
 
 public interface UserAPI {
@@ -15,5 +14,5 @@ public interface UserAPI {
     Call<List<User>> getUsers();
 
     @POST("/api/clients")
-    Single<User> postUser(@Body RegisterActivity.PostUser user);
+    Single<User> postUser(@Body User.PostUser user);
 }

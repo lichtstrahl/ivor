@@ -76,5 +76,35 @@ public class User implements Serializable {
     public boolean isAdmin() {
         return admin != null;
     }
+
+    public static class PostUser {
+        @SerializedName("realName")
+        public String realName;
+        @SerializedName("login")
+        public String login;
+        @SerializedName("pass")
+        public String pass;
+        @SerializedName("age")
+        public Integer age;
+        @SerializedName("city")
+        public String city;
+        @SerializedName("email")
+        public String email;
+        @SerializedName("lastEntry")
+        public String lastEntry;
+        @SerializedName("admin")
+        public Integer admin;
+
+        public PostUser(User user) {
+            this.admin = user.admin;
+            this.age = user.age;
+            this.city = user.city;
+            this.email = user.email;
+            this.lastEntry = user.lastEntry;
+            this.login = user.login;
+            this.pass = user.pass;
+            this.realName = user.realName;
+        }
+    }
 }
 

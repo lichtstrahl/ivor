@@ -141,6 +141,8 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     }
     @OnClick(R.id.buttonSend)
     public void sendClick() {
+        if (inputText.getText().toString().isEmpty())
+            return;
         messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
         ivorPresenter.clickSend(curRole, inputText.getText().toString());
         inputText.setText("");

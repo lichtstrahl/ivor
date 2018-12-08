@@ -4,6 +4,8 @@ import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.ForeignKey;
 import android.arch.persistence.room.PrimaryKey;
 
+import com.google.gson.annotations.SerializedName;
+
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.qustion.Question;
 
@@ -12,11 +14,16 @@ import root.ivatio.bd.qustion.Question;
         @ForeignKey(entity = Answer.class, parentColumns = "id", childColumns = "answerID")
 })
 public class Communication implements root.ivatio.bd.CommunicationAPI {
+    @SerializedName("id")
     @PrimaryKey(autoGenerate = true)
     public long id;
+    @SerializedName("questionID")
     public long questionID;
+    @SerializedName("answerID")
     public long answerID;
+    @SerializedName("correct")
     public long correct;
+    @SerializedName("power")
     public long power;
 
     public Communication(long questionID, long answerID) {
