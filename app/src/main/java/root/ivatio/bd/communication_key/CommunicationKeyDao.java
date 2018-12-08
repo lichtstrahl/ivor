@@ -10,6 +10,15 @@ import java.util.List;
 
 @Dao
 public interface CommunicationKeyDao {
+    @Update
+    void update(CommunicationKey communicationKey);
+    @Insert
+    void insert(CommunicationKey communicationKey);
+    @Insert
+    void insert(List<CommunicationKey> communicationKeys);
+    @Delete
+    void delete(CommunicationKey communicationKey);
+
     @Query("SELECT * FROM CommunicationKey")
     List<CommunicationKey> getAll();
 
@@ -51,11 +60,4 @@ public interface CommunicationKeyDao {
 
     @Query("DELETE FROM CommunicationKey")
     void deleteAll();
-
-    @Update
-    void update(CommunicationKey communicationKey);
-    @Insert
-    void insert(CommunicationKey communicationKey);
-    @Delete
-    void delete(CommunicationKey communicationKey);
 }

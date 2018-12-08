@@ -14,10 +14,10 @@ import root.ivatio.bd.answer.Answer;
 public interface KeyWordDao {
     @Insert
     long insert(KeyWord word);
-
+    @Insert
+    void insert(List<KeyWord> keyWords);
     @Update
     void update(KeyWord word);
-
     @Delete
     int delete(KeyWord word);
 

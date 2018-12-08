@@ -12,6 +12,8 @@ import java.util.List;
 public interface CommunicationDao {
     @Insert
     long insert(Communication communication);
+    @Insert
+    void insert(List<Communication> communications);
     @Update
     void update(Communication communication);
     @Delete

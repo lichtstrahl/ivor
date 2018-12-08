@@ -12,6 +12,15 @@ import root.ivatio.bd.answer.Answer;
 
 @Dao
 public interface QuestionDao {
+    @Insert
+    long insert(Question q);
+    @Insert
+    void insert(List<Question> questions);
+    @Update
+    void update(Question q);
+    @Delete
+    void delete(Question q);
+
     @Query("SELECT * FROM Question")
     List<Question> getAll();
 
@@ -31,13 +40,4 @@ public interface QuestionDao {
             "SELECT answerID FROM Communication WHERE questionID = :qID " +
             ")")
     List<Answer> getAnswerForQuestion(long qID);
-
-    @Insert
-    long insert(Question q);    // id, куда произошла вставка
-
-    @Update
-    void update(Question q);
-
-    @Delete
-    void delete(Question q);
 }

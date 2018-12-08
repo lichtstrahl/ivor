@@ -12,6 +12,8 @@ import java.util.List;
 public interface CommandDao {
     @Insert
     long insert(Command communication);
+    @Insert
+    void insert(List<Command> commands);
     @Update
     void update(Command communication);
     @Delete

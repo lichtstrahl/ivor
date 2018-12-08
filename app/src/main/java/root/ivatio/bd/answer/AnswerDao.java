@@ -5,6 +5,7 @@ import android.arch.persistence.room.Delete;
 import android.arch.persistence.room.Insert;
 import android.arch.persistence.room.Query;
 import android.arch.persistence.room.Update;
+import android.support.annotation.IntegerRes;
 
 import java.util.List;
 
@@ -30,6 +31,9 @@ public interface AnswerDao {
 
     @Insert
     long insert(Answer a);
+
+    @Insert
+    void insert(List<Answer> a);
 
     @Delete
     int delete(Answer a);
