@@ -85,4 +85,6 @@
 
     <!-- RegisterActivity -->
     <string name="userSuccessfulAppend">Пользователь успешно добавлен</string>
+    <string name="errorLoading">Ошибка при загрузке данных. Будет использована старая версия</string>
+    <string name="successfulLoading">Данные с сервера успешно загружены</string>
 </resources>

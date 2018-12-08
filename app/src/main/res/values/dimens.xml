@@ -9,6 +9,8 @@
     <dimen name="midleIcon">35dp</dimen>
     <dimen name="bigIcon">50dp</dimen>
     <dimen name="extraIcon">65dp</dimen>
+    <dimen name="xxIcon">80dp</dimen>
+    <dimen name="xxxIcon">100dp</dimen>
 
     <!-- TextSize -->
     <dimen name="msgTextSize">16sp</dimen>

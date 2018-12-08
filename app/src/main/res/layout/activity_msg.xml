@@ -4,13 +4,20 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    android:background="@color/msgPSTxt">
+
+    <ProgressBar
+        android:id="@+id/progressLoad"
+        android:layout_width="@dimen/xxxIcon"
+        android:layout_height="@dimen/xxxIcon"
+        android:layout_centerHorizontal="true"/>
 
     <android.support.v7.widget.CardView
         android:id="@+id/card"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:backgroundTint="@color/msgPSTxt">
+        android:layout_below="@id/progressLoad">
 
         <RelativeLayout
             android:layout_width="match_parent"
@@ -59,9 +66,9 @@
         android:layout_above="@id/input"
         android:transcriptMode="alwaysScroll"
         android:stackFromBottom="true"
-        android:background="@color/msgPSTxt"
         tools:listitem="@layout/list_msg_layout">
     </android.support.v7.widget.RecyclerView>
+
     <EditText
         android:id="@+id/input"
         android:layout_width="wrap_content"
@@ -69,15 +76,17 @@
         android:layout_alignParentBottom="true"
         android:layout_toStartOf="@id/buttonSend"
         android:layout_alignParentStart="true"
-        android:inputType="text"/>
+        android:inputType="text"
+        android:visibility="gone"/>
     <ImageButton
         android:id="@+id/buttonSend"
-        android:layout_width="@dimen/midleIcon"
+        android:layout_width="@dimen/extraIcon"
         android:layout_height="@dimen/midleIcon"
-        android:layout_alignParentBottom="true"
+        android:layout_alignTop="@id/input"
+        android:layout_alignBottom="@id/input"
         android:layout_alignParentEnd="true"
-        android:layout_centerInParent="true"
-        android:backgroundTint="@color/msgPSTxt"
+        android:backgroundTint="@android:color/transparent"
         android:src="@drawable/send_to2"
-        android:contentDescription="@string/buttonSend"/>
+        android:contentDescription="@string/buttonSend"
+        android:visibility="gone"/>
 </RelativeLayout>

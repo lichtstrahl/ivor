@@ -11,8 +11,10 @@ import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
+import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -47,7 +49,6 @@ import root.ivatio.ivor.action.ActionSendSMS;
 import root.ivatio.network.ListHolderObserver;
 import root.ivatio.util.ListsHolder;
 
-// TODO Убрать обращение к локальной БД в onCreate
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private static final String INTENT_USER = "args:user";
     private User user;
@@ -59,6 +60,18 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     MessageAdapter messages;
     @BindView(R.id.input)
     EditText inputText;
+    @BindView(R.id.progressLoad)
+    ProgressBar progressLoad;
+    @BindView(R.id.buttonNo)
+    ImageButton buttonNo;
+    @BindView(R.id.buttonYes)
+    ImageButton buttonYes;
+    @BindView(R.id.buttonDelete)
+    ImageButton buttonDelete;
+    @BindView(R.id.buttonSend)
+    ImageButton buttonSend;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -119,15 +132,13 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         removeRating();
         setTitle(user.login + ", " + user.realName);
 
-        holderObserver = new ListHolderObserver();
+        holderObserver = new ListHolderObserver(this::successfulLoad, this::errorLoad);
     }
-
     public static void start(Context context, User user) {
         Intent msgIntent = new Intent(context, MsgActivity.class);
         msgIntent.putExtra(INTENT_USER, user);
         context.startActivity(msgIntent);
     }
-
     @OnClick(R.id.buttonSend)
     public void sendClick() {
         messages.append(new Message(user, inputText.getText().toString(), getCurDate()));
@@ -135,22 +146,16 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         inputText.setText("");
         listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
     }
-    @BindView(R.id.buttonDelete)
-    ImageButton buttonDelete;
 
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
         ivorPresenter.clickDelete(curRole);
     }
-    @BindView(R.id.buttonYes)
-    ImageButton buttonYes;
 
     @OnClick(R.id.buttonYes)
     public void clickYes() {
         ivorPresenter.clickEval(1);
     }
-    @BindView(R.id.buttonNo)
-    ImageButton buttonNo;
 
     @OnClick(R.id.buttonNo)
     public void clickNo() {
@@ -160,13 +165,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @Override
     protected void onStart() {
         super.onStart();
-        // Total clear
-        App.getDB().getAnswerDao().deleteAll();
-        App.getDB().getCommandDao().deleteAll();
-        App.getDB().getCommunicationDao().deleteAll();
-        App.getDB().getCommunicationKeyDao().deleteAll();
-        App.getDB().getKeyWordDao().deleteAll();
-        App.getDB().getQuestionDao().deleteAll();
         // Скачивание данных их сети
         Observable.combineLatest(
                 App.getLoadAPI().loadAnswers(),
@@ -176,16 +174,15 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                 App.getLoadAPI().loadKeyWords(),
                 App.getLoadAPI().loadQuestions(),
                 (List<Answer> lAnswer, List<Command> lCommand, List<Communication> lCommunication,
-                 List<CommunicationKey> lCommunicationKey, List<KeyWord> lKeyWord, List<Question> lQuestion) -> {
-                    return ListsHolder.getBuilder()
+                 List<CommunicationKey> lCommunicationKey, List<KeyWord> lKeyWord, List<Question> lQuestion)
+                        -> ListsHolder.getBuilder()
                             .buildAnswers(lAnswer)
                             .buildCommands(lCommand)
                             .buildCommunications(lCommunication)
                             .buildCommunicationKeys(lCommunicationKey)
                             .buildKeyWords(lKeyWord)
                             .buildQuestions(lQuestion)
-                            .build();
-                })
+                            .build())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(holderObserver);
@@ -287,4 +284,18 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
     }
 
+    public void successfulLoad() {
+        Toast.makeText(this, R.string.successfulLoading, Toast.LENGTH_SHORT).show();
+        progressLoad.setVisibility(View.GONE);
+        inputText.setVisibility(View.VISIBLE);
+        buttonSend.setVisibility(View.VISIBLE);
+    }
+
+    public void errorLoad(Throwable t) {
+        App.logE(t.getMessage());
+        Toast.makeText(this, R.string.errorLoading, Toast.LENGTH_SHORT).show();
+        progressLoad.setVisibility(View.GONE);
+        inputText.setVisibility(View.VISIBLE);
+        buttonSend.setVisibility(View.VISIBLE);
+    }
 }
