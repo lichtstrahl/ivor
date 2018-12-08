@@ -43,7 +43,7 @@ public class LoginService extends IntentService {
                 } else {
                     for (User u : users) {
                         if (u.login.equals(login) && u.pass.equalsIgnoreCase(pass)) {
-                            LoginActivity.receiveLoginStatus(this, LoginStatus.SUCCESSFUL, u.id);
+                            LoginActivity.receiveLoginStatus(this, LoginStatus.SUCCESSFUL, u);
                             return;
                         }
                     }

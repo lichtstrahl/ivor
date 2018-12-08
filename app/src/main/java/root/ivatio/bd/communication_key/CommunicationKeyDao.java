@@ -49,6 +49,9 @@ public interface CommunicationKeyDao {
             ")")
     void magicalDelete();
 
+    @Query("DELETE FROM CommunicationKey")
+    void deleteAll();
+
     @Update
     void update(CommunicationKey communicationKey);
     @Insert

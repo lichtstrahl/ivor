@@ -14,7 +14,8 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
-import root.ivatio.network.UserAPI;
+import root.ivatio.network.api.LoadAPI;
+import root.ivatio.network.api.UserAPI;
 import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StorageAPI;
 
@@ -25,6 +26,7 @@ public class App extends Application {
     private static final LocalStorageAPI localAPI = new LocalStorageAPI();
     private static Retrofit retrofit;
     private static UserAPI userAPI;
+    private static LoadAPI loadAPI;
 
     private final Migration migration12 = new Migration(1, 2) {
         @Override
@@ -88,6 +90,7 @@ public class App extends Application {
                 .client(client)
                 .build();
         userAPI = retrofit.create(UserAPI.class);
+        loadAPI = retrofit.create(LoadAPI.class);
 
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
@@ -108,6 +111,9 @@ public class App extends Application {
         return userAPI;
     }
 
+    public static LoadAPI getLoadAPI() {
+        return loadAPI;
+    }
 
     public static void logI(String msg) {
         Log.i(BuildConfig.GLOBAL_TAG, msg);
@@ -118,6 +124,6 @@ public class App extends Application {
     }
 
     public static void logE(String msg) {
-        Log.e(BuildConfig.GLOBAL_TAG, msg);
+        Log.w(BuildConfig.GLOBAL_TAG, msg);
     }
 }

@@ -16,7 +16,7 @@ import javax.annotation.Nullable;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
-import root.ivatio.bd.Command.Command;
+import root.ivatio.bd.command.Command;
 import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.communication.Communication;

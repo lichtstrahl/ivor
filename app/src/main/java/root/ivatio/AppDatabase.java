@@ -3,8 +3,8 @@ package root.ivatio;
 import android.arch.persistence.room.Database;
 import android.arch.persistence.room.RoomDatabase;
 
-import root.ivatio.bd.Command.Command;
-import root.ivatio.bd.Command.CommandDao;
+import root.ivatio.bd.command.Command;
+import root.ivatio.bd.command.CommandDao;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.answer.AnswerDao;
 import root.ivatio.bd.communication.Communication;

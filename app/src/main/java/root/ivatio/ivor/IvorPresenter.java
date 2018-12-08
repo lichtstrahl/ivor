@@ -101,6 +101,7 @@ public class IvorPresenter {
                 break;
             default:
         }
+
     }
 
     private void sendWithModeSTD(String request) {

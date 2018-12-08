@@ -1,4 +1,4 @@
-package root.ivatio.bd.Command;
+package root.ivatio.bd.command;
 
 import android.arch.persistence.room.Entity;
 import android.arch.persistence.room.PrimaryKey;

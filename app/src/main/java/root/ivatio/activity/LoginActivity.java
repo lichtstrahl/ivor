@@ -18,6 +18,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import root.ivatio.App;
 import root.ivatio.R;
+import root.ivatio.bd.users.User;
 import root.ivatio.network.LoginService;
 import root.ivatio.network.LoginStatus;
 
@@ -25,6 +26,7 @@ public class LoginActivity extends AppCompatActivity {
     private static final String ACTION_LOGIN = "root.ivatio.LOGIN";
     private static final String INTENT_STATUS = "args:Status";
     private static final String INTENT_ID = "args:id";
+    private static final String INTENT_USER = "args:user";
 
     @BindView(R.id.editLogin)
     EditText editLogin;
@@ -73,7 +75,8 @@ public class LoginActivity extends AppCompatActivity {
             switch (status) {
                 case SUCCESSFUL:
                     long id = intent.getLongExtra(INTENT_ID, -1);
-                    MsgActivity.start(LoginActivity.this, id);
+                    User u = (User)intent.getSerializableExtra(INTENT_USER);
+                    MsgActivity.start(LoginActivity.this, u);
                     break;
 
                 case NOT_FOUND:
@@ -101,10 +104,10 @@ public class LoginActivity extends AppCompatActivity {
         service.sendBroadcast(intent);
     }
 
-    public static void receiveLoginStatus(Service service, LoginStatus status, long id) {
+    public static void receiveLoginStatus(Service service, LoginStatus status, User u) {
         Intent intent = new Intent().setAction(ACTION_LOGIN);
         intent.putExtra(INTENT_STATUS, status);
-        intent.putExtra(INTENT_ID, id);
+        intent.putExtra(INTENT_USER, u);
         service.sendBroadcast(intent);
     }
 }

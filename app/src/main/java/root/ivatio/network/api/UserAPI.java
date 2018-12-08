@@ -1,4 +1,4 @@
-package root.ivatio.network;
+package root.ivatio.network.api;
 
 import java.util.List;
 

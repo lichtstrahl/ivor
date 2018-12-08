@@ -2,7 +2,6 @@ package root.ivatio.util;
 
 import java.util.List;
 
-import root.ivatio.App;
 import root.ivatio.bd.command.Command;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.communication.Communication;
@@ -11,114 +10,139 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 
-public class LocalStorageAPI implements StorageAPI {
-
+public class NetworkStorageAPI implements StorageAPI {
+    @Override
     public void insertUser(User newUser) {
-        App.getDB().getUserDao().insert(newUser);
+
     }
 
+    @Override
     public User getUser(long id) {
-        return App.getDB().getUserDao().getUser(id);
+        return null;
     }
 
+    @Override
     public User getUser(String login, String pass) {
-        return App.getDB().getUserDao().getUser(login, pass);
+        return null;
     }
 
+    @Override
     public void selectionCommunication() {
-        App.getDB().getCommunicationDao().magicalDelete();
+
     }
 
+    @Override
     public void selectionCommunicationKey() {
-        App.getDB().getCommunicationKeyDao().magicalDelete();
+
     }
 
+    @Override
     public List<Question> getQuestions() {
-        return App.getDB().getQuestionDao().getAll();
+        return null;
     }
 
+    @Override
     public Question getQuestion(long id) {
-        return App.getDB().getQuestionDao().getQuestion(id);
+        return null;
     }
 
+    @Override
     public void insertQuestion(Question q) {
-        App.getDB().getQuestionDao().insert(q);
+
     }
 
-
+    @Override
     public List<KeyWord> getKeyWords() {
-        return App.getDB().getKeyWordDao().getAll();
+        return null;
     }
 
+    @Override
     public KeyWord getKeyWord(long id) {
-        return App.getDB().getKeyWordDao().getWord(id);
+        return null;
     }
 
+    @Override
     public void insertKeyWord(KeyWord word) {
-        App.getDB().getKeyWordDao().insert(word);
+
     }
 
+    @Override
     public long insertAnswer(Answer a) {
-        return App.getDB().getAnswerDao().insert(a);
+        return 0;
     }
 
+    @Override
     public void insertCommunication(Communication c) {
-        App.getDB().getCommunicationDao().insert(c);
+
     }
 
+    @Override
     public void insertCommunicationKey(CommunicationKey c) {
-        App.getDB().getCommunicationKeyDao().insert(c);
+
     }
 
+    @Override
     public List<Command> getCommands() {
-        return App.getDB().getCommandDao().getAll();
+        return null;
     }
 
+    @Override
     public List<Answer> getAnswerForQuestion(long id) {
-        return App.getDB().getQuestionDao().getAnswerForQuestion(id);
+        return null;
     }
 
+    @Override
     public Communication getCommunication(long qID, long aID) {
-        return App.getDB().getCommunicationDao().getCommunication(qID, aID);
+        return null;
     }
 
+    @Override
     public List<Answer> getAnswerForKeyWord(long id) {
-        return App.getDB().getKeyWordDao().getAnswerForKeyWord(id);
+        return null;
     }
 
+    @Override
     public CommunicationKey getCommunicationKey(long wID, long aID) {
-        return App.getDB().getCommunicationKeyDao().getCommunicationKey(wID, aID);
+        return null;
     }
 
+    @Override
     public void updateCommunicationKey(CommunicationKey key) {
-        App.getDB().getCommunicationKeyDao().update(key);
+
     }
 
+    @Override
     public void updateCommunication(Communication com) {
-        App.getDB().getCommunicationDao().update(com);
+
     }
 
+    @Override
     public long[] getKeyWordsID() {
-        return App.getDB().getKeyWordDao().getAllID();
+        return new long[0];
     }
 
+    @Override
     public long[] getQuestionsID() {
-        return App.getDB().getQuestionDao().getAllID();
+        return new long[0];
     }
 
+    @Override
     public void deleteQuestion(Question q) {
-        App.getDB().getQuestionDao().delete(q);
+
     }
 
+    @Override
     public void deleteCommunication(long id) {
-        App.getDB().getCommunicationDao().delete(id);
+
     }
 
+    @Override
     public void deleteCommunicationKey(long id) {
-        App.getDB().getCommunicationKeyDao().delete(id);
+
     }
 
+    @Override
     public void deleteKeyWord(KeyWord word) {
-        App.getDB().getKeyWordDao().delete(word);
+
     }
 }

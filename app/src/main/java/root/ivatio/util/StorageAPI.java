@@ -2,7 +2,7 @@ package root.ivatio.util;
 
 import java.util.List;
 
-import root.ivatio.bd.Command.Command;
+import root.ivatio.bd.command.Command;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.communication.Communication;
 import root.ivatio.bd.communication_key.CommunicationKey;

@@ -1,4 +1,4 @@
-package root.ivatio.bd.Command;
+package root.ivatio.bd.command;
 
 import android.arch.persistence.room.Dao;
 import android.arch.persistence.room.Delete;
@@ -19,4 +19,7 @@ public interface CommandDao {
 
     @Query("SELECT * FROM Command")
     List<Command> getAll();
+
+    @Query("DELETE FROM Command")
+    void deleteAll();
 }

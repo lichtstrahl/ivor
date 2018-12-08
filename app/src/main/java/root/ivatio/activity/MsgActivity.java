@@ -20,10 +20,23 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import root.ivatio.bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.Observable;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
+import root.ivatio.App;
+import root.ivatio.Message;
+import root.ivatio.MessageAdapter;
+import root.ivatio.R;
+import root.ivatio.bd.answer.Answer;
+import root.ivatio.bd.command.Command;
+import root.ivatio.bd.communication.Communication;
+import root.ivatio.bd.communication_key.CommunicationKey;
+import root.ivatio.bd.key_word.KeyWord;
+import root.ivatio.bd.qustion.Question;
+import root.ivatio.bd.users.User;
 import root.ivatio.ivor.Ivor;
 import root.ivatio.ivor.IvorPresenter;
 import root.ivatio.ivor.IvorViewAPI;
@@ -31,16 +44,16 @@ import root.ivatio.ivor.action.ActionCall;
 import root.ivatio.ivor.action.ActionSendEmail;
 import root.ivatio.ivor.action.ActionSendGPS;
 import root.ivatio.ivor.action.ActionSendSMS;
-import root.ivatio.App;
-import root.ivatio.Message;
-import root.ivatio.MessageAdapter;
-import root.ivatio.R;
+import root.ivatio.network.ListHolderObserver;
+import root.ivatio.util.ListsHolder;
+
 // TODO Убрать обращение к локальной БД в onCreate
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
-    private static final String INTENT_USER_ID = "args:user_id";
+    private static final String INTENT_USER = "args:user";
     private User user;
     private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
+    private ListHolderObserver holderObserver;
     @BindView(R.id.list)
     RecyclerView listView;
     MessageAdapter messages;
@@ -52,8 +65,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
-        long id = getIntent().getLongExtra(INTENT_USER_ID, -1);
-        user = App.getStorageAPI().getUser(id);
+        user = (User)getIntent().getSerializableExtra(INTENT_USER);
         ivorPresenter = new IvorPresenter(
                         new Ivor(getResources(),
                         new ActionCall(
@@ -105,15 +117,16 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         ((LinearLayoutManager) lManager).setStackFromEnd(true);
         listView.setLayoutManager(lManager);
         removeRating();
-//        setTitle(user.login + ", " + user.realName);
+        setTitle(user.login + ", " + user.realName);
+
+        holderObserver = new ListHolderObserver();
     }
 
-    public static void start(Context context, long id) {
+    public static void start(Context context, User user) {
         Intent msgIntent = new Intent(context, MsgActivity.class);
-        msgIntent.putExtra(INTENT_USER_ID, id);
+        msgIntent.putExtra(INTENT_USER, user);
         context.startActivity(msgIntent);
     }
-
 
     @OnClick(R.id.buttonSend)
     public void sendClick() {
@@ -145,9 +158,44 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     }
 
     @Override
+    protected void onStart() {
+        super.onStart();
+        // Total clear
+        App.getDB().getAnswerDao().deleteAll();
+        App.getDB().getCommandDao().deleteAll();
+        App.getDB().getCommunicationDao().deleteAll();
+        App.getDB().getCommunicationKeyDao().deleteAll();
+        App.getDB().getKeyWordDao().deleteAll();
+        App.getDB().getQuestionDao().deleteAll();
+        // Скачивание данных их сети
+        Observable.combineLatest(
+                App.getLoadAPI().loadAnswers(),
+                App.getLoadAPI().loadCommands(),
+                App.getLoadAPI().loadCommunications(),
+                App.getLoadAPI().loadCommunicationKeys(),
+                App.getLoadAPI().loadKeyWords(),
+                App.getLoadAPI().loadQuestions(),
+                (List<Answer> lAnswer, List<Command> lCommand, List<Communication> lCommunication,
+                 List<CommunicationKey> lCommunicationKey, List<KeyWord> lKeyWord, List<Question> lQuestion) -> {
+                    return ListsHolder.getBuilder()
+                            .buildAnswers(lAnswer)
+                            .buildCommands(lCommand)
+                            .buildCommunications(lCommunication)
+                            .buildCommunicationKeys(lCommunicationKey)
+                            .buildKeyWords(lKeyWord)
+                            .buildQuestions(lQuestion)
+                            .build();
+                })
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(holderObserver);
+    }
+
+    @Override
     protected void onStop() {
         super.onStop();
         ivorPresenter.selectionCommunications();
+        holderObserver.unsubscribe();
     }
 
     @Override
