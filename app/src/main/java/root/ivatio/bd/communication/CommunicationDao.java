@@ -26,7 +26,10 @@ public interface CommunicationDao {
     int delete(long id);
 
     @Query("SELECT * FROM Communication WHERE questionID = :questionID")
-    List<Communication> getCommunication(long questionID);
+    List<Communication> getCommunicationsForQuestion(long questionID);
+
+    @Query("SELECT * FROM Communication WHERE answerID = :answerID")
+    List<Communication> getCommunicationsForAnswer(long answerID);
 
     @Query("SELECT * FROM Communication WHERE questionID = :questionID AND answerID = :answerID")
     Communication getCommunication(long questionID, long answerID);
