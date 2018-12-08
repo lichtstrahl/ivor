@@ -25,7 +25,7 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
-import root.ivatio.util.StorageAPI;
+import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StringProcessor;
 
 public class Ivor extends User {
@@ -41,7 +41,7 @@ public class Ivor extends User {
     private boolean processingKeyWord;
     private boolean processingQuestion;
     private Action curAction;
-    private static StorageAPI storageAPI = App.getStorageAPI();
+    private static LocalStorageAPI storageAPI = App.getStorageAPI();
 
     public Ivor(Resources resources, Action ... actions) {
         this.id = Long.valueOf(-1);

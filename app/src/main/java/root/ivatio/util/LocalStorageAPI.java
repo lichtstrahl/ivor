@@ -11,7 +11,7 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 
-public class LocalStorageAPI implements StorageAPI {
+public class LocalStorageAPI {
 
     public void insertUser(User newUser) {
         App.getDB().getUserDao().insert(newUser);
@@ -62,6 +62,10 @@ public class LocalStorageAPI implements StorageAPI {
         return App.getDB().getAnswerDao().insert(a);
     }
 
+    public List<Answer> getAnswers() {
+        return App.getDB().getAnswerDao().getAll();
+    }
+
     public void insertCommunication(Communication c) {
         App.getDB().getCommunicationDao().insert(c);
     }
@@ -82,12 +86,20 @@ public class LocalStorageAPI implements StorageAPI {
         return App.getDB().getCommunicationDao().getCommunication(qID, aID);
     }
 
+    public List<Communication> getCommunications() {
+        return App.getDB().getCommunicationDao().getAll();
+    }
+
     public List<Answer> getAnswerForKeyWord(long id) {
         return App.getDB().getKeyWordDao().getAnswerForKeyWord(id);
     }
 
     public CommunicationKey getCommunicationKey(long wID, long aID) {
         return App.getDB().getCommunicationKeyDao().getCommunicationKey(wID, aID);
+    }
+
+    public List<CommunicationKey> getCommunicationKeys() {
+        return App.getDB().getCommunicationKeyDao().getAll();
     }
 
     public void updateCommunicationKey(CommunicationKey key) {

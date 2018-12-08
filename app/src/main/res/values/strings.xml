@@ -87,4 +87,6 @@
     <string name="userSuccessfulAppend">Пользователь успешно добавлен</string>
     <string name="errorLoading">Ошибка при загрузке данных. Будет использована старая версия</string>
     <string name="successfulLoading">Данные с сервера успешно загружены</string>
+    <string name="errorPost">Ошибка при отправке данных на сервер</string>
+    <string name="successfulPost">Данные были успешно отправлены на сервер</string>
 </resources>

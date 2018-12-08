@@ -17,7 +17,6 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import root.ivatio.network.api.LoadAPI;
 import root.ivatio.network.api.UserAPI;
 import root.ivatio.util.LocalStorageAPI;
-import root.ivatio.util.StorageAPI;
 
 public class App extends Application {
     private static AppDatabase db;
@@ -99,11 +98,12 @@ public class App extends Application {
         Stetho.initialize(builder.build());
     }
 
+    @Deprecated
     public static AppDatabase getDB() {
         return db;
     }
 
-    public static StorageAPI getStorageAPI() {
+    public static LocalStorageAPI getStorageAPI() {
         return localAPI;
     }
 

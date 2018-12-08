@@ -11,15 +11,16 @@ import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.LinkedList;
 import java.util.List;
 
 import butterknife.BindView;
@@ -46,7 +47,7 @@ import root.ivatio.ivor.action.ActionCall;
 import root.ivatio.ivor.action.ActionSendEmail;
 import root.ivatio.ivor.action.ActionSendGPS;
 import root.ivatio.ivor.action.ActionSendSMS;
-import root.ivatio.network.ListHolderObserver;
+import root.ivatio.network.NetworkObserver;
 import root.ivatio.util.ListsHolder;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
@@ -54,7 +55,8 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
     private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
-    private ListHolderObserver holderObserver;
+    private NetworkObserver<ListsHolder> getObserver;
+    private NetworkObserver<List> postObserver;
     @BindView(R.id.list)
     RecyclerView listView;
     MessageAdapter messages;
@@ -132,13 +134,16 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         removeRating();
         setTitle(user.login + ", " + user.realName);
 
-        holderObserver = new ListHolderObserver(this::successfulLoad, this::errorLoad);
+        getObserver = new NetworkObserver<>(this::successfulLoad, this::errorLoad);
+        postObserver = new NetworkObserver<>(this::successfulPost, this::errorPost);
     }
+
     public static void start(Context context, User user) {
         Intent msgIntent = new Intent(context, MsgActivity.class);
         msgIntent.putExtra(INTENT_USER, user);
         context.startActivity(msgIntent);
     }
+
     @OnClick(R.id.buttonSend)
     public void sendClick() {
         if (inputText.getText().toString().isEmpty())
@@ -148,7 +153,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         inputText.setText("");
         listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
     }
-
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
         ivorPresenter.clickDelete(curRole);
@@ -175,8 +179,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                 App.getLoadAPI().loadCommunicationKeys(),
                 App.getLoadAPI().loadKeyWords(),
                 App.getLoadAPI().loadQuestions(),
-                (List<Answer> lAnswer, List<Command> lCommand, List<Communication> lCommunication,
-                 List<CommunicationKey> lCommunicationKey, List<KeyWord> lKeyWord, List<Question> lQuestion)
+                (lAnswer, lCommand,  lCommunication, lCommunicationKey,  lKeyWord, lQuestion)
                         -> ListsHolder.getBuilder()
                             .buildAnswers(lAnswer)
                             .buildCommands(lCommand)
@@ -187,14 +190,69 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                             .build())
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(holderObserver);
+                .subscribe(getObserver);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         ivorPresenter.selectionCommunications();
-        holderObserver.unsubscribe();
+
+        List<Observable<Command>> observableCommand = new LinkedList<>();
+        for (Command cmd : App.getStorageAPI().getCommands())
+            observableCommand.add(App.getLoadAPI().postCommand(cmd));
+
+        List<Observable<Answer>> observableAnswer = new LinkedList<>();
+        for (Answer a : App.getStorageAPI().getAnswers())
+            observableAnswer.add(App.getLoadAPI().postAnswer(a));
+
+        List<Observable<Communication>> observableCommunication = new LinkedList<>();
+        for (Communication c : App.getStorageAPI().getCommunications())
+            observableCommunication.add(App.getLoadAPI().postCommunication(c));
+
+        List<Observable<CommunicationKey>> observableCommunicationKey = new LinkedList<>();
+        for (CommunicationKey c : App.getStorageAPI().getCommunicationKeys())
+            observableCommunicationKey.add(App.getLoadAPI().postCommunicationKey(c));
+
+        List<Observable<KeyWord>> observableKeyWord = new LinkedList<>();
+        for (KeyWord w : App.getStorageAPI().getKeyWords())
+            observableKeyWord.add(App.getLoadAPI().postKeyWord(w));
+
+        List<Observable<Question>> observableQuestion = new LinkedList<>();
+        for (Question q : App.getStorageAPI().getQuestions())
+            observableQuestion.add(App.getLoadAPI().postQuestio(q));
+
+        Observable.combineLatest(observableAnswer, Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        Observable.combineLatest(observableCommand, Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        Observable.combineLatest(observableCommunication, Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        Observable.combineLatest(observableCommunicationKey, Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        Observable.combineLatest(observableKeyWord, Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        Observable.combineLatest(observableQuestion,Arrays::asList)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(postObserver);
+
+        getObserver.unsubscribe();
     }
 
     @Override
@@ -234,6 +292,8 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         return true;
     }
 
+
+
     public enum ROLE {
         STD,
         USER_SEND_ANSWER_FOR_KW,
@@ -241,7 +301,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         USER_SEND_ANSWER_FOR_Q,
         USER_SEND_NEW_Q,
     }
-    /***************************************/
     /** Реализация интерфейса IvorViewAPI **/
     /***************************************/
     @Override
@@ -254,7 +313,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         buttonNo.setVisibility(View.VISIBLE);
         buttonYes.setVisibility(View.VISIBLE);
     }
-
     @Override
     public void appendMessage(Message msg) {
         messages.append(msg);
@@ -268,13 +326,13 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     public void setRole(ROLE role) {
         curRole = role;
     }
+
     @Override
     public void switchButtonDelete(int visibility) {
         if (visibility == View.VISIBLE && !user.isAdmin())
             return;
         buttonDelete.setVisibility(visibility);
     }
-
     @Override
     public void showMessage(int res) {
         Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
@@ -286,7 +344,22 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
     }
 
-    public void successfulLoad() {
+    public void successfulLoad(ListsHolder listsHolder) {
+        App.getDB().getAnswerDao().deleteAll();
+        App.getDB().getCommandDao().deleteAll();
+        App.getDB().getCommunicationDao().deleteAll();
+        App.getDB().getCommunicationKeyDao().deleteAll();
+        App.getDB().getKeyWordDao().deleteAll();
+        App.getDB().getQuestionDao().deleteAll();
+
+        // Insert new data
+        App.getDB().getAnswerDao().insert(listsHolder.getAnswers());
+        App.getDB().getCommandDao().insert(listsHolder.getCommands());
+        App.getDB().getCommunicationDao().insert(listsHolder.getCommunications());
+        App.getDB().getCommunicationKeyDao().insert(listsHolder.getCommunicationKeys());
+        App.getDB().getKeyWordDao().insert(listsHolder.getKeyWords());
+        App.getDB().getQuestionDao().insert(listsHolder.getQuestions());
+
         Toast.makeText(this, R.string.successfulLoading, Toast.LENGTH_SHORT).show();
         progressLoad.setVisibility(View.GONE);
         inputText.setVisibility(View.VISIBLE);
@@ -299,5 +372,14 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         progressLoad.setVisibility(View.GONE);
         inputText.setVisibility(View.VISIBLE);
         buttonSend.setVisibility(View.VISIBLE);
+    }
+
+    private void successfulPost(List list) {
+        App.logI(getString(R.string.successfulPost));
+    }
+
+    public void errorPost(Throwable t) {
+        App.logE(t.getMessage());
+        App.logW(getString(R.string.errorPost));
     }
 }
