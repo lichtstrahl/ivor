@@ -16,6 +16,7 @@
     <color name="msgBg">#9ccc65</color>
     <color name="msgIvorBg">#689e38</color>
     <color name="msgTxt">#386911</color>
-    <color name="msgPSTxt">#c5e1a5</color>
+    <color name="msgLittleTxt">#ffffff</color>
+    <color name="bgMsgActivity">#e7f195</color>
     <!-- ........... -->
 </resources>

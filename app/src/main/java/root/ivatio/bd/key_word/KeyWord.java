@@ -6,6 +6,10 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
+import java.security.Key;
+
+import root.ivatio.network.dto.PostContentDTO;
+
 @Entity
 public class KeyWord {
     @SerializedName("id")
@@ -19,10 +23,12 @@ public class KeyWord {
         this.content = content;
     }
 
+    public PostContentDTO toDTO() {
+        return new PostContentDTO(content);
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        return content.equals(((KeyWord)obj).content);
+    public boolean equals(Object o) {
+        return o instanceof KeyWord && content.equals(((KeyWord)o).content);
     }
 }

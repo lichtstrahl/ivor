@@ -8,9 +8,16 @@ public class PostComDTO {
     @SerializedName("answerID")
     private long answerID;
     @SerializedName("correct")
-    private int correct;
+    private long correct;
     @SerializedName("power")
-    private int power;
+    private long power;
+
+    public PostComDTO(long questionID, long answerID, long correct, long power) {
+        this.questionID = questionID;
+        this.answerID = answerID;
+        this.correct = correct;
+        this.power = power;
+    }
 
     public long getQuestionID() {
         return questionID;
@@ -20,11 +27,11 @@ public class PostComDTO {
         return answerID;
     }
 
-    public int getCorrect() {
+    public long getCorrect() {
         return correct;
     }
 
-    public int getPower() {
+    public long getPower() {
         return power;
     }
 }

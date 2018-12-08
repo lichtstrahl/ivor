@@ -40,7 +40,7 @@
                 android:layout_margin="4dp"
                 tools:text="Автор"
                 android:textSize="@dimen/smallText"
-                android:textColor="@color/msgPSTxt"
+                android:textColor="@color/msgLittleTxt"
                 />
             <TextView
                 android:id="@+id/time"
@@ -49,7 +49,7 @@
                 android:layout_margin="4dp"
                 tools:text="10:42"
                 android:textSize="@dimen/smallText"
-                android:textColor="@color/msgPSTxt"/>
+                android:textColor="@color/msgLittleTxt"/>
         </LinearLayout>
 
 

@@ -9,6 +9,7 @@ import com.google.gson.annotations.SerializedName;
 import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
+import root.ivatio.network.dto.PostComKeyDTO;
 
 @Entity(foreignKeys = {
         @ForeignKey(entity = KeyWord.class, parentColumns = "id", childColumns = "keyID"),
@@ -34,6 +35,10 @@ public class CommunicationKey implements CommunicationAPI {
         this.correct = 0;
     }
 
+    public PostComKeyDTO toDTO() {
+        return new PostComKeyDTO(keyID, answerID, power, correct);
+    }
+
     @Override
     public int getType() {
         return COMMUNICATION_KEY;
@@ -42,5 +47,13 @@ public class CommunicationKey implements CommunicationAPI {
     @Override
     public long getID() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof CommunicationKey && (
+                keyID == ((CommunicationKey) o).keyID && answerID == ((CommunicationKey) o).answerID &&
+                        power == ((CommunicationKey) o).power && correct == ((CommunicationKey) o).correct
+        );
     }
 }

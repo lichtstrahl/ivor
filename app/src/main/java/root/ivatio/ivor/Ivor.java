@@ -31,10 +31,10 @@ import root.ivatio.util.StringProcessor;
 public class Ivor extends User {
     public static final int criticalCountEval = 50;
     private Resources resources;
-    private LinkedList<KeyWord> memoryWords;
-    private LinkedList<Question> memoryQuestions;
-    private LinkedList<Answer>   memoryAnswers;
-    private LinkedList<CommunicationAPI> memoryCommunicationAPIS;
+    private List<KeyWord> memoryWords;
+    private List<Question> memoryQuestions;
+    private List<Answer>   memoryAnswers;
+    private List<CommunicationAPI> memoryCommunicationAPIS;
     private List<Action> actions;
     private int countEval;
     private Random random;
@@ -42,6 +42,12 @@ public class Ivor extends User {
     private boolean processingQuestion;
     private Action curAction;
     private static LocalStorageAPI storageAPI = App.getStorageAPI();
+    // Добавление новых данных
+    private List<Question> newQuestions;
+    private List<Answer> newAnswers;
+    private List<KeyWord> newKeyWords;
+    private List<Communication> newCommunications;
+    private List<CommunicationKey> newCommunicationKeys;
 
     public Ivor(Resources resources, Action ... actions) {
         this.id = Long.valueOf(-1);
@@ -51,10 +57,15 @@ public class Ivor extends User {
         this.memoryAnswers = new LinkedList<>();
         this.memoryCommunicationAPIS = new LinkedList<>();
         this.random = new Random();
-        processingKeyWord = false;
-        countEval = 0;
+        this.processingKeyWord = false;
+        this.countEval = 0;
         this.actions = Arrays.asList(actions);
-        curAction = null;
+        this.curAction = null;
+        this.newQuestions = new LinkedList<>();
+        this.newAnswers = new LinkedList<>();
+        this.newKeyWords = new LinkedList<>();
+        this.newCommunications = new LinkedList<>();
+        this.newCommunicationKeys = new LinkedList<>();
     }
 
     public static String getName() {
@@ -286,25 +297,30 @@ public class Ivor extends User {
     }
 
     void appendNewAnswerForLastKW(Answer answer) {
-        long answerID = storageAPI.insertAnswer(answer);
+        answer.id = storageAPI.insertAnswer(answer);
+        newAnswers.add(answer);
         KeyWord lastKeyWord = getLastKeyWord();
         if (lastKeyWord == null)
             return;
-        CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answerID);
-        storageAPI.insertCommunicationKey(comKey);
+        CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answer.id);
+        comKey.id = storageAPI.insertCommunicationKey(comKey);
+        newCommunicationKeys.add(comKey);
     }
     void appendNewAnswerForLastQ(Answer answer) {
-        long answerID = storageAPI.insertAnswer(answer);
+        answer.id = storageAPI.insertAnswer(answer);
+        newAnswers.add(answer);
         Question lastQuestion = getLastQuestion();
         if (lastQuestion == null)
             return;
-        Communication communication = new Communication(lastQuestion.id, answerID);
-        storageAPI.insertCommunication(communication);
+        Communication communication = new Communication(lastQuestion.id, answer.id);
+        communication.id = storageAPI.insertCommunication(communication);
+        newCommunications.add(communication);
     }
     boolean appendNewKeyWord(KeyWord keyWord) {
         List<KeyWord> keyWords = storageAPI.getKeyWords();
         if (!keyWords.contains(keyWord)) {
-            storageAPI.insertKeyWord(keyWord);
+            keyWord.id = storageAPI.insertKeyWord(keyWord);
+            newKeyWords.add(keyWord);
             return  true;
         }
         return false;
@@ -312,7 +328,8 @@ public class Ivor extends User {
     boolean appendNewQuestion(Question question) {
         List<Question> questions = storageAPI.getQuestions();
         if (!questions.contains(question)) {
-            storageAPI.insertQuestion(question);
+            question.id = storageAPI.insertQuestion(question);
+            newQuestions.add(question);
             return true;
         }
         return false;
@@ -325,5 +342,25 @@ public class Ivor extends User {
     public void selection() {
         storageAPI.selectionCommunication();
         storageAPI.selectionCommunicationKey();
+    }
+
+    public List<Question> getNewQuestions() {
+        return newQuestions;
+    }
+
+    public List<Answer> getNewAnswers() {
+        return newAnswers;
+    }
+
+    public List<KeyWord> getNewKeyWords() {
+        return newKeyWords;
+    }
+
+    public List<Communication> getNewCommunications() {
+        return newCommunications;
+    }
+
+    public List<CommunicationKey> getNewCommunicationKeys() {
+        return newCommunicationKeys;
     }
 }

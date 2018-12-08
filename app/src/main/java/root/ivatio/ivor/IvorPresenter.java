@@ -2,11 +2,13 @@ package root.ivatio.ivor;
 
 import android.view.View;
 
+import java.util.LinkedList;
 import java.util.List;
 
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
+import root.ivatio.util.ListsHolder;
 import root.ivatio.util.StringProcessor;
 import root.ivatio.Message;
 import root.ivatio.R;
@@ -151,5 +153,16 @@ public class IvorPresenter {
 
     public List<String> completeAction() {
         return model.resetAction();
+    }
+
+    public ListsHolder getNewElements() {
+        return ListsHolder.getBuilder()
+                .buildAnswers(model.getNewAnswers())
+                .buildCommands(new LinkedList<>())
+                .buildCommunications(model.getNewCommunications())
+                .buildCommunicationKeys(model.getNewCommunicationKeys())
+                .buildKeyWords(model.getNewKeyWords())
+                .buildQuestions(model.getNewQuestions())
+                .build();
     }
 }

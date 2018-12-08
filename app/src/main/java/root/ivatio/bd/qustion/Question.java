@@ -5,6 +5,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import root.ivatio.network.dto.PostContentDTO;
+
 @Entity
 public class Question {
     @SerializedName("id")
@@ -17,10 +19,12 @@ public class Question {
         this.content = content;
     }
 
+    public PostContentDTO toDTO() {
+        return new PostContentDTO(content);
+    }
+
     @Override
-    public boolean equals(Object obj) {
-        if (obj == null)
-            return false;
-        return content.equals(((Question)obj).content);
+    public boolean equals(Object o) {
+        return o instanceof Question && content.equals(((Question)o).content);
     }
 }

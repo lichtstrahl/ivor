@@ -5,6 +5,8 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import root.ivatio.network.dto.PostCommandDTO;
+
 @Entity
 public class Command {
     @SerializedName("id")
@@ -15,5 +17,14 @@ public class Command {
 
     public Command(String cmd) {
         this.cmd = cmd;
+    }
+
+    public PostCommandDTO toDTO() {
+        return new PostCommandDTO(cmd);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Command && cmd.equals(((Command) o).cmd);
     }
 }

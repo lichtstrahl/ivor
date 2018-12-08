@@ -8,9 +8,16 @@ public class PostComKeyDTO {
     @SerializedName("answerID")
     private long answerID;
     @SerializedName("power")
-    private int power;
+    private long power;
     @SerializedName("correct")
-    private int correct;
+    private long correct;
+
+    public PostComKeyDTO(long keyID, long answerID, long power, long correct) {
+        this.keyID = keyID;
+        this.answerID = answerID;
+        this.power = power;
+        this.correct = correct;
+    }
 
     public long getKeyID() {
         return keyID;
@@ -20,11 +27,11 @@ public class PostComKeyDTO {
         return answerID;
     }
 
-    public int getPower() {
+    public long getPower() {
         return power;
     }
 
-    public int getCorrect() {
+    public long getCorrect() {
         return correct;
     }
 }

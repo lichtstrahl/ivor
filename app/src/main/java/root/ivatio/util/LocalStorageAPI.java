@@ -41,8 +41,8 @@ public class LocalStorageAPI {
         return App.getDB().getQuestionDao().getQuestion(id);
     }
 
-    public void insertQuestion(Question q) {
-        App.getDB().getQuestionDao().insert(q);
+    public long insertQuestion(Question q) {
+        return App.getDB().getQuestionDao().insert(q);
     }
 
 
@@ -54,8 +54,8 @@ public class LocalStorageAPI {
         return App.getDB().getKeyWordDao().getWord(id);
     }
 
-    public void insertKeyWord(KeyWord word) {
-        App.getDB().getKeyWordDao().insert(word);
+    public long insertKeyWord(KeyWord word) {
+        return App.getDB().getKeyWordDao().insert(word);
     }
 
     public long insertAnswer(Answer a) {
@@ -66,12 +66,12 @@ public class LocalStorageAPI {
         return App.getDB().getAnswerDao().getAll();
     }
 
-    public void insertCommunication(Communication c) {
-        App.getDB().getCommunicationDao().insert(c);
+    public long insertCommunication(Communication c) {
+        return App.getDB().getCommunicationDao().insert(c);
     }
 
-    public void insertCommunicationKey(CommunicationKey c) {
-        App.getDB().getCommunicationKeyDao().insert(c);
+    public long insertCommunicationKey(CommunicationKey c) {
+        return App.getDB().getCommunicationKeyDao().insert(c);
     }
 
     public List<Command> getCommands() {

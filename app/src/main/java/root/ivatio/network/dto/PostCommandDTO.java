@@ -6,6 +6,10 @@ public class PostCommandDTO {
     @SerializedName("cmd")
     private String content;
 
+    public PostCommandDTO(String c) {
+        content = c;
+    }
+
     public String getContent() {
         return content;
     }

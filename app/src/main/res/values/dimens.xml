@@ -26,7 +26,7 @@
     <dimen name="stdWidthInput">250dp</dimen>
 
     <!-- list_msg_layout_user -->
-    <dimen name="cardMargin">16dp</dimen>
+    <dimen name="cardMargin">12dp</dimen>
     <dimen name="cardElevation">10dp</dimen>
     <dimen name="cardCornerRadius">10dp</dimen>
 </resources>

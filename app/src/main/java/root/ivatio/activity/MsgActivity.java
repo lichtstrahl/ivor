@@ -22,6 +22,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -197,31 +198,49 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     protected void onStop() {
         super.onStop();
         ivorPresenter.selectionCommunications();
+        ListsHolder newElements = ivorPresenter.getNewElements();
 
         List<Observable<Command>> observableCommand = new LinkedList<>();
-        for (Command cmd : App.getStorageAPI().getCommands())
-            observableCommand.add(App.getLoadAPI().postCommand(cmd));
+        for (Command cmd : App.getStorageAPI().getCommands()) {
+            observableCommand.add(
+                    newElements.getCommands().contains(cmd)
+                            ? App.getLoadAPI().insertCommand(cmd.toDTO())
+                            : App.getLoadAPI().replaceCommand(cmd));
+        }
 
         List<Observable<Answer>> observableAnswer = new LinkedList<>();
-        for (Answer a : App.getStorageAPI().getAnswers())
-            observableAnswer.add(App.getLoadAPI().postAnswer(a));
+        for (Answer a : App.getStorageAPI().getAnswers()) {
+            observableAnswer.add(newElements.getAnswers().contains(a)
+                    ? App.getLoadAPI().insertAnswer(a.toDTO())
+                    : App.getLoadAPI().replaceAnswer(a));
+        }
 
         List<Observable<Communication>> observableCommunication = new LinkedList<>();
-        for (Communication c : App.getStorageAPI().getCommunications())
-            observableCommunication.add(App.getLoadAPI().postCommunication(c));
-
+        for (Communication c : App.getStorageAPI().getCommunications()) {
+            observableCommunication.add(newElements.getCommunications().contains(c)
+                    ? App.getLoadAPI().insertCommunication(c.toDTO())
+                    : App.getLoadAPI().replaceCommunication(c));
+        }
         List<Observable<CommunicationKey>> observableCommunicationKey = new LinkedList<>();
-        for (CommunicationKey c : App.getStorageAPI().getCommunicationKeys())
-            observableCommunicationKey.add(App.getLoadAPI().postCommunicationKey(c));
+        for (CommunicationKey c : App.getStorageAPI().getCommunicationKeys()) {
+            observableCommunicationKey.add(newElements.getCommunicationKeys().contains(c)
+                    ? App.getLoadAPI().insertCommunicationKey(c.toDTO())
+                    : App.getLoadAPI().replaceCommunicationKey(c));
+        }
 
         List<Observable<KeyWord>> observableKeyWord = new LinkedList<>();
-        for (KeyWord w : App.getStorageAPI().getKeyWords())
-            observableKeyWord.add(App.getLoadAPI().postKeyWord(w));
+        for (KeyWord w : App.getStorageAPI().getKeyWords()) {
+            observableKeyWord.add(newElements.getKeyWords().contains(w)
+                    ? App.getLoadAPI().insertKeyWord(w.toDTO())
+                    : App.getLoadAPI().replaceKeyWord(w));
+        }
 
         List<Observable<Question>> observableQuestion = new LinkedList<>();
-        for (Question q : App.getStorageAPI().getQuestions())
-            observableQuestion.add(App.getLoadAPI().postQuestio(q));
-
+        for (Question q : App.getStorageAPI().getQuestions()) {
+            observableQuestion.add(newElements.getQuestions().contains(q)
+                    ? App.getLoadAPI().insertQuestion(q.toDTO())
+                    : App.getLoadAPI().replaceQuestion(q));
+        }
         Observable.combineLatest(observableAnswer, Arrays::asList)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
@@ -375,7 +394,23 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     }
 
     private void successfulPost(List list) {
-        App.logI(getString(R.string.successfulPost));
+        Object o = list.get(0);
+        String type = "undefined";
+        if (o instanceof Command)
+            type = "Command";
+        if (o instanceof Answer)
+            type = "Answer";
+        if (o instanceof  Question)
+            type = "Question";
+        if (o instanceof Communication)
+            type = "Communication";
+        if (o instanceof CommunicationKey)
+            type = "CommunicationKey";
+        if (o instanceof KeyWord)
+            type = "KeyWord";
+
+
+        App.logI(String.format(Locale.ENGLISH, "%s : type %s : size %d", getString(R.string.successfulPost), type, list.size()));
     }
 
     public void errorPost(Throwable t) {

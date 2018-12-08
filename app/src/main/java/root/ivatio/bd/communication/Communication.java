@@ -8,6 +8,7 @@ import com.google.gson.annotations.SerializedName;
 
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.qustion.Question;
+import root.ivatio.network.dto.PostComDTO;
 
 @Entity(foreignKeys = {
         @ForeignKey(entity = Question.class, parentColumns = "id", childColumns = "questionID"),
@@ -33,6 +34,10 @@ public class Communication implements root.ivatio.bd.CommunicationAPI {
         this.power = 0;
     }
 
+    public PostComDTO toDTO() {
+        return new PostComDTO(questionID, answerID, correct, power);
+    }
+
     @Override
     public int getType() {
         return COMMUNICATION;
@@ -41,5 +46,12 @@ public class Communication implements root.ivatio.bd.CommunicationAPI {
     @Override
     public long getID() {
         return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o instanceof Communication && (questionID == ((Communication) o).questionID &&
+                        answerID == ((Communication) o).answerID && correct == ((Communication) o).correct && power == ((Communication) o).power
+        );
     }
 }

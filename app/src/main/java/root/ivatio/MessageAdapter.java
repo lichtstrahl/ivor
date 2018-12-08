@@ -50,7 +50,6 @@ public class MessageAdapter extends RecyclerView.Adapter<MessageAdapter.MessageV
 
     @Override
     public void onBindViewHolder(@NonNull MessageViewHolder viewHolder, int i) {
-        App.logI("Adapter bind view: " + i);
         viewHolder.bindMessageView(i);
     }
 

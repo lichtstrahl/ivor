@@ -13,7 +13,7 @@ public interface CommunicationKeyDao {
     @Update
     void update(CommunicationKey communicationKey);
     @Insert
-    void insert(CommunicationKey communicationKey);
+    long insert(CommunicationKey communicationKey);
     @Insert
     void insert(List<CommunicationKey> communicationKeys);
     @Delete
