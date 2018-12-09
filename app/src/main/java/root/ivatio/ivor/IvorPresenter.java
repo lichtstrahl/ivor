@@ -1,5 +1,6 @@
 package root.ivatio.ivor;
 
+import android.opengl.Visibility;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -78,11 +79,11 @@ public class IvorPresenter {
         switch (curRole) {
             case USER_SEND_ANSWER_FOR_KW:
                 model.deleteLastKeyWord();
-                viewAPI.appendMessage(model.send(model.getRandomKeyWord().content));
+                viewAPI.appendMessage(model.sendRandomKeyWord());
                 break;
             case USER_SEND_ANSWER_FOR_Q:
                 model.deleteLastQuestion();
-                viewAPI.appendMessage(model.send(model.getRandomQuestion().content));
+                viewAPI.appendMessage(model.sendRandomQuestion());
                 break;
             case STD:
                 viewAPI.showMessage(R.string.deprecated);
@@ -90,6 +91,8 @@ public class IvorPresenter {
                 break;
             default:
         }
+        viewAPI.removeRating();
+        viewAPI.switchButtonDelete(View.GONE);
     }
 
     public void clickSend(MsgActivity.ROLE curRole, String request) {
@@ -150,13 +153,20 @@ public class IvorPresenter {
         viewAPI.appendMessage(model.sendRandomQuestion());
     }
 
-    public void selectionCommunications() {
+    public void selection() {
         if (model.getCountEval() > Ivor.criticalCountEval) {
             model.selection();
             model.resetCountEval();
             viewAPI.appendMessage(model.send(R.string.ivorSuccessfulSelection));
             viewAPI.showMessage(R.string.successfulSelection);
         }
+    }
+
+    public void selectionForce() {
+        model.selection();
+        model.resetCountEval();
+        viewAPI.appendMessage(model.send(R.string.ivorSuccessfulSelection));
+        viewAPI.showMessage(R.string.successfulSelection);
     }
 
     public List<String> completeAction() {

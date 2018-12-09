@@ -14,7 +14,7 @@ import root.ivatio.network.dto.PostComDTO;
         @ForeignKey(entity = Question.class, parentColumns = "id", childColumns = "questionID"),
         @ForeignKey(entity = Answer.class, parentColumns = "id", childColumns = "answerID")
 })
-public class Communication implements root.ivatio.bd.CommunicationAPI {
+public class Communication {
     @SerializedName("id")
     @PrimaryKey
     public long id;
@@ -36,16 +36,6 @@ public class Communication implements root.ivatio.bd.CommunicationAPI {
 
     public PostComDTO toDTO() {
         return new PostComDTO(questionID, answerID, correct, power);
-    }
-
-    @Override
-    public int getType() {
-        return COMMUNICATION;
-    }
-
-    @Override
-    public long getID() {
-        return id;
     }
 
     @Override

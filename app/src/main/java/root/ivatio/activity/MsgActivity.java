@@ -144,6 +144,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
         ivorPresenter.clickDelete(curRole);
+        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
     }
 
     @OnClick(R.id.buttonYes)
@@ -185,81 +186,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     protected void onStop() {
         super.onStop();
         ivorPresenter.onStop();
-//        ListsHolder newElements = ivorPresenter.getNewElements();
-//
-//        List<Observable<Command>> observableCommand = new LinkedList<>();
-//        for (Command cmd : App.getStorageAPI().getCommands()) {
-//            observableCommand.add(
-//                    newElements.getCommands().contains(cmd)
-//                            ? App.getLoadAPI().insertCommand(cmd.toDTO())
-//                            : App.getLoadAPI().replaceCommand(cmd));
-//        }
-//
-//        List<Observable<Answer>> observableAnswer = new LinkedList<>();
-//        for (Answer a : App.getStorageAPI().getAnswers()) {
-//            observableAnswer.add(
-//                    newElements.getAnswers().contains(a)
-//                            ? App.getLoadAPI().insertAnswer(a.toDTO())
-//                            : App.getLoadAPI().replaceAnswer(a));
-//        }
-//
-//        List<Observable<Communication>> observableCommunication = new LinkedList<>();
-//        for (Communication c : App.getStorageAPI().getCommunications()) {
-//            observableCommunication.add(newElements.getCommunications().contains(c)
-//                    ? App.getLoadAPI().insertCommunication(c.toDTO())
-//                    : App.getLoadAPI().replaceCommunication(c));
-//        }
-//        List<Observable<CommunicationKey>> observableCommunicationKey = new LinkedList<>();
-//        for (CommunicationKey c : App.getStorageAPI().getCommunicationKeys()) {
-//            observableCommunicationKey.add(newElements.getCommunicationKeys().contains(c)
-//                    ? App.getLoadAPI().insertCommunicationKey(c.toDTO())
-//                    : App.getLoadAPI().replaceCommunicationKey(c));
-//        }
-//
-//        List<Observable<KeyWord>> observableKeyWord = new LinkedList<>();
-//        for (KeyWord w : App.getStorageAPI().getKeyWords()) {
-//            observableKeyWord.add(newElements.getKeyWords().contains(w)
-//                    ? App.getLoadAPI().insertKeyWord(w.toDTO())
-//                    : App.getLoadAPI().replaceKeyWord(w));
-//        }
-//
-//        List<Observable<Question>> observableQuestion = new LinkedList<>();
-//        for (Question q : App.getStorageAPI().getQuestions()) {
-//            observableQuestion.add(newElements.getQuestions().contains(q)
-//                    ? App.getLoadAPI().insertQuestion(q.toDTO())
-//                    : App.getLoadAPI().replaceQuestion(q));
-//        }
-//        // Перебираем сначала в пришедшем списке все Answer-ы, которые будут добавляться.
-//        // Далее для каждого такого Answer находим его коммуницации
-//        Observable.combineLatest(observableAnswer, Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
-//
-//        Observable.combineLatest(observableCommand, Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
-//
-//        Observable.combineLatest(observableCommunication, Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
-//
-//        Observable.combineLatest(observableCommunicationKey, Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
-//
-//        Observable.combineLatest(observableKeyWord, Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
-//
-//        Observable.combineLatest(observableQuestion,Arrays::asList)
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(postObserver);
         getObserver.unsubscribe();
     }
 
@@ -292,7 +218,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
                 ivorPresenter.setMenuModeIvorAskingQ();
                 break;
             case R.id.menuSelection:
-                ivorPresenter.selectionCommunications();
+                ivorPresenter.selectionForce();
                 break;
             default:
         }

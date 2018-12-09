@@ -4,6 +4,7 @@ package root.ivatio.ivor;
 // Общение и так далее
 
 import android.content.res.Resources;
+import android.support.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -19,7 +20,6 @@ import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
-import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.command.Command;
 import root.ivatio.bd.communication.Communication;
@@ -29,6 +29,7 @@ import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
 import root.ivatio.network.NetworkObserver;
+import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StringProcessor;
 
@@ -39,7 +40,7 @@ public class Ivor extends User {
     private List<KeyWord> memoryWords;
     private List<Question> memoryQuestions;
     private List<Answer>   memoryAnswers;
-    private List<CommunicationAPI> memoryCommunicationAPIS;
+    private List<Object> memoryCommunicationAPIS;
     private List<Action> actions;
     private int countEval;
     private Random random;
@@ -53,6 +54,7 @@ public class Ivor extends User {
     private List<KeyWord> newKeyWords;
     private List<Communication> newCommunications;
     private List<CommunicationKey> newCommunicationKeys;
+    // Наблюдатели за сетевыми запросами
     private NetworkObserver<Question> insertQuestionObserver;
     private NetworkObserver<Answer> insertAnswerObserver;
     private NetworkObserver<KeyWord> insertKeyWordObserver;
@@ -60,6 +62,11 @@ public class Ivor extends User {
     private NetworkObserver<CommunicationKey> insertCommunicationKeyObserver;
     private NetworkObserver<Communication> replaceCommunicationObserver;
     private NetworkObserver<CommunicationKey> replaceCommunicationKeyObserver;
+    private NetworkObserver<EmptyDTO> deleteKeyWordObserver;
+    private NetworkObserver<EmptyDTO> deleteQuestionObserver;
+    private NetworkObserver<EmptyDTO> deleteCommunicationObserver;
+    private NetworkObserver<EmptyDTO> deleteCommunicationKeyObserver;
+    private NetworkObserver<EmptyDTO> selectionObserver;
     // Списки для отображения ID с местных значений в серверные
     private List<HolderID> questionHolderID;
     private List<HolderID> keyWordHolderID;
@@ -95,6 +102,11 @@ public class Ivor extends User {
         this.communicationKeyHolderID = new LinkedList<>();
         this.replaceCommunicationObserver = new NetworkObserver<>(this::successfulReplaceCommunication, this::errorNetwork);
         this.replaceCommunicationKeyObserver = new NetworkObserver<>(this::successfulReplaceCommunicationKey, this::errorNetwork);
+        this.deleteKeyWordObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
+        this.deleteQuestionObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
+        this.deleteCommunicationObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
+        this.deleteCommunicationKeyObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
+        this.selectionObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
     }
 
     public static String getName() {
@@ -197,7 +209,7 @@ public class Ivor extends User {
         memoryWords.add(kw);
         return this;
     }
-    private Ivor memory(CommunicationAPI api) {
+    private Ivor memory(Object api) {
         memoryCommunicationAPIS.add(api);
         return this;
     }
@@ -307,30 +319,48 @@ public class Ivor extends User {
         return memoryAnswers.get(memoryAnswers.size()-1);
     }
 
-    private CommunicationAPI getLastCommunication() {
+    private Object getLastCommunication() {
         if (memoryCommunicationAPIS.isEmpty())
             return null;
         return memoryCommunicationAPIS.get(memoryCommunicationAPIS.size()-1);
     }
 
+    @NonNull
     Message sendRandomKeyWord() {
         KeyWord r = getRandomKeyWord();
+        if (r == null)
+            return sendEmptyMessage();
         memoryWords.add(r);
         return new Message(null, r.content);
     }
+
+    private Message sendEmptyMessage() {
+        return new Message(null, "");
+    }
+
+    @Nullable
     KeyWord getRandomKeyWord() {
         long[] allID = storageAPI.getKeyWordsID();
+        if (allID.length == 0)
+            return null;
         long anyID = allID[random.nextInt(allID.length)];
         return storageAPI.getKeyWord(anyID);
     }
 
+    @NonNull
     Message sendRandomQuestion() {
         Question r = getRandomQuestion();
+        if (r == null)
+            return sendEmptyMessage();
         memoryQuestions.add(r);
         return new Message(null, r.content);
     }
+
+    @Nullable
     Question getRandomQuestion() {
         long[] allID = storageAPI.getQuestionsID();
+        if (allID.length == 0)
+            return null;
         long anyID = allID[random.nextInt(allID.length)];
         return storageAPI.getQuestion(anyID);
     }
@@ -342,21 +372,83 @@ public class Ivor extends User {
         return processingQuestion;
     }
     void deleteLastKeyWord() {
-        storageAPI.deleteKeyWord(getLastKeyWord());
+        KeyWord word = getLastKeyWord();
+        if (word == null)
+            return;
+        storageAPI.deleteKeyWord(word);
+
+        if (newKeyWords.contains(word)) {
+            for (HolderID holder : keyWordHolderID) {
+                if (holder.selfID == word.id) {
+                    word.id = holder.serverID;
+                    break;
+                }
+            }
+        }
+        App.getLoadAPI().deleteKeyWord(word.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(deleteKeyWordObserver);
     }
     void deleteLastQuestion() {
-        storageAPI.deleteQuestion(getLastQuestion());
+        Question question = getLastQuestion();
+        if (question == null)
+            return;
+        storageAPI.deleteQuestion(question);
+
+        if (newQuestions.contains(question)) {
+            for (HolderID holder : questionHolderID) {
+                if (holder.selfID == question.id) {
+                    question.id = holder.serverID;
+                    break;
+                }
+            }
+        }
+        App.getLoadAPI().deleteQuestion(question.id)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(deleteQuestionObserver);
     }
 
     /** Удаление не только Communication, но и CommunicationKey, если она была последней*/
     void deleteLastCommunication() {
-        CommunicationAPI lastCom = getLastCommunication();
-        if (lastCom == null)
+        Object o = getLastCommunication();
+        if (o == null)
             return;
-        if(lastCom.getType() == CommunicationAPI.COMMUNICATION)
-            storageAPI.deleteCommunication(lastCom.getID());
-        else
-            storageAPI.deleteCommunicationKey(lastCom.getID());
+        if(o instanceof Communication) {
+            Communication c = (Communication)o;
+            storageAPI.deleteCommunication(c.id);
+
+            if (newCommunications.contains(c)) {
+                for (HolderID holder : communicationHolderID) {
+                    if (holder.selfID == c.id) {
+                        c.id = holder.serverID;
+                        break;
+                    }
+                }
+            }
+            App.getLoadAPI().deleteCommunication(c.id)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deleteCommunicationObserver);
+        } else {
+            CommunicationKey c = (CommunicationKey)o;
+            storageAPI.deleteCommunicationKey(c.id);
+
+            if (newCommunicationKeys.contains(c)) {
+                for (HolderID holder : communicationKeyHolderID) {
+                    if (holder.selfID == c.id) {
+                        c.id = holder.serverID;
+                        break;
+                    }
+                }
+            }
+
+            App.getLoadAPI().deleteCommunicationKey(c.id)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(deleteCommunicationKeyObserver);
+        }
     }
 
     void appendNewAnswerForLastKW(Answer answer) {
@@ -423,6 +515,10 @@ public class Ivor extends User {
     public void selection() {
         storageAPI.selectionCommunication();
         storageAPI.selectionCommunicationKey();
+        App.getLoadAPI().selection()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(selectionObserver);
     }
 
     List<Question> getNewQuestions() {
@@ -455,6 +551,13 @@ public class Ivor extends User {
         insertKeyWordObserver.unsubscribe();
         insertCommunicationObserver.unsubscribe();
         insertCommunicationKeyObserver.unsubscribe();
+        deleteCommunicationKeyObserver.unsubscribe();
+        deleteCommunicationObserver.unsubscribe();
+        deleteKeyWordObserver.unsubscribe();
+        deleteQuestionObserver.unsubscribe();
+        replaceCommunicationKeyObserver.unsubscribe();
+        replaceCommunicationObserver.unsubscribe();
+        selectionObserver.unsubscribe();
     }
 
     private void successfulInsertQuestion(Question question) {
@@ -575,6 +678,10 @@ public class Ivor extends User {
 
     private void successfulReplaceCommunication(Communication communication) {
         App.logI(resources.getString(R.string.successfulUpdate));
+    }
+
+    private void successfulNetwork(Object o) {
+        App.logI(resources.getString(R.string.successfulPost));
     }
 
     private void errorNetwork(Throwable t) {

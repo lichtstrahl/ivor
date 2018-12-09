@@ -6,7 +6,6 @@ import android.arch.persistence.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
-import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.network.dto.PostComKeyDTO;
@@ -15,7 +14,7 @@ import root.ivatio.network.dto.PostComKeyDTO;
         @ForeignKey(entity = KeyWord.class, parentColumns = "id", childColumns = "keyID"),
         @ForeignKey(entity = Answer.class, parentColumns = "id", childColumns = "answerID")
 })
-public class CommunicationKey implements CommunicationAPI {
+public class CommunicationKey {
     @SerializedName("id")
     @PrimaryKey
     public long id;
@@ -37,16 +36,6 @@ public class CommunicationKey implements CommunicationAPI {
 
     public PostComKeyDTO toDTO() {
         return new PostComKeyDTO(keyID, answerID, power, correct);
-    }
-
-    @Override
-    public int getType() {
-        return COMMUNICATION_KEY;
-    }
-
-    @Override
-    public long getID() {
-        return id;
     }
 
     @Override
