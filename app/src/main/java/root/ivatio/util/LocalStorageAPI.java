@@ -3,28 +3,14 @@ package root.ivatio.util;
 import java.util.List;
 
 import root.ivatio.App;
-import root.ivatio.bd.command.Command;
 import root.ivatio.bd.answer.Answer;
+import root.ivatio.bd.command.Command;
 import root.ivatio.bd.communication.Communication;
 import root.ivatio.bd.communication_key.CommunicationKey;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
-import root.ivatio.bd.users.User;
 
 public class LocalStorageAPI {
-
-    public void insertUser(User newUser) {
-        App.getDB().getUserDao().insert(newUser);
-    }
-
-    public User getUser(long id) {
-        return App.getDB().getUserDao().getUser(id);
-    }
-
-    public User getUser(String login, String pass) {
-        return App.getDB().getUserDao().getUser(login, pass);
-    }
-
     public void selectionCommunication() {
         App.getDB().getCommunicationDao().magicalDelete();
     }
@@ -42,6 +28,7 @@ public class LocalStorageAPI {
     }
 
     public long insertQuestion(Question q) {
+        q.id = App.getDB().getQuestionDao().getMaxID() + 1;
         return App.getDB().getQuestionDao().insert(q);
     }
 
@@ -55,10 +42,12 @@ public class LocalStorageAPI {
     }
 
     public long insertKeyWord(KeyWord word) {
+        word.id = App.getDB().getKeyWordDao().getMaxID() + 1;
         return App.getDB().getKeyWordDao().insert(word);
     }
 
     public long insertAnswer(Answer a) {
+        a.id = App.getDB().getAnswerDao().getMaxID() + 1;
         return App.getDB().getAnswerDao().insert(a);
     }
 
@@ -67,10 +56,12 @@ public class LocalStorageAPI {
     }
 
     public long insertCommunication(Communication c) {
+        c.id = App.getDB().getCommunicationDao().getMaxID() + 1;
         return App.getDB().getCommunicationDao().insert(c);
     }
 
     public long insertCommunicationKey(CommunicationKey c) {
+        c.id = App.getDB().getCommunicationKeyDao().getMaxID() + 1;
         return App.getDB().getCommunicationKeyDao().insert(c);
     }
 

@@ -361,7 +361,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         App.getDB().getKeyWordDao().deleteAll();
         App.getDB().getQuestionDao().deleteAll();
 
-        // Insert new data
+        // Insert new data. Ни в коем случае не менять на LocalStorageAPI. Главное - id должны оставаться серверными.
         App.getDB().getAnswerDao().insert(listsHolder.getAnswers());
         App.getDB().getCommandDao().insert(listsHolder.getCommands());
         App.getDB().getKeyWordDao().insert(listsHolder.getKeyWords());
