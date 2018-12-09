@@ -60,4 +60,7 @@ public interface CommunicationKeyDao {
 
     @Query("DELETE FROM CommunicationKey")
     void deleteAll();
+
+    @Query("SELECT * FROM CommunicationKey WHERE answerID = :aID")
+    List<CommunicationKey> getCommunicationKeyForAnswer(long aID);
 }

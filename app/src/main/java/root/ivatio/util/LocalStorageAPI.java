@@ -102,6 +102,10 @@ public class LocalStorageAPI {
         return App.getDB().getCommunicationKeyDao().getCommunicationKey(wID, aID);
     }
 
+    public List<CommunicationKey> getCommunicationKeysForAnswer(long aID) {
+        return App.getDB().getCommunicationKeyDao().getCommunicationKeyForAnswer(aID);
+    }
+
     public List<CommunicationKey> getCommunicationKeys() {
         return App.getDB().getCommunicationKeyDao().getAll();
     }

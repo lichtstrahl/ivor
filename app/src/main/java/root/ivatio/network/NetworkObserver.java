@@ -48,6 +48,6 @@ public class NetworkObserver<T> implements Observer<T> {
     }
 
     public void unsubscribe() {
-        disposable.dispose();
+        if (disposable != null) disposable.dispose();
     }
 }

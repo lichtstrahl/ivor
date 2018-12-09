@@ -75,7 +75,7 @@ public class App extends Application {
         super.onCreate();
         db = Room.databaseBuilder(this, AppDatabase.class, nameDB)
                 .allowMainThreadQueries()
-                .addMigrations(migration12, migration21)
+                .fallbackToDestructiveMigration()
                 .build();
 
         OkHttpClient client = new OkHttpClient.Builder()
@@ -124,6 +124,6 @@ public class App extends Application {
     }
 
     public static void logE(String msg) {
-        Log.w(BuildConfig.GLOBAL_TAG, msg);
+        Log.e(BuildConfig.GLOBAL_TAG, msg);
     }
 }

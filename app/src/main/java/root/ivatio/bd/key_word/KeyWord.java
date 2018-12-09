@@ -13,7 +13,7 @@ import root.ivatio.network.dto.PostContentDTO;
 @Entity
 public class KeyWord {
     @SerializedName("id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long id;
     @SerializedName("content")
     @NonNull

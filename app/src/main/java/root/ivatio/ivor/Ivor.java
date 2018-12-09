@@ -14,15 +14,16 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.Observable;
 import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
-import root.ivatio.bd.command.Command;
 import root.ivatio.bd.CommunicationAPI;
 import root.ivatio.bd.answer.Answer;
+import root.ivatio.bd.command.Command;
 import root.ivatio.bd.communication.Communication;
 import root.ivatio.bd.communication_key.CommunicationKey;
 import root.ivatio.bd.key_word.KeyWord;
@@ -58,6 +59,9 @@ public class Ivor extends User {
     private NetworkObserver<KeyWord> insertKeyWordObserver;
     private NetworkObserver<Communication> insertCommunicationObserver;
     private NetworkObserver<CommunicationKey> insertCommunicationKeyObserver;
+    // Списки для отображения ID с местных значений в серверные
+    private List<HolderID> questionHolderID;
+    private List<HolderID> keyWordHolderID;
 
 
     public Ivor(Resources resources, Action ... actions) {
@@ -82,6 +86,8 @@ public class Ivor extends User {
         this.insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorInsert);
         this.insertCommunicationObserver = new NetworkObserver<>(this::successfulInsertCommunication, this::errorInsert);
         this.insertCommunicationKeyObserver = new NetworkObserver<>(this::successfulInsertCommunicationKey, this::errorInsert);
+        this.questionHolderID = new LinkedList<>();
+        this.keyWordHolderID = new LinkedList<>();
     }
 
     public static String getName() {
@@ -354,6 +360,7 @@ public class Ivor extends User {
         List<KeyWord> keyWords = storageAPI.getKeyWords();
         if (!keyWords.contains(keyWord)) {
             keyWord.id = storageAPI.insertKeyWord(keyWord);
+            newKeyWords.add(keyWord);
             App.getLoadAPI().insertKeyWord(keyWord.toDTO())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -366,6 +373,7 @@ public class Ivor extends User {
         List<Question> questions = storageAPI.getQuestions();
         if (!questions.contains(question)) {
             question.id = storageAPI.insertQuestion(question);
+            newQuestions.add(question);
             App.getLoadAPI().insertQuestion(question.toDTO())
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -420,30 +428,80 @@ public class Ivor extends User {
         long serverID = question.id;
         long oldID = -1;
         for (Question q : newQuestions)
-            if (q.content.equals(question.content))
+            if (q.content.equals(question.content)) {
                 oldID = q.id;
-
+                q.id = serverID;
+        }
+        questionHolderID.add(new HolderID(oldID, serverID));
         App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
                 resources.getString(R.string.successfulPost), "Question", oldID, serverID));
     }
 
+    // Если был добавлен Answer, значит вместе с ним нужно добавить либо один Communication, либо один CommunicationKey
     private void successfulInsertAnswer(Answer answer) {
         long serverID = answer.id;
         long oldID = -1;
         for (Answer a : newAnswers)
-            if (a.content.equals(answer.content))
+            if (a.content.equals(answer.content)) {
                 oldID = a.id;
+                a.id = serverID;
+            }
 
         App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
                 resources.getString(R.string.successfulPost), "Answer", oldID, serverID));
+
+        // Ищем (по старому id) какие коммуникации соответствуют нашему ответу. Она будет одна (либо Com, либо ComKey)
+        List<Communication> coms = App.getStorageAPI().getCommunicationsForAnswer(oldID);
+        List<CommunicationKey> comKeys = App.getStorageAPI().getCommunicationKeysForAnswer(oldID);
+
+
+        if (!coms.isEmpty()) { // Если нужно добавить Communication, но сначала изменить answerID и questionID
+            Communication c = coms.get(0);
+            c.answerID = serverID;
+            // Ищем, в какой серверный ID ревращается местный ID нужного нам вопроса
+            for (HolderID holder : questionHolderID) {
+                if (holder.selfID == c.questionID) {
+                    c.questionID = holder.serverID;
+                    App.logI(String.format(Locale.ENGLISH, "Успешная трансформация для Communication qID: %d", c.questionID));
+                    break;
+                }
+            }
+            // Отправляем обновленный Communication на сервер
+            App.getLoadAPI().insertCommunication(c.toDTO())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(insertCommunicationObserver);
+        } else if (!comKeys.isEmpty()) { // Если нужно добавить CommunicationKey, но сначала изменить answerID и keyID
+            CommunicationKey c = comKeys.get(0);
+            c.answerID = serverID;
+            // Ищем, в какой серверный ID превращаетс местный ID нужного нам ключевого слова
+            for (HolderID holder : keyWordHolderID) {
+                if (holder.selfID == c.keyID) {
+                    c.keyID = holder.serverID;
+                    App.logI(String.format(Locale.ENGLISH, "Успешная трансформация для CommunicationKey keyID: %d", c.keyID));
+                    break;
+                }
+            }
+            // Отправляем обновленный CommunicationKey на сервер
+            App.getLoadAPI().insertCommunicationKey(c.toDTO())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(insertCommunicationKeyObserver);
+        } else {    // Вообще не удалось найти таких коммуникаций
+            App.logW("Не удалось найти коммуникаций, соответствующих данному ответу.");
+        }
     }
 
     private void successfulInsertKeyWord(KeyWord word) {
         long serverID = word.id;
         long oldID = -1;
         for (KeyWord w : newKeyWords)
-            if (w.content.equals(word.content))
+            if (w.content.equals(word.content)) {
                 oldID = w.id;
+                w.id = serverID;
+        }
+        keyWordHolderID.add(new HolderID(oldID, serverID));
+
         App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
                 resources.getString(R.string.successfulPost), "KeyWord", oldID, serverID));
     }
@@ -459,5 +517,15 @@ public class Ivor extends User {
 
     private void errorInsert(Throwable t) {
         App.logE(t.getMessage());
+    }
+
+    class HolderID {
+        private long selfID;
+        private long serverID;
+
+        HolderID(long i0, long i1) {
+            selfID = i0;
+            serverID = i1;
+        }
     }
 }

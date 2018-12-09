@@ -10,7 +10,7 @@ import root.ivatio.network.dto.PostCommandDTO;
 @Entity
 public class Command {
     @SerializedName("id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long id;
     @SerializedName("cmd")
     public String cmd;

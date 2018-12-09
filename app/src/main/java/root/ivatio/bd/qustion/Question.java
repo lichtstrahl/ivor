@@ -10,7 +10,7 @@ import root.ivatio.network.dto.PostContentDTO;
 @Entity
 public class Question {
     @SerializedName("id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long id;
     @SerializedName("content")
     public String content;

@@ -363,10 +363,10 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         // Insert new data
         App.getDB().getAnswerDao().insert(listsHolder.getAnswers());
         App.getDB().getCommandDao().insert(listsHolder.getCommands());
-        App.getDB().getCommunicationDao().insert(listsHolder.getCommunications());
-        App.getDB().getCommunicationKeyDao().insert(listsHolder.getCommunicationKeys());
         App.getDB().getKeyWordDao().insert(listsHolder.getKeyWords());
         App.getDB().getQuestionDao().insert(listsHolder.getQuestions());
+        App.getDB().getCommunicationDao().insert(listsHolder.getCommunications());
+        App.getDB().getCommunicationKeyDao().insert(listsHolder.getCommunicationKeys());
 
         Toast.makeText(this, R.string.successfulLoading, Toast.LENGTH_SHORT).show();
         progressLoad.setVisibility(View.GONE);

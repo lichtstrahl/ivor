@@ -16,7 +16,7 @@ import root.ivatio.network.dto.PostComDTO;
 })
 public class Communication implements root.ivatio.bd.CommunicationAPI {
     @SerializedName("id")
-    @PrimaryKey(autoGenerate = true)
+    @PrimaryKey
     public long id;
     @SerializedName("questionID")
     public long questionID;
