@@ -5,6 +5,7 @@ import android.view.View;
 import java.util.LinkedList;
 import java.util.List;
 
+import root.ivatio.App;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
@@ -29,6 +30,8 @@ public class IvorPresenter {
     }
 
     public void setMenuModeIvorAskingKW() {
+        if (App.getStorageAPI().getKeyWords().isEmpty())
+            return;
         viewAPI.setRole(MsgActivity.ROLE.USER_SEND_ANSWER_FOR_KW);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewAnswerForKW));
         viewAPI.appendMessage(model.sendRandomKeyWord());
@@ -45,6 +48,8 @@ public class IvorPresenter {
         viewAPI.switchButtonDelete(View.GONE);
     }
     public void setMenuModeIvorAskingQ() {
+        if (App.getStorageAPI().getQuestions().isEmpty())
+            return;
         viewAPI.setRole(MsgActivity.ROLE.USER_SEND_ANSWER_FOR_Q);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewAnswerForQ));
         viewAPI.appendMessage(model.sendRandomQuestion());
@@ -52,8 +57,11 @@ public class IvorPresenter {
     }
 
     public void onStop() {
-        if (model.getCountEval() > Ivor.criticalCountEval)
+        if (model.getCountEval() > Ivor.criticalCountEval) {
             model.selection();
+        }
+        model.insertCommunication();
+        model.unsubscribe();
     }
 
     public void clickEval(int eval) {
@@ -165,4 +173,5 @@ public class IvorPresenter {
                 .buildQuestions(model.getNewQuestions())
                 .build();
     }
+
 }

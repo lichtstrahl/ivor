@@ -17,12 +17,9 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -34,12 +31,6 @@ import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
-import root.ivatio.bd.answer.Answer;
-import root.ivatio.bd.command.Command;
-import root.ivatio.bd.communication.Communication;
-import root.ivatio.bd.communication_key.CommunicationKey;
-import root.ivatio.bd.key_word.KeyWord;
-import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.Ivor;
 import root.ivatio.ivor.IvorPresenter;
@@ -57,7 +48,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
     private NetworkObserver<ListsHolder> getObserver;
-    private NetworkObserver<List> postObserver;
     @BindView(R.id.list)
     RecyclerView listView;
     MessageAdapter messages;
@@ -73,8 +63,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     ImageButton buttonDelete;
     @BindView(R.id.buttonSend)
     ImageButton buttonSend;
-
-
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -136,7 +124,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         setTitle(user.login + ", " + user.realName);
 
         getObserver = new NetworkObserver<>(this::successfulLoad, this::errorLoad);
-        postObserver = new NetworkObserver<>(this::successfulPost, this::errorPost);
     }
 
     public static void start(Context context, User user) {
@@ -197,7 +184,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @Override
     protected void onStop() {
         super.onStop();
-        ivorPresenter.selectionCommunications();
+        ivorPresenter.onStop();
 //        ListsHolder newElements = ivorPresenter.getNewElements();
 //
 //        List<Observable<Command>> observableCommand = new LinkedList<>();
@@ -273,7 +260,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
 //                .subscribeOn(Schedulers.io())
 //                .observeOn(AndroidSchedulers.mainThread())
 //                .subscribe(postObserver);
-
         getObserver.unsubscribe();
     }
 
@@ -394,30 +380,5 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         progressLoad.setVisibility(View.GONE);
         inputText.setVisibility(View.VISIBLE);
         buttonSend.setVisibility(View.VISIBLE);
-    }
-
-    private void successfulPost(List list) {
-        Object o = list.get(0);
-        String type = "undefined";
-        if (o instanceof Command)
-            type = "Command";
-        if (o instanceof Answer)
-            type = "Answer";
-        if (o instanceof  Question)
-            type = "Question";
-        if (o instanceof Communication)
-            type = "Communication";
-        if (o instanceof CommunicationKey)
-            type = "CommunicationKey";
-        if (o instanceof KeyWord)
-            type = "KeyWord";
-
-
-        App.logI(String.format(Locale.ENGLISH, "%s : type %s : size %d", getString(R.string.successfulPost), type, list.size()));
-    }
-
-    public void errorPost(Throwable t) {
-        App.logE(t.getMessage());
-        App.logW(getString(R.string.errorPost));
     }
 }

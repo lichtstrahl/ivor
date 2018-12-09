@@ -9,10 +9,14 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Locale;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.Scheduler;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
@@ -25,6 +29,7 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
+import root.ivatio.network.NetworkObserver;
 import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StringProcessor;
 
@@ -48,6 +53,12 @@ public class Ivor extends User {
     private List<KeyWord> newKeyWords;
     private List<Communication> newCommunications;
     private List<CommunicationKey> newCommunicationKeys;
+    private NetworkObserver<Question> insertQuestionObserver;
+    private NetworkObserver<Answer> insertAnswerObserver;
+    private NetworkObserver<KeyWord> insertKeyWordObserver;
+    private NetworkObserver<Communication> insertCommunicationObserver;
+    private NetworkObserver<CommunicationKey> insertCommunicationKeyObserver;
+
 
     public Ivor(Resources resources, Action ... actions) {
         this.id = Long.valueOf(-1);
@@ -66,6 +77,11 @@ public class Ivor extends User {
         this.newKeyWords = new LinkedList<>();
         this.newCommunications = new LinkedList<>();
         this.newCommunicationKeys = new LinkedList<>();
+        this.insertQuestionObserver = new NetworkObserver<>(this::successfulInsertQuestion, this::errorInsert);
+        this.insertAnswerObserver = new NetworkObserver<>(this::successfulInsertAnswer, this::errorInsert);
+        this.insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorInsert);
+        this.insertCommunicationObserver = new NetworkObserver<>(this::successfulInsertCommunication, this::errorInsert);
+        this.insertCommunicationKeyObserver = new NetworkObserver<>(this::successfulInsertCommunicationKey, this::errorInsert);
     }
 
     public static String getName() {
@@ -299,28 +315,49 @@ public class Ivor extends User {
     void appendNewAnswerForLastKW(Answer answer) {
         answer.id = storageAPI.insertAnswer(answer);
         newAnswers.add(answer);
+        App.getLoadAPI().insertAnswer(answer.toDTO())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(insertAnswerObserver);
+
         KeyWord lastKeyWord = getLastKeyWord();
         if (lastKeyWord == null)
             return;
         CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answer.id);
         comKey.id = storageAPI.insertCommunicationKey(comKey);
         newCommunicationKeys.add(comKey);
+//        App.getLoadAPI().insertCommunicationKey(comKey.toDTO())
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(insertCommunicationKeyObserver);
     }
     void appendNewAnswerForLastQ(Answer answer) {
         answer.id = storageAPI.insertAnswer(answer);
         newAnswers.add(answer);
+        App.getLoadAPI().insertAnswer(answer.toDTO())
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(insertAnswerObserver);
+
         Question lastQuestion = getLastQuestion();
         if (lastQuestion == null)
             return;
         Communication communication = new Communication(lastQuestion.id, answer.id);
         communication.id = storageAPI.insertCommunication(communication);
         newCommunications.add(communication);
+//        App.getLoadAPI().insertCommunication(communication.toDTO())
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(insertCommunicationObserver);
     }
     boolean appendNewKeyWord(KeyWord keyWord) {
         List<KeyWord> keyWords = storageAPI.getKeyWords();
         if (!keyWords.contains(keyWord)) {
             keyWord.id = storageAPI.insertKeyWord(keyWord);
-            newKeyWords.add(keyWord);
+            App.getLoadAPI().insertKeyWord(keyWord.toDTO())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(insertKeyWordObserver);
             return  true;
         }
         return false;
@@ -329,7 +366,10 @@ public class Ivor extends User {
         List<Question> questions = storageAPI.getQuestions();
         if (!questions.contains(question)) {
             question.id = storageAPI.insertQuestion(question);
-            newQuestions.add(question);
+            App.getLoadAPI().insertQuestion(question.toDTO())
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(insertQuestionObserver);
             return true;
         }
         return false;
@@ -362,5 +402,62 @@ public class Ivor extends User {
 
     public List<CommunicationKey> getNewCommunicationKeys() {
         return newCommunicationKeys;
+    }
+
+    public void insertCommunication() {
+
+    }
+
+    public void unsubscribe() {
+        insertQuestionObserver.unsubscribe();
+        insertAnswerObserver.unsubscribe();
+        insertKeyWordObserver.unsubscribe();
+        insertCommunicationObserver.unsubscribe();
+        insertCommunicationKeyObserver.unsubscribe();
+    }
+
+    private void successfulInsertQuestion(Question question) {
+        long serverID = question.id;
+        long oldID = -1;
+        for (Question q : newQuestions)
+            if (q.content.equals(question.content))
+                oldID = q.id;
+
+        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
+                resources.getString(R.string.successfulPost), "Question", oldID, serverID));
+    }
+
+    private void successfulInsertAnswer(Answer answer) {
+        long serverID = answer.id;
+        long oldID = -1;
+        for (Answer a : newAnswers)
+            if (a.content.equals(answer.content))
+                oldID = a.id;
+
+        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
+                resources.getString(R.string.successfulPost), "Answer", oldID, serverID));
+    }
+
+    private void successfulInsertKeyWord(KeyWord word) {
+        long serverID = word.id;
+        long oldID = -1;
+        for (KeyWord w : newKeyWords)
+            if (w.content.equals(word.content))
+                oldID = w.id;
+        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
+                resources.getString(R.string.successfulPost), "KeyWord", oldID, serverID));
+    }
+
+    private void successfulInsertCommunication(Communication c) {
+        App.logI(resources.getString(R.string.successfulPost) + ": Communication : id = " + c.id);
+    }
+
+    private void successfulInsertCommunicationKey(CommunicationKey c) {
+        App.logI(resources.getString(R.string.successfulPost) + ": CommunicationKey : id = " + c.id);
+
+    }
+
+    private void errorInsert(Throwable t) {
+        App.logE(t.getMessage());
     }
 }
