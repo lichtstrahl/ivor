@@ -29,7 +29,7 @@ import root.ivatio.bd.users.UserDao;
         KeyWord.class,
         CommunicationKey.class,
         Command.class},
-        version = 2,
+        version = 1,
         exportSchema = false)
 public abstract class AppDatabase extends RoomDatabase {
 //    public abstract

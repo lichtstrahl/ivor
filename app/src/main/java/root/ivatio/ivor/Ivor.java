@@ -14,8 +14,6 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
-import io.reactivex.Observable;
-import io.reactivex.Scheduler;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
@@ -35,6 +33,7 @@ import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StringProcessor;
 
 public class Ivor extends User {
+    private static final String name = "Ivor";
     public static final int criticalCountEval = 50;
     private Resources resources;
     private List<KeyWord> memoryWords;
@@ -59,9 +58,13 @@ public class Ivor extends User {
     private NetworkObserver<KeyWord> insertKeyWordObserver;
     private NetworkObserver<Communication> insertCommunicationObserver;
     private NetworkObserver<CommunicationKey> insertCommunicationKeyObserver;
+    private NetworkObserver<Communication> replaceCommunicationObserver;
+    private NetworkObserver<CommunicationKey> replaceCommunicationKeyObserver;
     // Списки для отображения ID с местных значений в серверные
     private List<HolderID> questionHolderID;
     private List<HolderID> keyWordHolderID;
+    private List<HolderID> communicationHolderID;
+    private List<HolderID> communicationKeyHolderID;
 
 
     public Ivor(Resources resources, Action ... actions) {
@@ -81,17 +84,21 @@ public class Ivor extends User {
         this.newKeyWords = new LinkedList<>();
         this.newCommunications = new LinkedList<>();
         this.newCommunicationKeys = new LinkedList<>();
-        this.insertQuestionObserver = new NetworkObserver<>(this::successfulInsertQuestion, this::errorInsert);
-        this.insertAnswerObserver = new NetworkObserver<>(this::successfulInsertAnswer, this::errorInsert);
-        this.insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorInsert);
-        this.insertCommunicationObserver = new NetworkObserver<>(this::successfulInsertCommunication, this::errorInsert);
-        this.insertCommunicationKeyObserver = new NetworkObserver<>(this::successfulInsertCommunicationKey, this::errorInsert);
+        this.insertQuestionObserver = new NetworkObserver<>(this::successfulInsertQuestion, this::errorNetwork);
+        this.insertAnswerObserver = new NetworkObserver<>(this::successfulInsertAnswer, this::errorNetwork);
+        this.insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorNetwork);
+        this.insertCommunicationObserver = new NetworkObserver<>(this::successfulInsertCommunication, this::errorNetwork);
+        this.insertCommunicationKeyObserver = new NetworkObserver<>(this::successfulInsertCommunicationKey, this::errorNetwork);
         this.questionHolderID = new LinkedList<>();
         this.keyWordHolderID = new LinkedList<>();
+        this.communicationHolderID = new LinkedList<>();
+        this.communicationKeyHolderID = new LinkedList<>();
+        this.replaceCommunicationObserver = new NetworkObserver<>(this::successfulReplaceCommunication, this::errorNetwork);
+        this.replaceCommunicationKeyObserver = new NetworkObserver<>(this::successfulReplaceCommunicationKey, this::errorNetwork);
     }
 
     public static String getName() {
-        return "Ivor";
+        return name;
     }
 
     private String processingMessage(String message) {
@@ -211,11 +218,11 @@ public class Ivor extends User {
     }
 
 
-    public int getCountEval() {
+    int getCountEval() {
         return countEval;
     }
 
-    public List<String> resetAction() {
+    List<String> resetAction() {
         List<String> res = curAction.getParam();
         curAction = null;
         return res;
@@ -224,6 +231,8 @@ public class Ivor extends User {
     void reEvalutionKeyWord(int eval) {
         Answer answer = getLastAnswer();
         KeyWord keyWord = getLastKeyWord();
+        if (keyWord == null || answer == null)
+            return;
         CommunicationKey communicationKey = storageAPI.getCommunicationKey(keyWord.id, answer.id);
         if (communicationKey != null) {
             countEval++;
@@ -233,11 +242,26 @@ public class Ivor extends User {
             if (eval < 0)
                 communicationKey.correct--;
             storageAPI.updateCommunicationKey(communicationKey);
+
+            if (newCommunicationKeys.contains(communicationKey)) {
+                for (HolderID holder : communicationKeyHolderID) {
+                    if (communicationKey.id == holder.selfID) {
+                        communicationKey.id = holder.serverID;
+                        break;
+                    }
+                }
+            }
+            App.getLoadAPI().replaceCommunicationKey(communicationKey)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(replaceCommunicationKeyObserver);
         }
     }
     void reEvalutionQuestion(int eval) {
         Answer answer = getLastAnswer();
         Question question = getLastQuestion();
+        if (question == null || answer ==null)
+            return;
         Communication communication = storageAPI.getCommunication(question.id, answer.id);
         if (communication != null) {
             countEval++;
@@ -247,6 +271,21 @@ public class Ivor extends User {
             if (eval < 0)
                 communication.correct--;
             storageAPI.updateCommunication(communication);
+            // Теперь нужно обновить коммуникацию на сервере. Для этого необходимо узнать серверный ID для данной коммуникации
+            if (newCommunications.contains(communication)) {    // Если новая, значит нужно "подменить" ID
+                for (HolderID holder : communicationHolderID) {
+                    if (holder.selfID == communication.id) {
+                        communication.id = holder.serverID;
+                        break;
+                    }
+                }
+            }
+
+            // Обновляем Communication на сервере с действительным ID
+            App.getLoadAPI().replaceCommunication(communication)
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(replaceCommunicationObserver);
         }
     }
 
@@ -312,6 +351,8 @@ public class Ivor extends User {
     /** Удаление не только Communication, но и CommunicationKey, если она была последней*/
     void deleteLastCommunication() {
         CommunicationAPI lastCom = getLastCommunication();
+        if (lastCom == null)
+            return;
         if(lastCom.getType() == CommunicationAPI.COMMUNICATION)
             storageAPI.deleteCommunication(lastCom.getID());
         else
@@ -332,10 +373,6 @@ public class Ivor extends User {
         CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answer.id);
         comKey.id = storageAPI.insertCommunicationKey(comKey);
         newCommunicationKeys.add(comKey);
-//        App.getLoadAPI().insertCommunicationKey(comKey.toDTO())
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(insertCommunicationKeyObserver);
     }
     void appendNewAnswerForLastQ(Answer answer) {
         answer.id = storageAPI.insertAnswer(answer);
@@ -351,10 +388,6 @@ public class Ivor extends User {
         Communication communication = new Communication(lastQuestion.id, answer.id);
         communication.id = storageAPI.insertCommunication(communication);
         newCommunications.add(communication);
-//        App.getLoadAPI().insertCommunication(communication.toDTO())
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(insertCommunicationObserver);
     }
     boolean appendNewKeyWord(KeyWord keyWord) {
         List<KeyWord> keyWords = storageAPI.getKeyWords();
@@ -383,7 +416,7 @@ public class Ivor extends User {
         return false;
     }
 
-    public void resetCountEval() {
+    void resetCountEval() {
         countEval = 0;
     }
 
@@ -392,28 +425,28 @@ public class Ivor extends User {
         storageAPI.selectionCommunicationKey();
     }
 
-    public List<Question> getNewQuestions() {
+    List<Question> getNewQuestions() {
         return newQuestions;
     }
 
-    public List<Answer> getNewAnswers() {
+    List<Answer> getNewAnswers() {
         return newAnswers;
     }
 
-    public List<KeyWord> getNewKeyWords() {
+    List<KeyWord> getNewKeyWords() {
         return newKeyWords;
     }
 
-    public List<Communication> getNewCommunications() {
+    List<Communication> getNewCommunications() {
         return newCommunications;
     }
 
-    public List<CommunicationKey> getNewCommunicationKeys() {
+    List<CommunicationKey> getNewCommunicationKeys() {
         return newCommunicationKeys;
     }
 
-    public void insertCommunication() {
-
+    void insertCommunication() {
+        throw new UnsupportedOperationException();
     }
 
     public void unsubscribe() {
@@ -495,10 +528,11 @@ public class Ivor extends User {
     private void successfulInsertKeyWord(KeyWord word) {
         long serverID = word.id;
         long oldID = -1;
-        for (KeyWord w : newKeyWords)
+        for (KeyWord w : newKeyWords) {
             if (w.content.equals(word.content)) {
                 oldID = w.id;
                 w.id = serverID;
+            }
         }
         keyWordHolderID.add(new HolderID(oldID, serverID));
 
@@ -506,18 +540,47 @@ public class Ivor extends User {
                 resources.getString(R.string.successfulPost), "KeyWord", oldID, serverID));
     }
 
-    private void successfulInsertCommunication(Communication c) {
-        App.logI(resources.getString(R.string.successfulPost) + ": Communication : id = " + c.id);
+    private void successfulInsertCommunication(Communication communication) {
+        long serverID = communication.id;
+        long oldID = -1;
+        for (Communication c : newCommunications) {
+            if (c.equals(communication)) {
+                oldID = c.id;
+                c.id = serverID;
+            }
+        }
+        communicationHolderID.add(new HolderID(oldID, serverID));
+
+        App.logI(resources.getString(R.string.successfulPost) + ": Communication : id = " + communication.id);
     }
 
-    private void successfulInsertCommunicationKey(CommunicationKey c) {
-        App.logI(resources.getString(R.string.successfulPost) + ": CommunicationKey : id = " + c.id);
+    private void successfulInsertCommunicationKey(CommunicationKey communicationKey) {
+        long serverID = communicationKey.id;
+        long oldID = -1;
+        for (CommunicationKey comKey : newCommunicationKeys) {
+            if (comKey.equals(communicationKey)) {
+                oldID = comKey.id;
+                comKey.id = serverID;
+            }
+        }
+        communicationKeyHolderID.add(new HolderID(oldID, serverID));
+
+        App.logI(resources.getString(R.string.successfulPost) + ": CommunicationKey : id = " + communicationKey.id);
 
     }
 
-    private void errorInsert(Throwable t) {
+    private void successfulReplaceCommunicationKey(CommunicationKey communicationKey) {
+        App.logI(resources.getString(R.string.successfulUpdate));
+    }
+
+    private void successfulReplaceCommunication(Communication communication) {
+        App.logI(resources.getString(R.string.successfulUpdate));
+    }
+
+    private void errorNetwork(Throwable t) {
         App.logE(t.getMessage());
     }
+
 
     class HolderID {
         private long selfID;

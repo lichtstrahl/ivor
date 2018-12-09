@@ -75,7 +75,8 @@ public class App extends Application {
         super.onCreate();
         db = Room.databaseBuilder(this, AppDatabase.class, nameDB)
                 .allowMainThreadQueries()
-                .fallbackToDestructiveMigration()
+                .addMigrations(migration12, migration21)
+//                .fallbackToDestructiveMigration()
                 .build();
 
         OkHttpClient client = new OkHttpClient.Builder()

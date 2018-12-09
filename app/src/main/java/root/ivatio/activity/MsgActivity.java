@@ -353,10 +353,11 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     }
 
     public void successfulLoad(ListsHolder listsHolder) {
-        App.getDB().getAnswerDao().deleteAll();
-        App.getDB().getCommandDao().deleteAll();
+        App.logI(getString(R.string.successfulLoading) + ". Загрузка в БД");
         App.getDB().getCommunicationDao().deleteAll();
         App.getDB().getCommunicationKeyDao().deleteAll();
+        App.getDB().getAnswerDao().deleteAll();
+        App.getDB().getCommandDao().deleteAll();
         App.getDB().getKeyWordDao().deleteAll();
         App.getDB().getQuestionDao().deleteAll();
 
@@ -367,6 +368,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         App.getDB().getQuestionDao().insert(listsHolder.getQuestions());
         App.getDB().getCommunicationDao().insert(listsHolder.getCommunications());
         App.getDB().getCommunicationKeyDao().insert(listsHolder.getCommunicationKeys());
+
 
         Toast.makeText(this, R.string.successfulLoading, Toast.LENGTH_SHORT).show();
         progressLoad.setVisibility(View.GONE);
