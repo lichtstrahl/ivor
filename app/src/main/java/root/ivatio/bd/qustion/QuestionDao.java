@@ -40,4 +40,7 @@ public interface QuestionDao {
             "SELECT answerID FROM Communication WHERE questionID = :qID " +
             ")")
     List<Answer> getAnswerForQuestion(long qID);
+
+    @Query("SELECT MAX(id) FROM Question")
+    long getMaxID();
 }

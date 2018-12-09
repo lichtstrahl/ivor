@@ -446,7 +446,7 @@ public class Ivor extends User {
     }
 
     void insertCommunication() {
-        throw new UnsupportedOperationException();
+        // Метод не используется
     }
 
     public void unsubscribe() {

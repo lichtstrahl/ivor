@@ -55,4 +55,7 @@ public interface CommunicationDao {
 
     @Query("DELETE FROM Communication")
     void deleteAll();
+
+    @Query("SELECT MAX(id) FROM Communication")
+    long getMaxID();
 }

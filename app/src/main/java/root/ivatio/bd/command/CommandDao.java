@@ -24,4 +24,7 @@ public interface CommandDao {
 
     @Query("DELETE FROM Command")
     void deleteAll();
+
+    @Query("SELECT MAX(id) FROM Communication")
+    long getMaxID();
 }

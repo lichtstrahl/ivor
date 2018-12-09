@@ -63,4 +63,7 @@ public interface CommunicationKeyDao {
 
     @Query("SELECT * FROM CommunicationKey WHERE answerID = :aID")
     List<CommunicationKey> getCommunicationKeyForAnswer(long aID);
+
+    @Query("SELECT MAX(id) FROM CommunicationKey")
+    long getMaxID();
 }

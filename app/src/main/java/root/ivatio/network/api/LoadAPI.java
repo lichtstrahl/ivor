@@ -20,45 +20,45 @@ import root.ivatio.network.dto.PostContentDTO;
 public interface LoadAPI {
     @GET("/api/answers")
     Observable<List<Answer>> loadAnswers();
-    @POST("/api/answers/replaceOrCreate")
+    @POST("/api/answers/update")
     Observable<Answer> replaceAnswer(@Body Answer answer);
-    @POST("/api/answers")
+    @POST("/api/answers/insert")
     Observable<Answer> insertAnswer(@Body PostContentDTO answer);
 
 
     @GET("/api/commands")
     Observable<List<Command>> loadCommands();
-    @POST("api/commands/replaceOrCreate")
+    @POST("api/commands/update")
     Observable<Command> replaceCommand(@Body Command command);
-    @POST("/api/commands")
+    @POST("/api/commands/insert")
     Observable<Command> insertCommand(@Body PostCommandDTO cmd);
 
 
     @GET("/api/communications")
     Observable<List<Communication>> loadCommunications();
-    @POST("/api/communications/replaceOrCreate")
+    @POST("/api/communications/update")
     Observable<Communication> replaceCommunication(@Body Communication communication);
-    @POST("/api/communications")
+    @POST("/api/communications/insert")
     Observable<Communication> insertCommunication(@Body PostComDTO com);
 
     @GET("/api/communicationkeys")
     Observable<List<CommunicationKey>> loadCommunicationKeys();
-    @POST("/api/communicationkeys/replaceOrCreate")
+    @POST("/api/communicationkeys/update")
     Observable<CommunicationKey> replaceCommunicationKey(@Body CommunicationKey communicationKey);
-    @POST("/api/communicationkeys")
+    @POST("/api/communicationkeys/insert")
     Observable<CommunicationKey> insertCommunicationKey(@Body PostComKeyDTO comKey);
 
     @GET("/api/keywords")
     Observable<List<KeyWord>> loadKeyWords();
-    @POST("/api/keywords/replaceOrCreate")
+    @POST("/api/keywords/update")
     Observable<KeyWord> replaceKeyWord(@Body KeyWord word);
-    @POST("/api/keywords")
+    @POST("/api/keywords/insert")
     Observable<KeyWord> insertKeyWord(@Body PostContentDTO word);
 
     @GET("/api/questions")
     Observable<List<Question>> loadQuestions();
-    @POST("/api/questions/replaceOrCreate")
+    @POST("/api/questions/update")
     Observable<Question> replaceQuestion(@Body Question question);
-    @POST("/api/questions")
+    @POST("/api/questions/insert")
     Observable<Question> insertQuestion(@Body PostContentDTO question);
 }

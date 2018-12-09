@@ -45,4 +45,7 @@ public interface KeyWordDao {
 
     @Query("DELETE FROM KeyWord")
     void deleteAll();
+
+    @Query("SELECT MAX(id) FROM KeyWord")
+    long getMaxID();
 }

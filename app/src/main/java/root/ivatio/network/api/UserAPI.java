@@ -13,6 +13,6 @@ public interface UserAPI {
     @GET("/api/clients")
     Call<List<User>> getUsers();
 
-    @POST("/api/clients")
+    @POST("/api/clients/insert")
     Single<User> postUser(@Body User.PostUser user);
 }

@@ -23,8 +23,11 @@ public interface AnswerDao {
     @Query("SELECT * FROM Answer WHERE content = :content")
     Answer getAnswer(String content);
 
-    @Query("SELECT id FROM ANSWER WHERE content = :content")
+    @Query("SELECT id FROM Answer WHERE content = :content")
     long getAnswerID(String content);
+
+    @Query("SELECT MAX(id) FROM Answer")
+    long getMaxID();
 
     @Update
     void update(Answer a);

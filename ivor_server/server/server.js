@@ -1,7 +1,18 @@
+/* eslint-disable max-len */
 'use strict';
 
 var loopback = require('loopback');
 var boot = require('loopback-boot');
+var SQL = require('mysql');
+var sqlConnection = SQL.createConnection(
+  {
+    'host': 'localhost',
+    'port': '3306',
+    'user': 'root',
+    'password': 'i1g9o9r7',
+    'database': 'ivor_db',
+  }
+);
 
 var app = module.exports = loopback();
 
@@ -17,6 +28,19 @@ app.start = function() {
     }
   });
 };
+
+app.get('/igor', function(req, res) {
+
+  sqlConnection.connect();
+  sqlConnection.query('SELECT * FROM client', function(error, results, fields) {
+    if (error) throw error;
+    console.log('The solution is: ', results.length);
+    console.log(results);
+    res.writeHead(200, {'Content-Type': 'text/html'});
+    res.end();
+  });
+  sqlConnection.end();
+});
 
 // Bootstrap the application, configure models, datasources and middleware.
 // Sub-apps like REST API are mounted via boot scripts.
