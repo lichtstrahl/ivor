@@ -23,6 +23,14 @@ public class StringProcessor {
         return list;
     }
 
+    public static List<KeyWord> getKeyWords(String string, List<KeyWord> words) {
+        ArrayList<KeyWord> list = new ArrayList<>();
+        for (KeyWord word : words)
+            if (string.contains(word.content))
+                list.add(word);
+        return list;
+    }
+
     public static List<KeyWord> getAllocatedKeyWords(String string) {
         ArrayList<KeyWord> words = new ArrayList<>();
 

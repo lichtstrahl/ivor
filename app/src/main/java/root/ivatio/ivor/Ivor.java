@@ -129,19 +129,158 @@ public class Ivor extends User {
     }
 
     private Observable<String> rxProcessingRequest(String liteRequest) {
-        return Observable.combineLatest(
-                App.getLoadAPI().loadCommands(),
-                App.getLoadAPI().loadQuestions(),
-                App.getLoadAPI().loadKeyWords(),
-                (listCommand, listQuestion, listWords) -> {
-                    Command cmd = isCommand(liteRequest, listCommand);
-                    if (cmd != null) {
-                        return processingCommand(cmd);
-                    } else {
-                        return "Не команда";
-                    }
+
+//        return App.getLoadAPI().loadCommands()
+//                .flatMap((commands) -> {    // КРазбор команд
+//                    Command cmd = isCommand(liteRequest, commands);
+//                    if (cmd != null)
+//                        return Observable.just(cmd);
+//                    else
+//                        return Observable.just(Integer.valueOf(0));
+//                }).flatMap((args) -> {    // args: Command, 0
+//                    if (args.equals(0)) {
+//                        return App.getLoadAPI().loadQuestions();
+//                    } else {
+//                        processingQuestion = processingKeyWord = false;
+//                        return Observable.just((Command)args);
+//                    }
+//                })
+//                .flatMap((args) -> {    // args: List<Question>, Command
+//                    if (args instanceof Command) return Observable.just((Command)args);
+//                    List<Question> list = (List<Question>)args;
+//                    Question q = isQuestion2(liteRequest, list);
+//                    if (q != null) {
+//                        return Observable.just(q);
+//                    } else {
+//                        return Observable.just(Integer.valueOf(0));
+//                    }
+//                })
+//                .flatMap((arg) -> {     // args: Command, Question, 0
+//                    if (arg instanceof Command) return Observable.just((Command)arg);
+//                    if (arg.equals(0)) {  // Значит вопрос не был найден
+//                        return Observable.just(Integer.valueOf(0)); // Дополнительный проброс
+//                    } else {            // Был найден вопрос
+//                        return App.getLoadAPI().loadCommunicationsForQuestion(((Question)arg).id);
+//                    }
+//                })
+//                .flatMap((arg) -> {     // args: Command, 0, List<Communication>
+//                    if (arg instanceof Command) return Observable.just((Command)arg);
+//                    List<Communication> communications = (List)arg;
+//                    if (!communications.isEmpty()) {
+//                        int r = random.nextInt(communications.size());
+//                        Communication communication = communications.get(r);
+//                        return Observable.just(communication);
+//                    }
+//                    else {
+//                        return App.getLoadAPI().loadKeyWords();
+//                    }
+//                })
+//                .flatMap(arg -> {   // Command, Communication, List<KeyWord>
+//                    if (arg instanceof Command) return Observable.just((Command)arg);
+//                    if (arg instanceof Communication) { // Найдена коммуникация
+//                        Communication com = (Communication)arg;
+//                        processingQuestion = true;
+//                        processingKeyWord = false;
+//                        memory(com);
+//                        return Observable.combineLatest(
+//                                App.getLoadAPI().loadAnswerByID(com.answerID),
+//                                App.getLoadAPI().loadQuestionByID(com.questionID),
+//                                (Answer a, Question q) -> {
+//                                    memory(q).memory(a);
+//                                    return a;
+//                                }
+//                        );
+//                    }
+//                    List<KeyWord> words = (List)arg;
+//                    List<KeyWord> words2 = StringProcessor.getKeyWords(liteRequest);
+//                })
+//                .flatMap(arg -> {   // Command, Answer, 0
+//
+//                });
+        Observable<String> obsCommand = App.getLoadAPI().loadCommands()
+                .flatMap(commands -> {
+                   Command cmd = isCommand(liteRequest, commands);
+                   if (cmd != null)
+                       return Observable.just(processingCommand(cmd));
+                   else
+                       return Observable.just("");
                 });
 
+        Observable<String> obsQuestion = App.getLoadAPI().loadQuestions()
+                .flatMap(questions -> {
+                    Question q = isQuestion2(liteRequest, questions);
+                    if (q != null)
+                        return App.getLoadAPI().loadCommunicationsForQuestion(q.id);
+                    else
+                        return Observable.just("");
+                })
+                .flatMap(arg -> {   // List<Communication>, ""
+                    if (arg instanceof List) {
+                        List<Communication> communications = (List)arg;
+                        if (!communications.isEmpty()) {
+                            int r = random.nextInt(communications.size());
+                            Communication com = communications.get(r);
+                            memory(com);
+
+                            return Observable.combineLatest(
+                                    App.getLoadAPI().loadAnswerByID(com.answerID),
+                                    App.getLoadAPI().loadQuestionByID(com.questionID),
+                                    (Answer a, Question q) -> {
+                                        memory(a).memory(q);
+                                        return a.content;
+                                    });
+                        }
+                    }
+                    return Observable.just("");
+                });
+
+        Observable<String> obsKeyWord = App.getLoadAPI().loadKeyWords()
+                .flatMap(allWords -> {
+                    List<KeyWord> words = StringProcessor.getKeyWords(liteRequest, allWords);
+                    if (!words.isEmpty()) {
+                        int r = random.nextInt(words.size());
+                        KeyWord word = words.get(r);
+                        return App.getLoadAPI().loadCommunicationKeysForKeyWord(word.id);
+                    }
+                    return Observable.just("");
+                })
+                .flatMap(arg -> { // List<CommunicationKey>, ""
+                    if (arg instanceof List) {
+                        List<CommunicationKey> keys = (List)arg;
+                        if (!keys.isEmpty()) {
+                            int r = random.nextInt(keys.size());
+                            CommunicationKey communicationKey = keys.get(r);
+                            memory(communicationKey);
+
+                            return Observable.combineLatest(
+                                    App.getLoadAPI().loadAnswerByID(communicationKey.answerID),
+                                    App.getLoadAPI().loadKeyWordByID(communicationKey.keyID),
+                                    (Answer answer, KeyWord key) -> {
+                                        memory(answer).memory(key);
+                                        return answer.content;
+                                    });
+                        }
+                    }
+                    return Observable.just("");
+                });
+
+        return Observable.combineLatest(obsCommand, obsQuestion, obsKeyWord,
+                (strCommand, strQuestion, strWord) -> {
+                    processingKeyWord = false;
+                    processingQuestion = false;
+                    if (!strCommand.isEmpty()) {
+                       return strCommand;
+                    }
+                    if (!strQuestion.isEmpty()) {
+                        processingQuestion = true;
+                        return strQuestion;
+                    }
+                    if (!strWord.isEmpty()) {
+                        processingKeyWord = true;
+                       return strWord;
+                    }
+                    return resources.getString(R.string.ivorNoAnswer);
+                });
     }
 
     private Question isQuestion(String str) {
@@ -157,6 +296,21 @@ public class Ivor extends User {
         }
         return null;
     }
+
+    @Nullable
+    private Question isQuestion2(String str, List<Question> questions) {
+        String []words = str.split(" ");
+        HashSet<String> set = new HashSet<>(Arrays.asList(words));
+        // Обработка Question
+        for (Question q : questions) {
+            String[] qwords = q.content.split(" ");
+            HashSet<String> qSet = new HashSet<>(Arrays.asList(qwords));
+            if (qSet.equals(set))
+                return q;
+        }
+        return null;
+    }
+
 
     private Command isCommandLocal(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));

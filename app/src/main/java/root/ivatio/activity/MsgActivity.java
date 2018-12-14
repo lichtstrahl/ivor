@@ -50,7 +50,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
     private IvorPresenter ivorPresenter;
     private ROLE curRole = ROLE.STD;
-    private NetworkObserver<ListsHolder> getObserver;
     @BindView(R.id.list)
     RecyclerView listView;
     MessageAdapter messages;
@@ -95,7 +94,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         removeRating();
         setTitle(user.login + ", " + user.realName);
 
-        getObserver = new NetworkObserver<>(this::successfulLoad, this::errorLoad);
+        initialDialogInterface();
     }
 
     public static void start(Context context, User user) {
@@ -133,32 +132,31 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     protected void onStart() {
         super.onStart();
         // Скачивание данных их сети
-        Observable.combineLatest(
-                App.getLoadAPI().loadAnswers(),
-                App.getLoadAPI().loadCommands(),
-                App.getLoadAPI().loadCommunications(),
-                App.getLoadAPI().loadCommunicationKeys(),
-                App.getLoadAPI().loadKeyWords(),
-                App.getLoadAPI().loadQuestions(),
-                (lAnswer, lCommand,  lCommunication, lCommunicationKey,  lKeyWord, lQuestion)
-                        -> ListsHolder.getBuilder()
-                            .buildAnswers(lAnswer)
-                            .buildCommands(lCommand)
-                            .buildCommunications(lCommunication)
-                            .buildCommunicationKeys(lCommunicationKey)
-                            .buildKeyWords(lKeyWord)
-                            .buildQuestions(lQuestion)
-                            .build())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(getObserver);
+//        Observable.combineLatest(
+//                App.getLoadAPI().loadAnswers(),
+//                App.getLoadAPI().loadCommands(),
+//                App.getLoadAPI().loadCommunications(),
+//                App.getLoadAPI().loadCommunicationKeys(),
+//                App.getLoadAPI().loadKeyWords(),
+//                App.getLoadAPI().loadQuestions(),
+//                (lAnswer, lCommand,  lCommunication, lCommunicationKey,  lKeyWord, lQuestion)
+//                        -> ListsHolder.getBuilder()
+//                            .buildAnswers(lAnswer)
+//                            .buildCommands(lCommand)
+//                            .buildCommunications(lCommunication)
+//                            .buildCommunicationKeys(lCommunicationKey)
+//                            .buildKeyWords(lKeyWord)
+//                            .buildQuestions(lQuestion)
+//                            .build())
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(getObserver);
     }
 
     @Override
     protected void onStop() {
         super.onStop();
         ivorPresenter.onStop();
-        getObserver.unsubscribe();
     }
 
     @Override
@@ -251,33 +249,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         progressLoad.setVisibility(state);
     }
 
-    public void successfulLoad(ListsHolder listsHolder) {
-        App.logI(getString(R.string.successfulLoading) + ". Загрузка в БД");
-        App.getDB().getCommunicationDao().deleteAll();
-        App.getDB().getCommunicationKeyDao().deleteAll();
-        App.getDB().getAnswerDao().deleteAll();
-        App.getDB().getCommandDao().deleteAll();
-        App.getDB().getKeyWordDao().deleteAll();
-        App.getDB().getQuestionDao().deleteAll();
-
-        // Insert new data. Ни в коем случае не менять на LocalStorageAPI. Главное - id должны оставаться серверными.
-        App.getDB().getAnswerDao().insert(listsHolder.getAnswers());
-        App.getDB().getCommandDao().insert(listsHolder.getCommands());
-        App.getDB().getKeyWordDao().insert(listsHolder.getKeyWords());
-        App.getDB().getQuestionDao().insert(listsHolder.getQuestions());
-        App.getDB().getCommunicationDao().insert(listsHolder.getCommunications());
-        App.getDB().getCommunicationKeyDao().insert(listsHolder.getCommunicationKeys());
-
-
-        Toast.makeText(this, R.string.successfulLoading, Toast.LENGTH_SHORT).show();
-        progressLoad.setVisibility(View.GONE);
-        inputText.setVisibility(View.VISIBLE);
-        buttonSend.setVisibility(View.VISIBLE);
-    }
-
-    public void errorLoad(Throwable t) {
-        App.logE(t.getMessage());
-        Toast.makeText(this, R.string.errorLoading, Toast.LENGTH_SHORT).show();
+    public void initialDialogInterface() {
         progressLoad.setVisibility(View.GONE);
         inputText.setVisibility(View.VISIBLE);
         buttonSend.setVisibility(View.VISIBLE);
