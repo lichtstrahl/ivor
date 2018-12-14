@@ -116,18 +116,6 @@ public class Ivor extends User {
         return NAME;
     }
 
-    private String processingMessage(String message) {
-        String liteString = StringProcessor.toStdFormat(message);
-        Command c = isCommandLocal(liteString);
-        if (c != null) // Обработка команды
-            return processingCommand(c);
-        Question q = isQuestion(liteString);
-        if (q != null)  // Обработка прямого вопроса
-            return processingQuestion(q);
-        else            // Обработка KeyWord
-            return processingKeyWords(StringProcessor.getKeyWords(liteString));
-    }
-
     private Observable<String> rxProcessingRequest(String liteRequest) {
 
 //        return App.getLoadAPI().loadCommands()
@@ -148,7 +136,7 @@ public class Ivor extends User {
 //                .flatMap((args) -> {    // args: List<Question>, Command
 //                    if (args instanceof Command) return Observable.just((Command)args);
 //                    List<Question> list = (List<Question>)args;
-//                    Question q = isQuestion2(liteRequest, list);
+//                    Question q = isQuestion(liteRequest, list);
 //                    if (q != null) {
 //                        return Observable.just(q);
 //                    } else {
@@ -208,7 +196,7 @@ public class Ivor extends User {
 
         Observable<String> obsQuestion = App.getLoadAPI().loadQuestions()
                 .flatMap(questions -> {
-                    Question q = isQuestion2(liteRequest, questions);
+                    Question q = isQuestion(liteRequest, questions);
                     if (q != null)
                         return App.getLoadAPI().loadCommunicationsForQuestion(q.id);
                     else
@@ -283,22 +271,8 @@ public class Ivor extends User {
                 });
     }
 
-    private Question isQuestion(String str) {
-        String []words = str.split(" ");
-        HashSet<String> set = new HashSet<>(Arrays.asList(words));
-        // Обработка Question
-        List<Question> questions = storageAPI.getQuestions();
-        for (Question q : questions) {
-            String[] qwords = q.content.split(" ");
-            HashSet<String> qSet = new HashSet<>(Arrays.asList(qwords));
-            if (qSet.equals(set))
-                return q;
-        }
-        return null;
-    }
-
     @Nullable
-    private Question isQuestion2(String str, List<Question> questions) {
+    private Question isQuestion(String str, List<Question> questions) {
         String []words = str.split(" ");
         HashSet<String> set = new HashSet<>(Arrays.asList(words));
         // Обработка Question
@@ -308,19 +282,6 @@ public class Ivor extends User {
             if (qSet.equals(set))
                 return q;
         }
-        return null;
-    }
-
-
-    private Command isCommandLocal(String str) {
-        HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
-        List<Command> commands = storageAPI.getCommands();
-        for (Command cmd : commands) {
-            HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.cmd.split(" ")));
-            if (set.containsAll(cmdSet))
-                return cmd;
-        }
-
         return null;
     }
 
@@ -345,37 +306,6 @@ public class Ivor extends User {
             }
 
         return resources.getString(R.string.noAction);
-    }
-
-    private String processingQuestion(Question q) {
-        processingKeyWord = false;
-        List<Answer> answers = storageAPI.getAnswerForQuestion(q.id);
-        if (!answers.isEmpty()) {
-            int r = random.nextInt(answers.size());
-            Answer answer = answers.get(r);
-            memory(answer).memory(q).memory(storageAPI.getCommunication(q.id, answer.id));
-            processingQuestion = true;
-            return answer.content;
-        }
-        processingQuestion = false;
-        return resources.getString(R.string.ivorNoAnswer);
-    }
-
-    private String processingKeyWords(List<KeyWord> keyWords) {
-        processingQuestion = false;
-        for (KeyWord word : keyWords) {
-            List<Answer> answers = storageAPI.getAnswerForKeyWord(word.id);
-            if (answers.isEmpty())
-                continue;
-            int r = random.nextInt(answers.size());
-            Answer answer = answers.get(r);
-            memory(answer).memory(word).memory(storageAPI.getCommunicationKey(word.id, answer.id));
-            processingKeyWord = true;
-            return answer.content;
-        }
-
-        processingKeyWord = false;
-        return resources.getString(R.string.ivorNoAnswer);
     }
 
     private Ivor memory(Question q) {
