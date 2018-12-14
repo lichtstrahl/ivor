@@ -1,6 +1,5 @@
 package root.ivatio.ivor;
 
-import android.opengl.Visibility;
 import android.view.View;
 
 import java.util.LinkedList;
@@ -11,6 +10,7 @@ import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.util.ListsHolder;
+import root.ivatio.util.ROLE;
 import root.ivatio.util.StringProcessor;
 import root.ivatio.Message;
 import root.ivatio.R;
@@ -19,13 +19,14 @@ import root.ivatio.activity.MsgActivity;
 public class IvorPresenter {
     private Ivor model;
     private IvorViewAPI viewAPI;
+
     public IvorPresenter(Ivor ivor, IvorViewAPI api) {
         model = ivor;
         viewAPI = api;
     }
 
     public void setMenuModeStd() {
-        viewAPI.setRole(MsgActivity.ROLE.STD);
+        viewAPI.setRole(ROLE.STD);
         viewAPI.appendMessage(model.send(R.string.ivorModeSTD));
         viewAPI.switchButtonDelete(View.GONE);
     }
@@ -33,32 +34,35 @@ public class IvorPresenter {
     public void setMenuModeIvorAskingKW() {
         if (App.getStorageAPI().getKeyWords().isEmpty())
             return;
-        viewAPI.setRole(MsgActivity.ROLE.USER_SEND_ANSWER_FOR_KW);
+        viewAPI.setRole(ROLE.USER_SEND_ANSWER_FOR_KW);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewAnswerForKW));
         viewAPI.appendMessage(model.sendRandomKeyWord());
         viewAPI.switchButtonDelete(View.VISIBLE);
     }
+
     public void setMenuModeAddKW() {
-        viewAPI.setRole(MsgActivity.ROLE.USER_SEND_NEW_KW);
+        viewAPI.setRole(ROLE.USER_SEND_NEW_KW);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewKW));
         viewAPI.switchButtonDelete(View.GONE);
     }
+
     public void setMenuModeAddQ() {
-        viewAPI.setRole(MsgActivity.ROLE.USER_SEND_NEW_Q);
+        viewAPI.setRole(ROLE.USER_SEND_NEW_Q);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewQuestion));
         viewAPI.switchButtonDelete(View.GONE);
     }
+
     public void setMenuModeIvorAskingQ() {
         if (App.getStorageAPI().getQuestions().isEmpty())
             return;
-        viewAPI.setRole(MsgActivity.ROLE.USER_SEND_ANSWER_FOR_Q);
+        viewAPI.setRole(ROLE.USER_SEND_ANSWER_FOR_Q);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewAnswerForQ));
         viewAPI.appendMessage(model.sendRandomQuestion());
         viewAPI.switchButtonDelete(View.VISIBLE);
     }
 
     public void onStop() {
-        if (model.getCountEval() > Ivor.criticalCountEval) {
+        if (model.getCountEval() > Ivor.CRITICAL_COUNT_EVAL) {
             model.selection();
         }
         model.insertCommunication();
@@ -66,7 +70,6 @@ public class IvorPresenter {
     }
 
     public void clickEval(int eval) {
-
         if (model.processingKeyWord())
             model.reEvalutionKeyWord(eval);
         if (model.processingQuestion())
@@ -74,7 +77,8 @@ public class IvorPresenter {
         viewAPI.removeRating();
         viewAPI.switchButtonDelete(View.GONE);
     }
-    public void clickDelete(MsgActivity.ROLE curRole) {
+
+    public void clickDelete(ROLE curRole) {
         viewAPI.appendMessage(model.send(R.string.ivorSuccessfulDelete));
         switch (curRole) {
             case USER_SEND_ANSWER_FOR_KW:
@@ -95,7 +99,7 @@ public class IvorPresenter {
         viewAPI.switchButtonDelete(View.GONE);
     }
 
-    public void clickSend(MsgActivity.ROLE curRole, String request) {
+    public void clickSend(ROLE curRole, String request) {
         switch (curRole) {
             case STD:
                 sendWithModeSTD(request);
@@ -114,7 +118,6 @@ public class IvorPresenter {
                 break;
             default:
         }
-
     }
 
     private void sendWithModeSTD(String request) {
@@ -140,6 +143,7 @@ public class IvorPresenter {
         else
             viewAPI.appendMessage(model.send(R.string.ivorKWExisting));
     }
+
     private void sendWithModeUserSendNewQ(String request) {
         Question question = new Question(StringProcessor.toStdFormat(request));
         if (model.appendNewQuestion(question))
@@ -147,6 +151,7 @@ public class IvorPresenter {
         else
             viewAPI.appendMessage(model.send(R.string.ivorQExisting));
     }
+
     private void sendWithModeUserSendAnswerForQ(String request) {
         model.appendNewAnswerForLastQ(new Answer(request));
         viewAPI.appendMessage(model.send(R.string.ivorSuccessfulAnswer));
@@ -154,7 +159,7 @@ public class IvorPresenter {
     }
 
     public void selection() {
-        if (model.getCountEval() > Ivor.criticalCountEval) {
+        if (model.getCountEval() > Ivor.CRITICAL_COUNT_EVAL) {
             model.selection();
             model.resetCountEval();
             viewAPI.appendMessage(model.send(R.string.ivorSuccessfulSelection));
@@ -183,5 +188,4 @@ public class IvorPresenter {
                 .buildQuestions(model.getNewQuestions())
                 .build();
     }
-
 }

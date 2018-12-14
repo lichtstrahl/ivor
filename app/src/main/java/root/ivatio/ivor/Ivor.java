@@ -30,12 +30,13 @@ import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
 import root.ivatio.network.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
+import root.ivatio.util.HolderID;
 import root.ivatio.util.LocalStorageAPI;
 import root.ivatio.util.StringProcessor;
 
 public class Ivor extends User {
-    private static final String name = "Ivor";
-    public static final int criticalCountEval = 50;
+    private static final String NAME = "Ivor";
+    static final int CRITICAL_COUNT_EVAL = 50;
     private Resources resources;
     private List<KeyWord> memoryWords;
     private List<Question> memoryQuestions;
@@ -73,7 +74,6 @@ public class Ivor extends User {
     private List<HolderID> communicationHolderID;
     private List<HolderID> communicationKeyHolderID;
 
-
     public Ivor(Resources resources, Action ... actions) {
         this.id = Long.valueOf(-1);
         this.resources = resources;
@@ -110,7 +110,7 @@ public class Ivor extends User {
     }
 
     public static String getName() {
-        return name;
+        return NAME;
     }
 
     private String processingMessage(String message) {
@@ -219,7 +219,7 @@ public class Ivor extends User {
         return send(processingMessage(request));
     }
 
-    Message send(String content) {
+    private Message send(String content) {
         if (content.isEmpty())
             return null;
         return new Message(null, content);
@@ -257,8 +257,8 @@ public class Ivor extends User {
 
             if (newCommunicationKeys.contains(communicationKey)) {
                 for (HolderID holder : communicationKeyHolderID) {
-                    if (communicationKey.id == holder.selfID) {
-                        communicationKey.id = holder.serverID;
+                    if (communicationKey.id == holder.getSelfID()) {
+                        communicationKey.id = holder.getServerID();
                         break;
                     }
                 }
@@ -286,8 +286,8 @@ public class Ivor extends User {
             // Теперь нужно обновить коммуникацию на сервере. Для этого необходимо узнать серверный ID для данной коммуникации
             if (newCommunications.contains(communication)) {    // Если новая, значит нужно "подменить" ID
                 for (HolderID holder : communicationHolderID) {
-                    if (holder.selfID == communication.id) {
-                        communication.id = holder.serverID;
+                    if (holder.getSelfID() == communication.id) {
+                        communication.id = holder.getServerID();
                         break;
                     }
                 }
@@ -307,6 +307,7 @@ public class Ivor extends User {
             return null;
         return memoryWords.get(memoryWords.size()-1);
     }
+
     private Question getLastQuestion() {
         if (memoryQuestions.isEmpty())
             return null;
@@ -339,7 +340,7 @@ public class Ivor extends User {
     }
 
     @Nullable
-    KeyWord getRandomKeyWord() {
+    private KeyWord getRandomKeyWord() {
         long[] allID = storageAPI.getKeyWordsID();
         if (allID.length == 0)
             return null;
@@ -357,7 +358,7 @@ public class Ivor extends User {
     }
 
     @Nullable
-    Question getRandomQuestion() {
+    private Question getRandomQuestion() {
         long[] allID = storageAPI.getQuestionsID();
         if (allID.length == 0)
             return null;
@@ -379,8 +380,8 @@ public class Ivor extends User {
 
         if (newKeyWords.contains(word)) {
             for (HolderID holder : keyWordHolderID) {
-                if (holder.selfID == word.id) {
-                    word.id = holder.serverID;
+                if (holder.getSelfID() == word.id) {
+                    word.id = holder.getServerID();
                     break;
                 }
             }
@@ -398,8 +399,8 @@ public class Ivor extends User {
 
         if (newQuestions.contains(question)) {
             for (HolderID holder : questionHolderID) {
-                if (holder.selfID == question.id) {
-                    question.id = holder.serverID;
+                if (holder.getSelfID() == question.id) {
+                    question.id = holder.getServerID();
                     break;
                 }
             }
@@ -421,8 +422,8 @@ public class Ivor extends User {
 
             if (newCommunications.contains(c)) {
                 for (HolderID holder : communicationHolderID) {
-                    if (holder.selfID == c.id) {
-                        c.id = holder.serverID;
+                    if (holder.getSelfID() == c.id) {
+                        c.id = holder.getServerID();
                         break;
                     }
                 }
@@ -437,8 +438,8 @@ public class Ivor extends User {
 
             if (newCommunicationKeys.contains(c)) {
                 for (HolderID holder : communicationKeyHolderID) {
-                    if (holder.selfID == c.id) {
-                        c.id = holder.serverID;
+                    if (holder.getSelfID() == c.id) {
+                        c.id = holder.getServerID();
                         break;
                     }
                 }
@@ -596,9 +597,8 @@ public class Ivor extends User {
             c.answerID = serverID;
             // Ищем, в какой серверный ID ревращается местный ID нужного нам вопроса
             for (HolderID holder : questionHolderID) {
-                if (holder.selfID == c.questionID) {
-                    c.questionID = holder.serverID;
-                    App.logI(String.format(Locale.ENGLISH, "Успешная трансформация для Communication qID: %d", c.questionID));
+                if (holder.getSelfID() == c.questionID) {
+                    c.questionID = holder.getServerID();
                     break;
                 }
             }
@@ -612,8 +612,8 @@ public class Ivor extends User {
             c.answerID = serverID;
             // Ищем, в какой серверный ID превращаетс местный ID нужного нам ключевого слова
             for (HolderID holder : keyWordHolderID) {
-                if (holder.selfID == c.keyID) {
-                    c.keyID = holder.serverID;
+                if (holder.getSelfID() == c.keyID) {
+                    c.keyID = holder.getServerID();
                     App.logI(String.format(Locale.ENGLISH, "Успешная трансформация для CommunicationKey keyID: %d", c.keyID));
                     break;
                 }
@@ -686,16 +686,5 @@ public class Ivor extends User {
 
     private void errorNetwork(Throwable t) {
         App.logE(t.getMessage());
-    }
-
-
-    class HolderID {
-        private long selfID;
-        private long serverID;
-
-        HolderID(long i0, long i1) {
-            selfID = i0;
-            serverID = i1;
-        }
     }
 }

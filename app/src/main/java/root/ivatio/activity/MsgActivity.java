@@ -41,6 +41,7 @@ import root.ivatio.ivor.action.ActionSendGPS;
 import root.ivatio.ivor.action.ActionSendSMS;
 import root.ivatio.network.NetworkObserver;
 import root.ivatio.util.ListsHolder;
+import root.ivatio.util.ROLE;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private static final String INTENT_USER = "args:user";
@@ -228,13 +229,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
 
 
 
-    public enum ROLE {
-        STD,
-        USER_SEND_ANSWER_FOR_KW,
-        USER_SEND_NEW_KW,
-        USER_SEND_ANSWER_FOR_Q,
-        USER_SEND_NEW_Q,
-    }
+
     /** Реализация интерфейса IvorViewAPI **/
     /***************************************/
     @Override
