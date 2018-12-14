@@ -320,8 +320,8 @@ public class Ivor extends User {
         memoryWords.add(kw);
         return this;
     }
-    private Ivor memory(Object api) {
-        memoryCommunication.add(api);
+    private Ivor memory(Object com) {
+        memoryCommunication.add(com);
         return this;
     }
 
@@ -408,30 +408,79 @@ public class Ivor extends User {
         }
     }
 
+    Observable<String> evaluation(int eval) {
+        Observable<CommunicationKey> obsKey = null;
+        if (processingKeyWord) {
+            CommunicationKey com = (CommunicationKey)getLastCommunication();
+            if (com != null) {
+                countEval++;
+                com.power++;
+                if (eval > 0)
+                    com.correct++;
+                if (eval < 0)
+                    com.correct--;
 
+
+                obsKey = App.getLoadAPI().replaceCommunicationKey(com);
+            }
+        }
+
+        Observable<Communication> obsCom = null;
+        if (processingQuestion) {
+            Communication com = (Communication)getLastCommunication();
+            if (com != null) {
+                countEval++;
+                com.power++;
+                if (eval > 0)
+                    com.correct++;
+                if (eval < 0)
+                    com.correct--;
+
+                // Обновляем Communication на сервере с действительным ID
+                obsCom = App.getLoadAPI().replaceCommunication(com);
+            }
+        }
+
+        if (obsCom != null) {
+            return obsCom.flatMap(com -> Observable.just("com"));
+        }
+
+        if (obsKey != null) {
+            return obsKey.flatMap(key -> Observable.just("key"));
+        }
+
+        return Observable.just("");
+    }
+
+
+    @Nullable
     private KeyWord getLastKeyWord() {
         if (memoryWords.isEmpty())
             return null;
         return memoryWords.get(memoryWords.size()-1);
     }
 
+    @Nullable
     private Question getLastQuestion() {
         if (memoryQuestions.isEmpty())
             return null;
         return memoryQuestions.get(memoryQuestions.size()-1);
     }
 
+    @Nullable
     private Answer getLastAnswer() {
         if (memoryAnswers.isEmpty())
             return null;
         return memoryAnswers.get(memoryAnswers.size()-1);
     }
 
+    @Nullable
     private Object getLastCommunication() {
         if (memoryCommunication.isEmpty())
             return null;
         return memoryCommunication.get(memoryCommunication.size()-1);
     }
+
 
     @NonNull
     Message sendRandomKeyWord() {

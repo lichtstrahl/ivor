@@ -1,6 +1,7 @@
 package root.ivatio.ivor;
 
 import android.view.View;
+import android.widget.Toast;
 
 import java.util.LinkedList;
 import java.util.List;
@@ -17,17 +18,18 @@ import root.ivatio.util.ROLE;
 import root.ivatio.util.StringProcessor;
 import root.ivatio.Message;
 import root.ivatio.R;
-import root.ivatio.activity.MsgActivity;
 
 public class IvorPresenter {
     private Ivor model;
     private IvorViewAPI viewAPI;
     private NetworkObserver<String> answerObserver;
+    private NetworkObserver<String> evalObserver;
 
     public IvorPresenter(Ivor ivor, IvorViewAPI api) {
         model = ivor;
         viewAPI = api;
         answerObserver = new NetworkObserver<>(this::successfulAnswer, this::errorNetwork);
+        evalObserver = new NetworkObserver<>(this::successfulEval, this::errorEval);
     }
 
     public void setMenuModeStd() {
@@ -74,15 +76,6 @@ public class IvorPresenter {
         model.unsubscribe();
     }
 
-    public void clickEval(int eval) {
-        if (model.processingKeyWord())
-            model.reEvalutionKeyWord(eval);
-        if (model.processingQuestion())
-            model.reEvalutionQuestion(eval);
-        viewAPI.removeRating();
-        viewAPI.switchButtonDelete(View.GONE);
-    }
-
     public void clickDelete(ROLE curRole) {
         viewAPI.appendMessage(model.send(R.string.ivorSuccessfulDelete));
         switch (curRole) {
@@ -123,6 +116,14 @@ public class IvorPresenter {
                 break;
             default:
         }
+    }
+
+    public void clickEval(int eval) {
+        viewAPI.switchProgress(View.VISIBLE);
+        model.evaluation(eval)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(evalObserver);
     }
 
     private void sendWithModeSTD(String request) {
@@ -199,6 +200,21 @@ public class IvorPresenter {
             viewAPI.appendRating();
             viewAPI.switchButtonDelete(View.VISIBLE);
         }
+    }
+
+    private void successfulEval(String response) {
+        if (response.isEmpty())
+            viewAPI.showMessage(R.string.notFoundForEval);
+        viewAPI.switchProgress(View.GONE);
+        viewAPI.removeRating();
+        viewAPI.switchButtonDelete(View.GONE);
+    }
+
+    private void errorEval(Throwable t) {
+        viewAPI.switchProgress(View.GONE);
+        viewAPI.removeRating();
+        viewAPI.switchButtonDelete(View.GONE);
+        App.logI(t.getMessage());
     }
 
     private void errorNetwork(Throwable t) {

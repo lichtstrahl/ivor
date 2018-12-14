@@ -90,4 +90,5 @@
     <string name="errorPost">Ошибка при отправке данных на сервер</string>
     <string name="successfulPost">Данные были успешно отправлены на сервер</string>
     <string name="successfulUpdate">Данные на сервере были успешно обновлены</string>
+    <string name="notFoundForEval">Не найдено элементов для оценивания</string>
 </resources>
