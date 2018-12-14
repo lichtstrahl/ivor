@@ -12,9 +12,7 @@ public class ActionSendSMS extends Action {
     private String phoneNumber;
     private String smsContent;
     public ActionSendSMS(String cmd, Consumer<String> next) {
-        super(cmd);
-        subject = PublishSubject.create();
-        subject.subscribe(next);
+        super(cmd, next);
         phoneNumber = null;
         smsContent = null;
         buffer = new CircularArray<>();

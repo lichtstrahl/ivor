@@ -15,9 +15,7 @@ public class ActionSendEmail extends Action {
     private String body;
 
     public ActionSendEmail(String cmd, Consumer<String> next) {
-        super(cmd);
-        subject = PublishSubject.create();
-        subject.subscribe(next);
+        super(cmd, next);
         buffer = new CircularArray<>();
         buffer.addFirst("Введи почту, кому хочешь отправить письмо");
         buffer.addFirst("О чем оно будет?");

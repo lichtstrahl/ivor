@@ -12,9 +12,8 @@ public class ActionCall extends Action {
     private String phoneNumber;
 
     public ActionCall(String c, Consumer<String> next) {
-        super(c);
+        super(c, next);
 
-        subject.subscribe(next);
         phoneNumber = null;
         buffer = new CircularArray<>();
         buffer.addFirst("Введите номер");
@@ -34,3 +33,16 @@ public class ActionCall extends Action {
         return new LinkedList<>(list);
     }
 }
+
+/*
+new ActionCall(
+        getString(R.string.cmdCall),
+        x -> {
+            if (x.isEmpty()) {
+                List<String> param = ivorPresenter.completeAction();
+                String dial = "tel:" + param.get(0);
+                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+            } else
+                appendMessage(new Message(null, x));
+        })
+ */

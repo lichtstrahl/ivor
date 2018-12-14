@@ -15,6 +15,7 @@ import java.util.Random;
 
 import javax.annotation.Nullable;
 
+import io.reactivex.Observable;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
@@ -32,6 +33,7 @@ import root.ivatio.network.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.util.HolderID;
 import root.ivatio.util.LocalStorageAPI;
+import root.ivatio.util.ServerIDAdapter;
 import root.ivatio.util.StringProcessor;
 
 public class Ivor extends User {
@@ -41,14 +43,14 @@ public class Ivor extends User {
     private List<KeyWord> memoryWords;
     private List<Question> memoryQuestions;
     private List<Answer>   memoryAnswers;
-    private List<Object> memoryCommunicationAPIS;
+    private List<Object> memoryCommunication;
     private List<Action> actions;
     private int countEval;
     private Random random;
     private boolean processingKeyWord;
     private boolean processingQuestion;
     private Action curAction;
-    private static LocalStorageAPI storageAPI = App.getStorageAPI();
+    private static LocalStorageAPI storageAPI;
     // Добавление новых данных
     private List<Question> newQuestions;
     private List<Answer> newAnswers;
@@ -74,13 +76,13 @@ public class Ivor extends User {
     private List<HolderID> communicationHolderID;
     private List<HolderID> communicationKeyHolderID;
 
-    public Ivor(Resources resources, Action ... actions) {
+    public Ivor(Resources resources, LocalStorageAPI api, Action ... actions) {
         this.id = Long.valueOf(-1);
         this.resources = resources;
         this.memoryWords = new LinkedList<>();
         this.memoryQuestions = new LinkedList<>();
         this.memoryAnswers = new LinkedList<>();
-        this.memoryCommunicationAPIS = new LinkedList<>();
+        this.memoryCommunication = new LinkedList<>();
         this.random = new Random();
         this.processingKeyWord = false;
         this.countEval = 0;
@@ -107,6 +109,7 @@ public class Ivor extends User {
         this.deleteCommunicationObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
         this.deleteCommunicationKeyObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
         this.selectionObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
+        this.storageAPI = api;
     }
 
     public static String getName() {
@@ -115,19 +118,30 @@ public class Ivor extends User {
 
     private String processingMessage(String message) {
         String liteString = StringProcessor.toStdFormat(message);
-        if (curAction == null) {
-            Command c = isCommand(liteString);
-            if (c != null) // Обработка команды
-                return processingCommand(c);
-            Question q = isQuestion(liteString);
-            if (q != null)  // Обработка прямого вопроса
-                return processingQuestion(q);
-            else            // Обработка KeyWord
-                return processingKeyWords(StringProcessor.getKeyWords(liteString));
-        } else {
-            curAction.put(liteString);
-            return curAction.next();
-        }
+        Command c = isCommandLocal(liteString);
+        if (c != null) // Обработка команды
+            return processingCommand(c);
+        Question q = isQuestion(liteString);
+        if (q != null)  // Обработка прямого вопроса
+            return processingQuestion(q);
+        else            // Обработка KeyWord
+            return processingKeyWords(StringProcessor.getKeyWords(liteString));
+    }
+
+    private Observable<String> rxProcessingRequest(String liteRequest) {
+        return Observable.combineLatest(
+                App.getLoadAPI().loadCommands(),
+                App.getLoadAPI().loadQuestions(),
+                App.getLoadAPI().loadKeyWords(),
+                (listCommand, listQuestion, listWords) -> {
+                    Command cmd = isCommand(liteRequest, listCommand);
+                    if (cmd != null) {
+                        return processingCommand(cmd);
+                    } else {
+                        return "Не команда";
+                    }
+                });
+
     }
 
     private Question isQuestion(String str) {
@@ -144,7 +158,7 @@ public class Ivor extends User {
         return null;
     }
 
-    private Command isCommand(String str) {
+    private Command isCommandLocal(String str) {
         HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
         List<Command> commands = storageAPI.getCommands();
         for (Command cmd : commands) {
@@ -152,8 +166,21 @@ public class Ivor extends User {
             if (set.containsAll(cmdSet))
                 return cmd;
         }
+
         return null;
     }
+
+    @Nullable
+    private Command isCommand(String str, List<Command> commands) {
+        HashSet<String> set = new HashSet<>(Arrays.asList(str.split(" ")));
+        for (Command cmd : commands) {
+            HashSet<String> cmdSet = new HashSet<>(Arrays.asList(cmd.cmd.split(" ")));
+            if (set.containsAll(cmdSet))
+                return cmd;
+        }
+        return null;
+    }
+
 
     private String processingCommand(Command c) {
         processingKeyWord = processingQuestion = false;
@@ -210,13 +237,18 @@ public class Ivor extends User {
         return this;
     }
     private Ivor memory(Object api) {
-        memoryCommunicationAPIS.add(api);
+        memoryCommunication.add(api);
         return this;
     }
 
-    @Nullable
-    Message answer(String request) {
-        return send(processingMessage(request));
+    Observable<String> rxAnswer(String request) {
+        String liteString = StringProcessor.toStdFormat(request);
+        if (curAction == null) {
+            return rxProcessingRequest(liteString);
+        } else {
+            curAction.put(liteString);
+            return Observable.just(curAction.next());
+        }
     }
 
     private Message send(String content) {
@@ -256,13 +288,9 @@ public class Ivor extends User {
             storageAPI.updateCommunicationKey(communicationKey);
 
             if (newCommunicationKeys.contains(communicationKey)) {
-                for (HolderID holder : communicationKeyHolderID) {
-                    if (communicationKey.id == holder.getSelfID()) {
-                        communicationKey.id = holder.getServerID();
-                        break;
-                    }
-                }
+                ServerIDAdapter.adapterID(communicationKey, communicationKeyHolderID);
             }
+
             App.getLoadAPI().replaceCommunicationKey(communicationKey)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
@@ -285,12 +313,7 @@ public class Ivor extends User {
             storageAPI.updateCommunication(communication);
             // Теперь нужно обновить коммуникацию на сервере. Для этого необходимо узнать серверный ID для данной коммуникации
             if (newCommunications.contains(communication)) {    // Если новая, значит нужно "подменить" ID
-                for (HolderID holder : communicationHolderID) {
-                    if (holder.getSelfID() == communication.id) {
-                        communication.id = holder.getServerID();
-                        break;
-                    }
-                }
+                ServerIDAdapter.adapterID(communication, communicationHolderID);
             }
 
             // Обновляем Communication на сервере с действительным ID
@@ -321,9 +344,9 @@ public class Ivor extends User {
     }
 
     private Object getLastCommunication() {
-        if (memoryCommunicationAPIS.isEmpty())
+        if (memoryCommunication.isEmpty())
             return null;
-        return memoryCommunicationAPIS.get(memoryCommunicationAPIS.size()-1);
+        return memoryCommunication.get(memoryCommunication.size()-1);
     }
 
     @NonNull
@@ -369,9 +392,11 @@ public class Ivor extends User {
     boolean processingKeyWord() {
         return processingKeyWord;
     }
+
     boolean processingQuestion() {
         return processingQuestion;
     }
+
     void deleteLastKeyWord() {
         KeyWord word = getLastKeyWord();
         if (word == null)
@@ -379,12 +404,7 @@ public class Ivor extends User {
         storageAPI.deleteKeyWord(word);
 
         if (newKeyWords.contains(word)) {
-            for (HolderID holder : keyWordHolderID) {
-                if (holder.getSelfID() == word.id) {
-                    word.id = holder.getServerID();
-                    break;
-                }
-            }
+            ServerIDAdapter.adapterID(word, keyWordHolderID);
         }
         App.getLoadAPI().deleteKeyWord(word.id)
                 .subscribeOn(Schedulers.io())
@@ -398,12 +418,7 @@ public class Ivor extends User {
         storageAPI.deleteQuestion(question);
 
         if (newQuestions.contains(question)) {
-            for (HolderID holder : questionHolderID) {
-                if (holder.getSelfID() == question.id) {
-                    question.id = holder.getServerID();
-                    break;
-                }
-            }
+            ServerIDAdapter.adapterID(question, questionHolderID);
         }
         App.getLoadAPI().deleteQuestion(question.id)
                 .subscribeOn(Schedulers.io())
@@ -421,12 +436,7 @@ public class Ivor extends User {
             storageAPI.deleteCommunication(c.id);
 
             if (newCommunications.contains(c)) {
-                for (HolderID holder : communicationHolderID) {
-                    if (holder.getSelfID() == c.id) {
-                        c.id = holder.getServerID();
-                        break;
-                    }
-                }
+                ServerIDAdapter.adapterID(c, communicationHolderID);
             }
             App.getLoadAPI().deleteCommunication(c.id)
                     .subscribeOn(Schedulers.io())
@@ -437,12 +447,7 @@ public class Ivor extends User {
             storageAPI.deleteCommunicationKey(c.id);
 
             if (newCommunicationKeys.contains(c)) {
-                for (HolderID holder : communicationKeyHolderID) {
-                    if (holder.getSelfID() == c.id) {
-                        c.id = holder.getServerID();
-                        break;
-                    }
-                }
+                ServerIDAdapter.adapterID(c, communicationKeyHolderID);
             }
 
             App.getLoadAPI().deleteCommunicationKey(c.id)
@@ -467,6 +472,7 @@ public class Ivor extends User {
         comKey.id = storageAPI.insertCommunicationKey(comKey);
         newCommunicationKeys.add(comKey);
     }
+
     void appendNewAnswerForLastQ(Answer answer) {
         answer.id = storageAPI.insertAnswer(answer);
         newAnswers.add(answer);
@@ -482,6 +488,7 @@ public class Ivor extends User {
         communication.id = storageAPI.insertCommunication(communication);
         newCommunications.add(communication);
     }
+
     boolean appendNewKeyWord(KeyWord keyWord) {
         List<KeyWord> keyWords = storageAPI.getKeyWords();
         if (!keyWords.contains(keyWord)) {
@@ -588,20 +595,15 @@ public class Ivor extends User {
                 resources.getString(R.string.successfulPost), "Answer", oldID, serverID));
 
         // Ищем (по старому id) какие коммуникации соответствуют нашему ответу. Она будет одна (либо Com, либо ComKey)
-        List<Communication> coms = App.getStorageAPI().getCommunicationsForAnswer(oldID);
-        List<CommunicationKey> comKeys = App.getStorageAPI().getCommunicationKeysForAnswer(oldID);
+        List<Communication> coms = storageAPI.getCommunicationsForAnswer(oldID);
+        List<CommunicationKey> comKeys = storageAPI.getCommunicationKeysForAnswer(oldID);
 
 
         if (!coms.isEmpty()) { // Если нужно добавить Communication, но сначала изменить answerID и questionID
             Communication c = coms.get(0);
             c.answerID = serverID;
             // Ищем, в какой серверный ID ревращается местный ID нужного нам вопроса
-            for (HolderID holder : questionHolderID) {
-                if (holder.getSelfID() == c.questionID) {
-                    c.questionID = holder.getServerID();
-                    break;
-                }
-            }
+            ServerIDAdapter.adapterQuestionID(c, questionHolderID);
             // Отправляем обновленный Communication на сервер
             App.getLoadAPI().insertCommunication(c.toDTO())
                     .subscribeOn(Schedulers.io())
@@ -611,13 +613,7 @@ public class Ivor extends User {
             CommunicationKey c = comKeys.get(0);
             c.answerID = serverID;
             // Ищем, в какой серверный ID превращаетс местный ID нужного нам ключевого слова
-            for (HolderID holder : keyWordHolderID) {
-                if (holder.getSelfID() == c.keyID) {
-                    c.keyID = holder.getServerID();
-                    App.logI(String.format(Locale.ENGLISH, "Успешная трансформация для CommunicationKey keyID: %d", c.keyID));
-                    break;
-                }
-            }
+            ServerIDAdapter.adapterKeyID(c, keyWordHolderID);
             // Отправляем обновленный CommunicationKey на сервер
             App.getLoadAPI().insertCommunicationKey(c.toDTO())
                     .subscribeOn(Schedulers.io())

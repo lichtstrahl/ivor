@@ -5,10 +5,13 @@ import android.view.View;
 import java.util.LinkedList;
 import java.util.List;
 
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
+import root.ivatio.network.NetworkObserver;
 import root.ivatio.util.ListsHolder;
 import root.ivatio.util.ROLE;
 import root.ivatio.util.StringProcessor;
@@ -19,10 +22,12 @@ import root.ivatio.activity.MsgActivity;
 public class IvorPresenter {
     private Ivor model;
     private IvorViewAPI viewAPI;
+    private NetworkObserver<String> answerObserver;
 
     public IvorPresenter(Ivor ivor, IvorViewAPI api) {
         model = ivor;
         viewAPI = api;
+        answerObserver = new NetworkObserver<>(this::successfulAnswer, this::errorNetwork);
     }
 
     public void setMenuModeStd() {
@@ -121,13 +126,11 @@ public class IvorPresenter {
     }
 
     private void sendWithModeSTD(String request) {
-        Message newMessage = model.answer(request);
-        if (newMessage != null)
-            viewAPI.appendMessage(newMessage);
-        if (model.processingKeyWord() || model.processingQuestion()) {
-            viewAPI.appendRating();
-            viewAPI.switchButtonDelete(View.VISIBLE);
-        }
+        viewAPI.switchProgress(View.VISIBLE);
+        model.rxAnswer(request)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(answerObserver);
     }
 
     private void sendWithModeUserSendAnswerForKW(String request) {
@@ -187,5 +190,19 @@ public class IvorPresenter {
                 .buildKeyWords(model.getNewKeyWords())
                 .buildQuestions(model.getNewQuestions())
                 .build();
+    }
+
+    private void successfulAnswer(String answer) {
+        viewAPI.switchProgress(View.GONE);
+        if (!answer.isEmpty()) viewAPI.appendMessage(new Message(null, answer));
+        if (model.processingKeyWord() || model.processingQuestion()) {
+            viewAPI.appendRating();
+            viewAPI.switchButtonDelete(View.VISIBLE);
+        }
+    }
+
+    private void errorNetwork(Throwable t) {
+        viewAPI.switchProgress(View.GONE);
+        App.logI(t.getMessage());
     }
 }

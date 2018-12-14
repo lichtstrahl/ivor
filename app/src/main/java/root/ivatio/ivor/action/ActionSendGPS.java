@@ -9,9 +9,7 @@ import io.reactivex.subjects.PublishSubject;
 
 public class ActionSendGPS extends Action {
     public ActionSendGPS(String cmd, Consumer<String> next) {
-        super(cmd);
-        subject = PublishSubject.create();
-        subject.subscribe(next);
+        super(cmd, next);
         buffer = new CircularArray<>();
         buffer.addFirst(endMessage);
     }

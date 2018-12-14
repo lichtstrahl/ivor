@@ -21,6 +21,8 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
+import javax.annotation.Nullable;
+
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
@@ -71,51 +73,20 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
         user = (User)getIntent().getSerializableExtra(INTENT_USER);
+
         ivorPresenter = new IvorPresenter(
-                        new Ivor(getResources(),
-                        new ActionCall(
-                                getString(R.string.cmdCall),
-                                x -> {
-                                    if (x.isEmpty()) {
-                                        List<String> param = ivorPresenter.completeAction();
-                                        String dial = "tel:" + param.get(0);
-                                        startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
-                                    } else
-                                        appendMessage(new Message(null, x));
-                                }),
-                        new ActionSendSMS(getString(R.string.cmdSendSMS),
-                                x -> {
-                                    if (x.isEmpty()) {
-                                        List<String> param = ivorPresenter.completeAction();
-                                        SmsManager smsManager = SmsManager.getDefault();
-                                        smsManager.sendTextMessage(param.get(0), null, param.get(1), null, null);
-                                        Toast.makeText(this, R.string.successfulSendSMS, Toast.LENGTH_SHORT).show();
-                                    } else
-                                        appendMessage(new Message(null, x));
-                                }),
-                        new ActionSendEmail(getString(R.string.cmdSendEmail), x-> {
+                new Ivor(
+                        getResources(),
+                        App.getStorageAPI(),
+                        new ActionCall("позвонить", x -> {
                             if (x.isEmpty()) {
                                 List<String> param = ivorPresenter.completeAction();
-                                Intent intent = new Intent(Intent.ACTION_SEND);
-                                intent.setType("plain/text");
-                                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {param.get(0)});
-                                intent.putExtra(Intent.EXTRA_SUBJECT, param.get(1));
-                                intent.putExtra(Intent.EXTRA_TEXT, param.get(2));
-                                this.startActivity(Intent.createChooser(intent, "Отправка ..."));
-                            } else
-                                appendMessage(new Message(null, x));
-                        }),
-                        new ActionSendGPS(getString(R.string.cmdSendGPS), x-> {
-                            if (x.isEmpty()) {
-                                ivorPresenter.completeAction();
-                                Intent intent = new Intent(android.content.Intent.ACTION_VIEW,
-                                        Uri.parse("geo:0,0?q="+user.city));
-                                startActivity(intent);
-                            } else
-                                appendMessage(new Message(null, x));
-                        })
-                ),
+                                String dial = "tel:" + param.get(0);
+                                startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
+                            }
+                        })),
                 this);
+
         messages = new MessageAdapter(this, new ArrayList<>());
         listView.setAdapter(messages);
         RecyclerView.LayoutManager lManager = new LinearLayoutManager(this);
@@ -243,8 +214,11 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         buttonYes.setVisibility(View.VISIBLE);
     }
     @Override
-    public void appendMessage(Message msg) {
-        messages.append(msg);
+    public void appendMessage(@Nullable Message msg) {
+        if (msg != null) {
+            messages.append(msg);
+            listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
+        }
     }
 
     private Date getCurDate() {
@@ -267,10 +241,14 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
     }
 
-
     @Override
     public void needEval() {
         Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void switchProgress(int state) {
+        progressLoad.setVisibility(state);
     }
 
     public void successfulLoad(ListsHolder listsHolder) {
