@@ -15,4 +15,5 @@ public interface IvorViewAPI {
     void appendRating();
     void needEval();
     void switchProgress(int state);
+    void inputEnabled(boolean flag);
 }

@@ -4,7 +4,6 @@ package root.ivatio.ivor;
 // Общение и так далее
 
 import android.content.res.Resources;
-import android.support.annotation.NonNull;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -117,74 +116,6 @@ public class Ivor extends User {
     }
 
     private Observable<String> rxProcessingRequest(String liteRequest) {
-
-//        return App.getLoadAPI().loadCommands()
-//                .flatMap((commands) -> {    // КРазбор команд
-//                    Command cmd = isCommand(liteRequest, commands);
-//                    if (cmd != null)
-//                        return Observable.just(cmd);
-//                    else
-//                        return Observable.just(Integer.valueOf(0));
-//                }).flatMap((args) -> {    // args: Command, 0
-//                    if (args.equals(0)) {
-//                        return App.getLoadAPI().loadQuestions();
-//                    } else {
-//                        processingQuestion = processingKeyWord = false;
-//                        return Observable.just((Command)args);
-//                    }
-//                })
-//                .flatMap((args) -> {    // args: List<Question>, Command
-//                    if (args instanceof Command) return Observable.just((Command)args);
-//                    List<Question> list = (List<Question>)args;
-//                    Question q = isQuestion(liteRequest, list);
-//                    if (q != null) {
-//                        return Observable.just(q);
-//                    } else {
-//                        return Observable.just(Integer.valueOf(0));
-//                    }
-//                })
-//                .flatMap((arg) -> {     // args: Command, Question, 0
-//                    if (arg instanceof Command) return Observable.just((Command)arg);
-//                    if (arg.equals(0)) {  // Значит вопрос не был найден
-//                        return Observable.just(Integer.valueOf(0)); // Дополнительный проброс
-//                    } else {            // Был найден вопрос
-//                        return App.getLoadAPI().loadCommunicationsForQuestion(((Question)arg).id);
-//                    }
-//                })
-//                .flatMap((arg) -> {     // args: Command, 0, List<Communication>
-//                    if (arg instanceof Command) return Observable.just((Command)arg);
-//                    List<Communication> communications = (List)arg;
-//                    if (!communications.isEmpty()) {
-//                        int r = random.nextInt(communications.size());
-//                        Communication communication = communications.get(r);
-//                        return Observable.just(communication);
-//                    }
-//                    else {
-//                        return App.getLoadAPI().loadKeyWords();
-//                    }
-//                })
-//                .flatMap(arg -> {   // Command, Communication, List<KeyWord>
-//                    if (arg instanceof Command) return Observable.just((Command)arg);
-//                    if (arg instanceof Communication) { // Найдена коммуникация
-//                        Communication com = (Communication)arg;
-//                        processingQuestion = true;
-//                        processingKeyWord = false;
-//                        memory(com);
-//                        return Observable.combineLatest(
-//                                App.getLoadAPI().loadAnswerByID(com.answerID),
-//                                App.getLoadAPI().loadQuestionByID(com.questionID),
-//                                (Answer a, Question q) -> {
-//                                    memory(q).memory(a);
-//                                    return a;
-//                                }
-//                        );
-//                    }
-//                    List<KeyWord> words = (List)arg;
-//                    List<KeyWord> words2 = StringProcessor.getKeyWords(liteRequest);
-//                })
-//                .flatMap(arg -> {   // Command, Answer, 0
-//
-//                });
         Observable<String> obsCommand = App.getLoadAPI().loadCommands()
                 .flatMap(commands -> {
                    Command cmd = isCommand(liteRequest, commands);
@@ -335,7 +266,7 @@ public class Ivor extends User {
         }
     }
 
-    private Message send(String content) {
+    public Message send(String content) {
         if (content.isEmpty())
             return null;
         return new Message(null, content);
@@ -346,6 +277,7 @@ public class Ivor extends User {
     }
 
 
+
     int getCountEval() {
         return countEval;
     }
@@ -354,58 +286,6 @@ public class Ivor extends User {
         List<String> res = curAction.getParam();
         curAction = null;
         return res;
-    }
-
-    void reEvalutionKeyWord(int eval) {
-        Answer answer = getLastAnswer();
-        KeyWord keyWord = getLastKeyWord();
-        if (keyWord == null || answer == null)
-            return;
-        CommunicationKey communicationKey = storageAPI.getCommunicationKey(keyWord.id, answer.id);
-        if (communicationKey != null) {
-            countEval++;
-            communicationKey.power++;
-            if (eval > 0)
-                communicationKey.correct++;
-            if (eval < 0)
-                communicationKey.correct--;
-            storageAPI.updateCommunicationKey(communicationKey);
-
-            if (newCommunicationKeys.contains(communicationKey)) {
-                ServerIDAdapter.adapterID(communicationKey, communicationKeyHolderID);
-            }
-
-            App.getLoadAPI().replaceCommunicationKey(communicationKey)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(replaceCommunicationKeyObserver);
-        }
-    }
-    void reEvalutionQuestion(int eval) {
-        Answer answer = getLastAnswer();
-        Question question = getLastQuestion();
-        if (question == null || answer ==null)
-            return;
-        Communication communication = storageAPI.getCommunication(question.id, answer.id);
-        if (communication != null) {
-            countEval++;
-            communication.power++;
-            if (eval > 0)
-                communication.correct++;
-            if (eval < 0)
-                communication.correct--;
-            storageAPI.updateCommunication(communication);
-            // Теперь нужно обновить коммуникацию на сервере. Для этого необходимо узнать серверный ID для данной коммуникации
-            if (newCommunications.contains(communication)) {    // Если новая, значит нужно "подменить" ID
-                ServerIDAdapter.adapterID(communication, communicationHolderID);
-            }
-
-            // Обновляем Communication на сервере с действительным ID
-            App.getLoadAPI().replaceCommunication(communication)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(replaceCommunicationObserver);
-        }
     }
 
     Observable<String> evaluation(int eval) {
@@ -481,45 +361,36 @@ public class Ivor extends User {
         return memoryCommunication.get(memoryCommunication.size()-1);
     }
 
+    public Observable<Message> sendRandomKeyWord() {
+        return App.getLoadAPI().loadKeyWords()
+                .flatMap(words -> {
+                    String content = "";
+                    if (!words.isEmpty()) {
+                        int r = random.nextInt(words.size());
+                        KeyWord word = words.get(r);
+                        content = word.content;
+                        memory(word);
+                    }
+                    return Observable.just(new Message(null, content));
+                });
+    }
 
-    @NonNull
-    Message sendRandomKeyWord() {
-        KeyWord r = getRandomKeyWord();
-        if (r == null)
-            return sendEmptyMessage();
-        memoryWords.add(r);
-        return new Message(null, r.content);
+    public Observable<Message> sendRandomQuestion() {
+        return App.getLoadAPI().loadQuestions()
+                .flatMap(questions -> {
+                   String content = "";
+                   if (questions.isEmpty()) {
+                        int r = random.nextInt(questions.size());
+                        Question q = questions.get(r);
+                        content = q.content;
+                        memory(q);
+                   }
+                   return Observable.just(new Message(null, content));
+                });
     }
 
     private Message sendEmptyMessage() {
         return new Message(null, "");
-    }
-
-    @Nullable
-    private KeyWord getRandomKeyWord() {
-        long[] allID = storageAPI.getKeyWordsID();
-        if (allID.length == 0)
-            return null;
-        long anyID = allID[random.nextInt(allID.length)];
-        return storageAPI.getKeyWord(anyID);
-    }
-
-    @NonNull
-    Message sendRandomQuestion() {
-        Question r = getRandomQuestion();
-        if (r == null)
-            return sendEmptyMessage();
-        memoryQuestions.add(r);
-        return new Message(null, r.content);
-    }
-
-    @Nullable
-    private Question getRandomQuestion() {
-        long[] allID = storageAPI.getQuestionsID();
-        if (allID.length == 0)
-            return null;
-        long anyID = allID[random.nextInt(allID.length)];
-        return storageAPI.getQuestion(anyID);
     }
 
     boolean processingKeyWord() {
@@ -530,64 +401,33 @@ public class Ivor extends User {
         return processingQuestion;
     }
 
-    void deleteLastKeyWord() {
-        KeyWord word = getLastKeyWord();
-        if (word == null)
-            return;
-        storageAPI.deleteKeyWord(word);
 
-        if (newKeyWords.contains(word)) {
-            ServerIDAdapter.adapterID(word, keyWordHolderID);
-        }
-        App.getLoadAPI().deleteKeyWord(word.id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(deleteKeyWordObserver);
-    }
-    void deleteLastQuestion() {
-        Question question = getLastQuestion();
-        if (question == null)
-            return;
-        storageAPI.deleteQuestion(question);
-
-        if (newQuestions.contains(question)) {
-            ServerIDAdapter.adapterID(question, questionHolderID);
-        }
-        App.getLoadAPI().deleteQuestion(question.id)
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(deleteQuestionObserver);
-    }
-
-    /** Удаление не только Communication, но и CommunicationKey, если она была последней*/
-    void deleteLastCommunication() {
+    Observable<EmptyDTO> rxDeleteLastCommunication() {
         Object o = getLastCommunication();
-        if (o == null)
-            return;
-        if(o instanceof Communication) {
+        if (o instanceof Communication) {
             Communication c = (Communication)o;
-            storageAPI.deleteCommunication(c.id);
 
-            if (newCommunications.contains(c)) {
-                ServerIDAdapter.adapterID(c, communicationHolderID);
-            }
-            App.getLoadAPI().deleteCommunication(c.id)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(deleteCommunicationObserver);
-        } else {
-            CommunicationKey c = (CommunicationKey)o;
-            storageAPI.deleteCommunicationKey(c.id);
-
-            if (newCommunicationKeys.contains(c)) {
-                ServerIDAdapter.adapterID(c, communicationKeyHolderID);
-            }
-
-            App.getLoadAPI().deleteCommunicationKey(c.id)
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(deleteCommunicationKeyObserver);
+            return App.getLoadAPI().deleteCommunication(c.id);
         }
+        if (o instanceof CommunicationKey) {
+            CommunicationKey key = (CommunicationKey)o;
+            return App.getLoadAPI().deleteCommunicationKey(key.id);
+        }
+        return Observable.just(new EmptyDTO());
+    }
+
+
+
+    Observable<Message> rxDeleteQuestion() {
+        Question q = getLastQuestion();
+        return App.getLoadAPI().deleteQuestion(q.id)
+                .flatMap(dto -> sendRandomQuestion());
+    }
+
+    Observable<Message> rxDeleteKeyWord() {
+        KeyWord word = getLastKeyWord();
+        return App.getLoadAPI().deleteKeyWord(word.id)
+                .flatMap(dto -> sendRandomKeyWord());
     }
 
     void appendNewAnswerForLastKW(Answer answer) {

@@ -249,6 +249,16 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         progressLoad.setVisibility(state);
     }
 
+    @Override
+    public void inputEnabled(boolean flag) {
+        if (flag)
+            initialDialogInterface();
+        else {
+            inputText.setVisibility(View.GONE);
+            buttonSend.setVisibility(View.GONE);
+        }
+    }
+
     public void initialDialogInterface() {
         progressLoad.setVisibility(View.GONE);
         inputText.setVisibility(View.VISIBLE);
