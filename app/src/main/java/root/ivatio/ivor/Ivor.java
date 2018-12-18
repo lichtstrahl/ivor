@@ -240,7 +240,7 @@ public class Ivor extends User {
         return res;
     }
 
-    Observable<String> evaluation(int eval) {
+    Observable<String> rxEvaluation(int eval) {
         Observable<CommunicationKey> obsKey = null;
         if (processingKeyWord) {
             CommunicationKey com = (CommunicationKey)getLastCommunication();
@@ -331,7 +331,7 @@ public class Ivor extends User {
         return App.getLoadAPI().loadQuestions()
                 .flatMap(questions -> {
                    String content = "";
-                   if (questions.isEmpty()) {
+                   if (!questions.isEmpty()) {
                         int r = random.nextInt(questions.size());
                         Question q = questions.get(r);
                         content = q.content;
@@ -407,10 +407,12 @@ public class Ivor extends User {
                 .flatMap(questions -> Observable.just(questions.contains(q)))
                 .flatMap(flag -> {
                     if (!flag)
-                        return App.getLoadAPI().insertKeyWord(q.toDTO());
+                        return App.getLoadAPI().insertQuestion(q.toDTO());
                     return Observable.just(flag);
                 })
-                .flatMap(arg -> Observable.just(arg instanceof Question));
+                .flatMap(arg -> {
+                    return Observable.just(arg instanceof Question);
+                });
     }
 
     Observable<Communication> rxAppendNewAnswerForQuestion(Answer answer) {
@@ -428,5 +430,9 @@ public class Ivor extends User {
 
     void selection() {
 
+    }
+
+    Observable<EmptyDTO> rxSelection() {
+        return App.getLoadAPI().selection();
     }
 }

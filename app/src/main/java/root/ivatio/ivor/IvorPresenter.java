@@ -2,7 +2,6 @@ package root.ivatio.ivor;
 
 import android.view.View;
 
-import java.util.LinkedList;
 import java.util.List;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
@@ -15,7 +14,6 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.network.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
-import root.ivatio.util.ListsHolder;
 import root.ivatio.util.ROLE;
 import root.ivatio.util.StringProcessor;
 import root.ivatio.Message;
@@ -35,6 +33,7 @@ public class IvorPresenter {
     private NetworkObserver<Communication> insertAnswerForQObserver;
     private NetworkObserver<Boolean> insertQuestionObserver;
     private NetworkObserver<Boolean> insertKeyWordObserver;
+    private NetworkObserver<EmptyDTO> selectionObserver;
 
     public IvorPresenter(Ivor ivor, IvorViewAPI api) {
         model = ivor;
@@ -50,16 +49,17 @@ public class IvorPresenter {
         insertAnswerForQObserver = new NetworkObserver<>(this::successfulInsertAnswerForQ, this::errorNetwork);
         insertQuestionObserver = new NetworkObserver<>(this::successfulInsertQuestion, this::errorNetwork);
         insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorNetwork);
+        selectionObserver = new NetworkObserver<>(this::successfulSelection, this::errorNetwork);
     }
 
     public void setMenuModeStd() {
         viewAPI.setRole(ROLE.STD);
         viewAPI.appendMessage(model.send(R.string.ivorModeSTD));
         viewAPI.switchButtonDelete(View.GONE);
+        viewAPI.inputEnabled(true);
     }
 
     public void setMenuModeIvorAskingKW() {
-
         viewAPI.setRole(ROLE.USER_SEND_ANSWER_FOR_KW);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewAnswerForKW));
         viewAPI.switchProgress(View.VISIBLE);
@@ -76,12 +76,14 @@ public class IvorPresenter {
         viewAPI.setRole(ROLE.USER_SEND_NEW_KW);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewKW));
         viewAPI.switchButtonDelete(View.GONE);
+        viewAPI.inputEnabled(true);
     }
 
     public void setMenuModeAddQ() {
         viewAPI.setRole(ROLE.USER_SEND_NEW_Q);
         viewAPI.appendMessage(model.send(R.string.ivorModeUserSendNewQuestion));
         viewAPI.switchButtonDelete(View.GONE);
+        viewAPI.inputEnabled(true);
     }
 
     public void setMenuModeIvorAskingQ() {
@@ -100,7 +102,10 @@ public class IvorPresenter {
 
     public void onStop() {
         if (model.getCountEval() > Ivor.CRITICAL_COUNT_EVAL) {
-            model.selection();
+            model.rxSelection()
+                    .subscribeOn(Schedulers.io())
+                    .observeOn(AndroidSchedulers.mainThread())
+                    .subscribe(selectionObserver);
         }
     }
 
@@ -154,7 +159,7 @@ public class IvorPresenter {
     public void clickEval(int eval) {
         viewAPI.switchProgress(View.VISIBLE);
         viewAPI.inputEnabled(false);
-        model.evaluation(eval)
+        model.rxEvaluation(eval)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribe(evalObserver);
@@ -207,24 +212,13 @@ public class IvorPresenter {
                 .subscribe(insertAnswerForQObserver);
     }
 
-
-    public void selection() {
-        throw new UnsupportedOperationException("Не готово");
-//        if (model.getCountEval() > Ivor.CRITICAL_COUNT_EVAL) {
-////            model.selection();
-//            model.resetCountEval();
-//            viewAPI.appendMessage(model.send(R.string.ivorSuccessfulSelection));
-//            viewAPI.showMessage(R.string.successfulSelection);
-//        }
-    }
-
     public void selectionForce() {
-        throw new UnsupportedOperationException("Не готово");
-
-//        model.selection();
-//        model.resetCountEval();
-//        viewAPI.appendMessage(model.send(R.string.ivorSuccessfulSelection));
-//        viewAPI.showMessage(R.string.successfulSelection);
+        viewAPI.switchProgress(View.VISIBLE);
+        viewAPI.inputEnabled(false);
+        model.rxSelection()
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribe(selectionObserver);
     }
 
     public List<String> completeAction() {
@@ -310,6 +304,14 @@ public class IvorPresenter {
             viewAPI.appendMessage(model.send(R.string.ivorSuccessfulAppendQ));
         else
             viewAPI.appendMessage(model.send(R.string.ivorQExisting));
+    }
+
+    private void successfulSelection(EmptyDTO dto) {
+        viewAPI.switchProgress(View.GONE);
+        viewAPI.inputEnabled(true);
+        viewAPI.appendMessage(model.send(R.string.successfulSelection));
+        model.resetCountEval();
+        viewAPI.showMessage(R.string.successfulSelection);
     }
 
     private void successfulRandomQuestion(Message message) {
