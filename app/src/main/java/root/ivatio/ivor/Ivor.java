@@ -5,6 +5,7 @@ package root.ivatio.ivor;
 
 import android.content.res.Resources;
 
+import java.security.Key;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -49,31 +50,6 @@ public class Ivor extends User {
     private boolean processingKeyWord;
     private boolean processingQuestion;
     private Action curAction;
-    private static LocalStorageAPI storageAPI;
-    // Добавление новых данных
-    private List<Question> newQuestions;
-    private List<Answer> newAnswers;
-    private List<KeyWord> newKeyWords;
-    private List<Communication> newCommunications;
-    private List<CommunicationKey> newCommunicationKeys;
-    // Наблюдатели за сетевыми запросами
-    private NetworkObserver<Question> insertQuestionObserver;
-    private NetworkObserver<Answer> insertAnswerObserver;
-    private NetworkObserver<KeyWord> insertKeyWordObserver;
-    private NetworkObserver<Communication> insertCommunicationObserver;
-    private NetworkObserver<CommunicationKey> insertCommunicationKeyObserver;
-    private NetworkObserver<Communication> replaceCommunicationObserver;
-    private NetworkObserver<CommunicationKey> replaceCommunicationKeyObserver;
-    private NetworkObserver<EmptyDTO> deleteKeyWordObserver;
-    private NetworkObserver<EmptyDTO> deleteQuestionObserver;
-    private NetworkObserver<EmptyDTO> deleteCommunicationObserver;
-    private NetworkObserver<EmptyDTO> deleteCommunicationKeyObserver;
-    private NetworkObserver<EmptyDTO> selectionObserver;
-    // Списки для отображения ID с местных значений в серверные
-    private List<HolderID> questionHolderID;
-    private List<HolderID> keyWordHolderID;
-    private List<HolderID> communicationHolderID;
-    private List<HolderID> communicationKeyHolderID;
 
     public Ivor(Resources resources, LocalStorageAPI api, Action ... actions) {
         this.id = Long.valueOf(-1);
@@ -87,35 +63,13 @@ public class Ivor extends User {
         this.countEval = 0;
         this.actions = Arrays.asList(actions);
         this.curAction = null;
-        this.newQuestions = new LinkedList<>();
-        this.newAnswers = new LinkedList<>();
-        this.newKeyWords = new LinkedList<>();
-        this.newCommunications = new LinkedList<>();
-        this.newCommunicationKeys = new LinkedList<>();
-        this.insertQuestionObserver = new NetworkObserver<>(this::successfulInsertQuestion, this::errorNetwork);
-        this.insertAnswerObserver = new NetworkObserver<>(this::successfulInsertAnswer, this::errorNetwork);
-        this.insertKeyWordObserver = new NetworkObserver<>(this::successfulInsertKeyWord, this::errorNetwork);
-        this.insertCommunicationObserver = new NetworkObserver<>(this::successfulInsertCommunication, this::errorNetwork);
-        this.insertCommunicationKeyObserver = new NetworkObserver<>(this::successfulInsertCommunicationKey, this::errorNetwork);
-        this.questionHolderID = new LinkedList<>();
-        this.keyWordHolderID = new LinkedList<>();
-        this.communicationHolderID = new LinkedList<>();
-        this.communicationKeyHolderID = new LinkedList<>();
-        this.replaceCommunicationObserver = new NetworkObserver<>(this::successfulReplaceCommunication, this::errorNetwork);
-        this.replaceCommunicationKeyObserver = new NetworkObserver<>(this::successfulReplaceCommunicationKey, this::errorNetwork);
-        this.deleteKeyWordObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
-        this.deleteQuestionObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
-        this.deleteCommunicationObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
-        this.deleteCommunicationKeyObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
-        this.selectionObserver = new NetworkObserver<>(this::successfulNetwork, this::errorNetwork);
-        this.storageAPI = api;
     }
 
     public static String getName() {
         return NAME;
     }
 
-    private Observable<String> rxProcessingRequest(String liteRequest) {
+    private Observable<String> processingRequest(String liteRequest) {
         Observable<String> obsCommand = App.getLoadAPI().loadCommands()
                 .flatMap(commands -> {
                    Command cmd = isCommand(liteRequest, commands);
@@ -259,7 +213,7 @@ public class Ivor extends User {
     Observable<String> rxAnswer(String request) {
         String liteString = StringProcessor.toStdFormat(request);
         if (curAction == null) {
-            return rxProcessingRequest(liteString);
+            return processingRequest(liteString);
         } else {
             curAction.put(liteString);
             return Observable.just(curAction.next());
@@ -275,8 +229,6 @@ public class Ivor extends User {
     Message send(int res) {
         return new Message(null, resources.getString(res));
     }
-
-
 
     int getCountEval() {
         return countEval;
@@ -430,230 +382,51 @@ public class Ivor extends User {
                 .flatMap(dto -> sendRandomKeyWord());
     }
 
-    void appendNewAnswerForLastKW(Answer answer) {
-        answer.id = storageAPI.insertAnswer(answer);
-        newAnswers.add(answer);
-        App.getLoadAPI().insertAnswer(answer.toDTO())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(insertAnswerObserver);
-
-        KeyWord lastKeyWord = getLastKeyWord();
-        if (lastKeyWord == null)
-            return;
-        CommunicationKey comKey = new CommunicationKey(lastKeyWord.id, answer.id);
-        comKey.id = storageAPI.insertCommunicationKey(comKey);
-        newCommunicationKeys.add(comKey);
+    Observable<CommunicationKey> rxAppendNewAnswerForLastWK(Answer answer) {
+        return App.getLoadAPI().insertAnswer(answer.toDTO())
+                .flatMap(a -> Observable.just(a.id))
+                .flatMap(id -> {
+                   CommunicationKey com = new CommunicationKey(getLastKeyWord().id, id);
+                   return App.getLoadAPI().insertCommunicationKey(com.toDTO());
+                });
     }
 
-    void appendNewAnswerForLastQ(Answer answer) {
-        answer.id = storageAPI.insertAnswer(answer);
-        newAnswers.add(answer);
-        App.getLoadAPI().insertAnswer(answer.toDTO())
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(insertAnswerObserver);
-
-        Question lastQuestion = getLastQuestion();
-        if (lastQuestion == null)
-            return;
-        Communication communication = new Communication(lastQuestion.id, answer.id);
-        communication.id = storageAPI.insertCommunication(communication);
-        newCommunications.add(communication);
+    Observable<Boolean> rxAppendNewKW(KeyWord word) {
+        return App.getLoadAPI().loadKeyWords()
+                .flatMap(words -> Observable.just(words.contains(word)))
+                .flatMap(flag -> { // true, false
+                    if (!flag)
+                        return App.getLoadAPI().insertKeyWord(word.toDTO());
+                    return Observable.just(flag);
+                })
+                .flatMap(arg -> Observable.just(arg instanceof KeyWord));
     }
 
-    boolean appendNewKeyWord(KeyWord keyWord) {
-        List<KeyWord> keyWords = storageAPI.getKeyWords();
-        if (!keyWords.contains(keyWord)) {
-            keyWord.id = storageAPI.insertKeyWord(keyWord);
-            newKeyWords.add(keyWord);
-            App.getLoadAPI().insertKeyWord(keyWord.toDTO())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(insertKeyWordObserver);
-            return  true;
-        }
-        return false;
+    Observable<Boolean> rxAppendNewQ(Question q) {
+        return App.getLoadAPI().loadQuestions()
+                .flatMap(questions -> Observable.just(questions.contains(q)))
+                .flatMap(flag -> {
+                    if (!flag)
+                        return App.getLoadAPI().insertKeyWord(q.toDTO());
+                    return Observable.just(flag);
+                })
+                .flatMap(arg -> Observable.just(arg instanceof Question));
     }
-    boolean appendNewQuestion(Question question) {
-        List<Question> questions = storageAPI.getQuestions();
-        if (!questions.contains(question)) {
-            question.id = storageAPI.insertQuestion(question);
-            newQuestions.add(question);
-            App.getLoadAPI().insertQuestion(question.toDTO())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(insertQuestionObserver);
-            return true;
-        }
-        return false;
+
+    Observable<Communication> rxAppendNewAnswerForQuestion(Answer answer) {
+        return App.getLoadAPI().insertAnswer(answer.toDTO())
+                .flatMap(a -> Observable.just(a.id))
+                .flatMap(id -> {
+                    Communication c = new Communication(getLastQuestion().id, id);
+                    return App.getLoadAPI().insertCommunication(c.toDTO());
+                });
     }
 
     void resetCountEval() {
         countEval = 0;
     }
 
-    public void selection() {
-        storageAPI.selectionCommunication();
-        storageAPI.selectionCommunicationKey();
-        App.getLoadAPI().selection()
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(selectionObserver);
-    }
+    void selection() {
 
-    List<Question> getNewQuestions() {
-        return newQuestions;
-    }
-
-    List<Answer> getNewAnswers() {
-        return newAnswers;
-    }
-
-    List<KeyWord> getNewKeyWords() {
-        return newKeyWords;
-    }
-
-    List<Communication> getNewCommunications() {
-        return newCommunications;
-    }
-
-    List<CommunicationKey> getNewCommunicationKeys() {
-        return newCommunicationKeys;
-    }
-
-    void insertCommunication() {
-        // Метод не используется
-    }
-
-    public void unsubscribe() {
-        insertQuestionObserver.unsubscribe();
-        insertAnswerObserver.unsubscribe();
-        insertKeyWordObserver.unsubscribe();
-        insertCommunicationObserver.unsubscribe();
-        insertCommunicationKeyObserver.unsubscribe();
-        deleteCommunicationKeyObserver.unsubscribe();
-        deleteCommunicationObserver.unsubscribe();
-        deleteKeyWordObserver.unsubscribe();
-        deleteQuestionObserver.unsubscribe();
-        replaceCommunicationKeyObserver.unsubscribe();
-        replaceCommunicationObserver.unsubscribe();
-        selectionObserver.unsubscribe();
-    }
-
-    private void successfulInsertQuestion(Question question) {
-        long serverID = question.id;
-        long oldID = -1;
-        for (Question q : newQuestions)
-            if (q.content.equals(question.content)) {
-                oldID = q.id;
-                q.id = serverID;
-        }
-        questionHolderID.add(new HolderID(oldID, serverID));
-        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
-                resources.getString(R.string.successfulPost), "Question", oldID, serverID));
-    }
-
-    // Если был добавлен Answer, значит вместе с ним нужно добавить либо один Communication, либо один CommunicationKey
-    private void successfulInsertAnswer(Answer answer) {
-        long serverID = answer.id;
-        long oldID = -1;
-        for (Answer a : newAnswers)
-            if (a.content.equals(answer.content)) {
-                oldID = a.id;
-                a.id = serverID;
-            }
-
-        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
-                resources.getString(R.string.successfulPost), "Answer", oldID, serverID));
-
-        // Ищем (по старому id) какие коммуникации соответствуют нашему ответу. Она будет одна (либо Com, либо ComKey)
-        List<Communication> coms = storageAPI.getCommunicationsForAnswer(oldID);
-        List<CommunicationKey> comKeys = storageAPI.getCommunicationKeysForAnswer(oldID);
-
-
-        if (!coms.isEmpty()) { // Если нужно добавить Communication, но сначала изменить answerID и questionID
-            Communication c = coms.get(0);
-            c.answerID = serverID;
-            // Ищем, в какой серверный ID ревращается местный ID нужного нам вопроса
-            ServerIDAdapter.adapterQuestionID(c, questionHolderID);
-            // Отправляем обновленный Communication на сервер
-            App.getLoadAPI().insertCommunication(c.toDTO())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(insertCommunicationObserver);
-        } else if (!comKeys.isEmpty()) { // Если нужно добавить CommunicationKey, но сначала изменить answerID и keyID
-            CommunicationKey c = comKeys.get(0);
-            c.answerID = serverID;
-            // Ищем, в какой серверный ID превращаетс местный ID нужного нам ключевого слова
-            ServerIDAdapter.adapterKeyID(c, keyWordHolderID);
-            // Отправляем обновленный CommunicationKey на сервер
-            App.getLoadAPI().insertCommunicationKey(c.toDTO())
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(insertCommunicationKeyObserver);
-        } else {    // Вообще не удалось найти таких коммуникаций
-            App.logW("Не удалось найти коммуникаций, соответствующих данному ответу.");
-        }
-    }
-
-    private void successfulInsertKeyWord(KeyWord word) {
-        long serverID = word.id;
-        long oldID = -1;
-        for (KeyWord w : newKeyWords) {
-            if (w.content.equals(word.content)) {
-                oldID = w.id;
-                w.id = serverID;
-            }
-        }
-        keyWordHolderID.add(new HolderID(oldID, serverID));
-
-        App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
-                resources.getString(R.string.successfulPost), "KeyWord", oldID, serverID));
-    }
-
-    private void successfulInsertCommunication(Communication communication) {
-        long serverID = communication.id;
-        long oldID = -1;
-        for (Communication c : newCommunications) {
-            if (c.equals(communication)) {
-                oldID = c.id;
-                c.id = serverID;
-            }
-        }
-        communicationHolderID.add(new HolderID(oldID, serverID));
-
-        App.logI(resources.getString(R.string.successfulPost) + ": Communication : id = " + communication.id);
-    }
-
-    private void successfulInsertCommunicationKey(CommunicationKey communicationKey) {
-        long serverID = communicationKey.id;
-        long oldID = -1;
-        for (CommunicationKey comKey : newCommunicationKeys) {
-            if (comKey.equals(communicationKey)) {
-                oldID = comKey.id;
-                comKey.id = serverID;
-            }
-        }
-        communicationKeyHolderID.add(new HolderID(oldID, serverID));
-
-        App.logI(resources.getString(R.string.successfulPost) + ": CommunicationKey : id = " + communicationKey.id);
-
-    }
-
-    private void successfulReplaceCommunicationKey(CommunicationKey communicationKey) {
-        App.logI(resources.getString(R.string.successfulUpdate));
-    }
-
-    private void successfulReplaceCommunication(Communication communication) {
-        App.logI(resources.getString(R.string.successfulUpdate));
-    }
-
-    private void successfulNetwork(Object o) {
-        App.logI(resources.getString(R.string.successfulPost));
-    }
-
-    private void errorNetwork(Throwable t) {
-        App.logE(t.getMessage());
     }
 }
