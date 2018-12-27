@@ -5,19 +5,15 @@ package root.ivatio.ivor;
 
 import android.content.res.Resources;
 
-import java.security.Key;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import javax.annotation.Nullable;
 
 import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.R;
@@ -29,11 +25,7 @@ import root.ivatio.bd.key_word.KeyWord;
 import root.ivatio.bd.qustion.Question;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
-import root.ivatio.network.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
-import root.ivatio.util.HolderID;
-import root.ivatio.util.LocalStorageAPI;
-import root.ivatio.util.ServerIDAdapter;
 import root.ivatio.util.StringProcessor;
 
 public class Ivor extends User {
@@ -51,7 +43,7 @@ public class Ivor extends User {
     private boolean processingQuestion;
     private Action curAction;
 
-    public Ivor(Resources resources, LocalStorageAPI api, Action ... actions) {
+    public Ivor(Resources resources, Action ... actions) {
         this.id = Long.valueOf(-1);
         this.resources = resources;
         this.memoryWords = new LinkedList<>();

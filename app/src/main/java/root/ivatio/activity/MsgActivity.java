@@ -76,7 +76,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         ivorPresenter = new IvorPresenter(
                 new Ivor(
                         getResources(),
-                        App.getStorageAPI(),
                         new ActionCall("позвонить", x -> {
                             if (x.isEmpty()) {
                                 List<String> param = ivorPresenter.completeAction();
