@@ -38,7 +38,6 @@ public class App extends Application {
         userAPI = retrofit.create(UserAPI.class);
         loadAPI = retrofit.create(LoadAPI.class);
 
-
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
         builder.enableWebKitInspector(Stetho.defaultInspectorModulesProvider(this));
         builder.enableDumpapp(Stetho.defaultDumperPluginsProvider(this));
