@@ -20,24 +20,15 @@ import root.ivatio.network.dto.PostCommandDTO;
 import root.ivatio.network.dto.PostContentDTO;
 
 public interface LoadAPI {
-    @GET("/api/answers")
-    Observable<List<Answer>> loadAnswers();
     @GET("/api/answers/byID")
     Observable<Answer> loadAnswerByID(@Query("id") long id);
-    @POST("/api/answers/update")
-    Observable<Answer> replaceAnswer(@Body Answer answer);
     @POST("/api/answers/insert")
     Observable<Answer> insertAnswer(@Body PostContentDTO answer);
-    @GET("/api/answers/answersForQuestion")
-    Observable<List<Answer>> loadAnswersForQuestion(@Query("questionID") long id);
 
 
     @GET("/api/commands")
     Observable<List<Command>> loadCommands();
 
-
-    @GET("/api/communications")
-    Observable<List<Communication>> loadCommunications();
     @GET("/api/communications/communicationsForQuestion")
     Observable<List<Communication>> loadCommunicationsForQuestion(@Query("questionID") long id);
     @POST("/api/communications/update")
@@ -47,9 +38,6 @@ public interface LoadAPI {
     @POST("/api/communications/delete")
     Observable<EmptyDTO> deleteCommunication(@Query("id") long id);
 
-
-    @GET("/api/communicationkeys")
-    Observable<List<CommunicationKey>> loadCommunicationKeys();
     @GET("/api/communicationkeys/communicationKeysForKeyWord")
     Observable<List<CommunicationKey>> loadCommunicationKeysForKeyWord(@Query("keyID") long id);
     @POST("/api/communicationkeys/update")
@@ -63,8 +51,6 @@ public interface LoadAPI {
     Observable<List<KeyWord>> loadKeyWords();
     @GET("/api/keywords/byID")
     Observable<KeyWord> loadKeyWordByID(@Query("id") long id);
-    @POST("/api/keywords/update")
-    Observable<KeyWord> replaceKeyWord(@Body KeyWord word);
     @POST("/api/keywords/insert")
     Observable<KeyWord> insertKeyWord(@Body PostContentDTO word);
     @POST("/api/keywords/delete")
@@ -74,8 +60,6 @@ public interface LoadAPI {
     Observable<List<Question>> loadQuestions();
     @GET("/api/questions/byID")
     Observable<Question> loadQuestionByID(@Query("id") long id);
-    @POST("/api/questions/update")
-    Observable<Question> replaceQuestion(@Body Question question);
     @POST("/api/questions/insert")
     Observable<Question> insertQuestion(@Body PostContentDTO question);
     @POST("/api/questions/delete")
