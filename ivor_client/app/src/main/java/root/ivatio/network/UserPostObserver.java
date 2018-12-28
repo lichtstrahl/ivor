@@ -40,6 +40,6 @@ public class UserPostObserver implements SingleObserver<User> {
     }
 
     public void unsubscribe() {
-        disposable.dispose();
+        if (disposable != null) disposable.dispose();
     }
 }
