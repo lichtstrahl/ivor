@@ -1,35 +1,18 @@
 {
-  "name": "ivor_server",
-  "version": "1.0.0",
-  "main": "server/server.js",
-  "engines": {
-    "node": ">=4"
-  },
+  "name": "server2",
+  "version": "0.0.0",
+  "private": true,
   "scripts": {
-    "lint": "eslint .",
-    "start": "node .",
-    "posttest": "npm run lint"
+    "start": "node ./app.js"
   },
   "dependencies": {
-    "compression": "^1.0.3",
-    "cors": "^2.5.2",
-    "helmet": "^3.10.0",
-    "loopback": "^3.19.0",
-    "loopback-boot": "^2.6.5",
-    "loopback-component-explorer": "^6.0.0",
-    "loopback-connector-mysql": "^2.4.1",
-    "serve-favicon": "^2.0.1",
-    "strong-error-handler": "^3.0.0",
-    "mysql": "^2.16.0"
-  },
-  "devDependencies": {
-    "eslint": "^3.17.1",
-    "eslint-config-loopback": "^8.0.0"
-  },
-  "repository": {
-    "type": "",
-    "url": ""
-  },
-  "license": "UNLICENSED",
-  "description": "ivor_server"
+    "cookie-parser": "~1.4.3",
+    "debug": "~2.6.9",
+    "express": "~4.16.0",
+    "http-errors": "~1.6.2",
+    "morgan": "~1.9.0",
+    "pug": "2.0.0-beta11",
+    "mysql": "^2.16.0",
+    "body-parser": "^1.18.3"
+  }
 }
