@@ -76,12 +76,38 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         ivorPresenter = new IvorPresenter(
                 new Ivor(
                         getResources(),
-                        new ActionCall("позвонить", x -> {
+                        new ActionCall(getString(R.string.cmdCall), x -> {
                             if (x.isEmpty()) {
                                 List<String> param = ivorPresenter.completeAction();
                                 String dial = "tel:" + param.get(0);
                                 startActivity(new Intent(Intent.ACTION_CALL, Uri.parse(dial)));
                             }
+                        }),
+                        new ActionSendSMS(getString(R.string.cmdSendSMS), x -> {
+                            if (x.isEmpty()) {
+                                List<String> param = ivorPresenter.completeAction();
+                                SmsManager smsManager = SmsManager.getDefault();
+                                smsManager.sendTextMessage(param.get(0), null, param.get(1), null, null);
+                                Toast.makeText(this, R.string.successfulSendSMS, Toast.LENGTH_LONG).show();
+                            }
+                        }),
+                        new ActionSendEmail(getString(R.string.cmdSendEmail), x -> {
+                            if (x.isEmpty()) {
+                                List<String> param = ivorPresenter.completeAction();
+                                Intent intent = new Intent(Intent.ACTION_SEND);
+                                intent.setType("plaint/text");
+                                intent.putExtra(Intent.EXTRA_EMAIL, new String[] {param.get(0)});
+                                intent.putExtra(Intent.EXTRA_SUBJECT, param.get(1));
+                                intent.putExtra(Intent.EXTRA_TEXT, param.get(2));
+                                this.startActivity(Intent.createChooser(intent, "Отправка ..."));
+                            }
+                        }),
+                        new ActionSendGPS(getString(R.string.cmdSendGPS), x -> {
+                           if (x.isEmpty()) {
+                               ivorPresenter.completeAction();
+                               Intent intent = new Intent(Intent.ACTION_VIEW, Uri.parse("geo:0,0?q="+user.city));
+                               startActivity(intent);
+                           }
                         })),
                 this);
 
@@ -125,31 +151,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @OnClick(R.id.buttonNo)
     public void clickNo() {
         ivorPresenter.clickEval(-1);
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-        // Скачивание данных их сети
-//        Observable.combineLatest(
-//                App.getLoadAPI().loadAnswers(),
-//                App.getLoadAPI().loadCommands(),
-//                App.getLoadAPI().loadCommunications(),
-//                App.getLoadAPI().loadCommunicationKeys(),
-//                App.getLoadAPI().loadKeyWords(),
-//                App.getLoadAPI().loadQuestions(),
-//                (lAnswer, lCommand,  lCommunication, lCommunicationKey,  lKeyWord, lQuestion)
-//                        -> ListsHolder.getBuilder()
-//                            .buildAnswers(lAnswer)
-//                            .buildCommands(lCommand)
-//                            .buildCommunications(lCommunication)
-//                            .buildCommunicationKeys(lCommunicationKey)
-//                            .buildKeyWords(lKeyWord)
-//                            .buildQuestions(lQuestion)
-//                            .build())
-//                .subscribeOn(Schedulers.io())
-//                .observeOn(AndroidSchedulers.mainThread())
-//                .subscribe(getObserver);
     }
 
     @Override
