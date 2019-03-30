@@ -1,17 +1,18 @@
-package root.ivatio.network;
+package root.ivatio.network.observer;
 
+import androidx.annotation.Nullable;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
 import root.ivatio.App;
-import root.ivatio.bd.users.User;
 
-public class UserPostObserver implements SingleObserver<User> {
+public class SingleNetworkObserver<T> implements SingleObserver<T> {
+    @Nullable
     private Disposable disposable;
     private Consumer<Throwable> error;
-    private Consumer<User> success;
+    private Consumer<T> success;
 
-    public UserPostObserver(Consumer<User> success, Consumer<Throwable> error) {
+    public SingleNetworkObserver(Consumer<T> success, Consumer<Throwable> error) {
         this.success = success;
         this.error = error;
     }
@@ -22,9 +23,9 @@ public class UserPostObserver implements SingleObserver<User> {
     }
 
     @Override
-    public void onSuccess(User user) {
+    public void onSuccess(T response) {
         try {
-            success.accept(user);
+            success.accept(response);
         } catch (Exception e) {
             App.logE(e.getMessage());
         }
@@ -40,6 +41,8 @@ public class UserPostObserver implements SingleObserver<User> {
     }
 
     public void unsubscribe() {
-        disposable.dispose();
+        if (disposable != null) {
+            disposable.dispose();
+        }
     }
 }

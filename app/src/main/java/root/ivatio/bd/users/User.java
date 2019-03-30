@@ -1,7 +1,7 @@
 package root.ivatio.bd.users;
 
-import android.arch.persistence.room.Entity;
-import android.arch.persistence.room.PrimaryKey;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
@@ -77,34 +77,11 @@ public class User implements Serializable {
         return admin != null;
     }
 
-    public static class PostUser {
-        @SerializedName("realName")
-        public String realName;
-        @SerializedName("login")
-        public String login;
-        @SerializedName("pass")
-        public String pass;
-        @SerializedName("age")
-        public Integer age;
-        @SerializedName("city")
-        public String city;
-        @SerializedName("email")
-        public String email;
-        @SerializedName("lastEntry")
-        public String lastEntry;
-        @SerializedName("admin")
-        public Integer admin;
-
-        public PostUser(User user) {
-            this.admin = user.admin;
-            this.age = user.age;
-            this.city = user.city;
-            this.email = user.email;
-            this.lastEntry = user.lastEntry;
-            this.login = user.login;
-            this.pass = user.pass;
-            this.realName = user.realName;
-        }
+    public static User getLoginUser(String login, String pass) {
+        User usr = new User();
+        usr.login = login;
+        usr.pass = pass;
+        return usr;
     }
 }
 

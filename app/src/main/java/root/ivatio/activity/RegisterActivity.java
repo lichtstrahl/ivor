@@ -1,23 +1,22 @@
 package root.ivatio.activity;
 
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.gson.annotations.SerializedName;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import root.ivatio.bd.users.User;
+import androidx.appcompat.app.AppCompatActivity;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.R;
-import root.ivatio.network.UserPostObserver;
+import root.ivatio.bd.users.User;
+import root.ivatio.network.dto.ServerAnswerDTO;
+import root.ivatio.network.observer.SingleNetworkObserver;
 
 public class RegisterActivity extends AppCompatActivity {
     @BindView(R.id.editName)
@@ -36,8 +35,7 @@ public class RegisterActivity extends AppCompatActivity {
     EditText editRetryPassword;
     @BindView(R.id.progressRegister)
     ProgressBar progressRegister;
-
-    private UserPostObserver userPostObserver;
+    private SingleNetworkObserver<ServerAnswerDTO> userPostObserver;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -45,7 +43,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
         ButterKnife.bind(this);
 
-        userPostObserver = new UserPostObserver(
+        userPostObserver = new SingleNetworkObserver<>(
                 user -> {
                     progressRegister.setVisibility(View.GONE);
                     Toast.makeText(this, R.string.userSuccessfulAppend, Toast.LENGTH_SHORT).show();
@@ -57,12 +55,6 @@ public class RegisterActivity extends AppCompatActivity {
                     App.logE(error.getMessage());
                 }
         );
-    }
-
-    @Override
-    protected void onStart() {
-        super.onStart();
-
     }
 
     @Override
@@ -97,7 +89,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .buildTimeEntry()
                     .build();
 
-            App.getUserAPI().postUser(new User.PostUser(newUser))
+            App.getServerAPI().register(newUser)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userPostObserver);
