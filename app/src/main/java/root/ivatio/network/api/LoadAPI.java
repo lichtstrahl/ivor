@@ -16,7 +16,6 @@ import root.ivatio.bd.qustion.Question;
 import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.network.dto.PostComDTO;
 import root.ivatio.network.dto.PostComKeyDTO;
-import root.ivatio.network.dto.PostCommandDTO;
 import root.ivatio.network.dto.PostContentDTO;
 
 public interface LoadAPI {

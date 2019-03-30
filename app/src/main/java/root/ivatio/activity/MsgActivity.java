@@ -26,10 +26,6 @@ import javax.annotation.Nullable;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import io.reactivex.Observable;
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import root.ivatio.App;
 import root.ivatio.Message;
 import root.ivatio.MessageAdapter;
 import root.ivatio.R;
@@ -41,8 +37,6 @@ import root.ivatio.ivor.action.ActionCall;
 import root.ivatio.ivor.action.ActionSendEmail;
 import root.ivatio.ivor.action.ActionSendGPS;
 import root.ivatio.ivor.action.ActionSendSMS;
-import root.ivatio.network.NetworkObserver;
-import root.ivatio.util.ListsHolder;
 import root.ivatio.util.ROLE;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {

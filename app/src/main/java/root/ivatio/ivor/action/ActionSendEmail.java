@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 
 import io.reactivex.functions.Consumer;
-import io.reactivex.subjects.PublishSubject;
 
 // TODO Сделать отписки, при complete
 public class ActionSendEmail extends Action {

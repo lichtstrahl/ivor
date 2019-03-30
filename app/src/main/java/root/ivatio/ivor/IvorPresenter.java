@@ -7,6 +7,8 @@ import java.util.List;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
+import root.ivatio.Message;
+import root.ivatio.R;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.communication.Communication;
 import root.ivatio.bd.communication_key.CommunicationKey;
@@ -16,8 +18,6 @@ import root.ivatio.network.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.util.ROLE;
 import root.ivatio.util.StringProcessor;
-import root.ivatio.Message;
-import root.ivatio.R;
 
 public class IvorPresenter {
     private Ivor model;

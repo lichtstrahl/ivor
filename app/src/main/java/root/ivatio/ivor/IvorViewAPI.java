@@ -3,7 +3,6 @@ package root.ivatio.ivor;
 import javax.annotation.Nullable;
 
 import root.ivatio.Message;
-import root.ivatio.activity.MsgActivity;
 import root.ivatio.util.ROLE;
 
 public interface IvorViewAPI {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import root.ivatio.bd.key_word.KeyWord;
-import root.ivatio.App;
 
 public class StringProcessor {
     private StringProcessor() {

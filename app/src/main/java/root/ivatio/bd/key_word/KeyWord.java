@@ -6,8 +6,6 @@ import android.support.annotation.NonNull;
 
 import com.google.gson.annotations.SerializedName;
 
-import java.security.Key;
-
 import root.ivatio.network.dto.PostContentDTO;
 
 @Entity

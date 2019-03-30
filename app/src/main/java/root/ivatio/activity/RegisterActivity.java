@@ -7,16 +7,14 @@ import android.widget.EditText;
 import android.widget.ProgressBar;
 import android.widget.Toast;
 
-import com.google.gson.annotations.SerializedName;
-
-import io.reactivex.android.schedulers.AndroidSchedulers;
-import io.reactivex.schedulers.Schedulers;
-import root.ivatio.bd.users.User;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import io.reactivex.android.schedulers.AndroidSchedulers;
+import io.reactivex.schedulers.Schedulers;
 import root.ivatio.App;
 import root.ivatio.R;
+import root.ivatio.bd.users.User;
 import root.ivatio.network.UserPostObserver;
 
 public class RegisterActivity extends AppCompatActivity {
