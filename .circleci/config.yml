@@ -26,13 +26,14 @@ jobs:
             - run:
                 name: Building JavaDoc
                 command: ./gradlew :app:createJavadocs
-            # - store_artifacts:
-            #     name: Uploading JavaDoc
-            #     path: build/docs/javadoc
-            #     destination: javadoc
+            - store_artifacts:
+                name: Uploading JavaDoc
+                path: app/build/docs/javadoc
+                destination: javadoc
             - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
                 path: app/build/reports
                 destination: reports
+
             - store_test_results: # for display in Test Summary: https://circleci.com/docs/2.0/collect-test-data/
-                path: ap/build/test-results
+                path: app/build/test-results
             # See https://circleci.com/docs/2.0/deployment-integrations/ for deploy examples
