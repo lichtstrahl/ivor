@@ -16,6 +16,8 @@ jobs:
             - run:
                 name: Download Dependencies
                 command:  ./gradlew androidDependencies
+            - run:
+                name: Test javadocs
                 command: javadoc -d /doc/
             - save_cache:
                 paths:
