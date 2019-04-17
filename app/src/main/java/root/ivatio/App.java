@@ -102,6 +102,10 @@ public class App extends Application {
         Stetho.initialize(builder.build());
     }
 
+    /**
+     * @deprecated - запрещен к использованию, так как БД была вынесена насервер Heroku
+     * @return - экземпляр БД
+     */
     @Deprecated
     public static AppDatabase getDB() {
         return db;
