@@ -28,7 +28,7 @@ jobs:
                 command: ./gradlew lint test
             - run:
                 name: Building JavaDoc
-                command: ./gradlew :app:generateJavadoc
+                command: ./gradlew :app:createJavadocs
             - store_artifacts:
                 name: Uploading JavaDoc
                 path: build/docs/javadoc
