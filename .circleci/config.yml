@@ -23,6 +23,13 @@ jobs:
             - run:
                 name: Run Tests
                 command: ./gradlew lint test
+                - run:
+                  name: Building JavaDoc
+                  command: ./gradlew :javadoc
+              - store_artifacts:
+                  name: Uploading JavaDoc
+                  path: build/docs/javadoc
+                  destination: javadoc
             - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
                 path: app/build/reports
                 destination: reports
