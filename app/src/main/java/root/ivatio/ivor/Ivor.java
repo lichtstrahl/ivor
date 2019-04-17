@@ -591,7 +591,8 @@ public class Ivor extends User {
         App.logI(String.format(Locale.ENGLISH, "%s : type %s : oldID = %d : serverID = %d",
                 resources.getString(R.string.successfulPost), "Answer", oldID, serverID));
 
-        // Ищем (по старому id) какие коммуникации соответствуют нашему ответу. Она будет одна (либо Com, либо ComKey)
+
+
         List<Communication> coms = App.getStorageAPI().getCommunicationsForAnswer(oldID);
         List<CommunicationKey> comKeys = App.getStorageAPI().getCommunicationKeysForAnswer(oldID);
 
@@ -599,7 +600,7 @@ public class Ivor extends User {
         if (!coms.isEmpty()) { // Если нужно добавить Communication, но сначала изменить answerID и questionID
             Communication c = coms.get(0);
             c.answerID = serverID;
-            // Ищем, в какой серверный ID ревращается местный ID нужного нам вопроса
+
             for (HolderID holder : questionHolderID) {
                 if (holder.selfID == c.questionID) {
                     c.questionID = holder.serverID;
@@ -615,7 +616,7 @@ public class Ivor extends User {
         } else if (!comKeys.isEmpty()) { // Если нужно добавить CommunicationKey, но сначала изменить answerID и keyID
             CommunicationKey c = comKeys.get(0);
             c.answerID = serverID;
-            // Ищем, в какой серверный ID превращаетс местный ID нужного нам ключевого слова
+
             for (HolderID holder : keyWordHolderID) {
                 if (holder.selfID == c.keyID) {
                     c.keyID = holder.serverID;

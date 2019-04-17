@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-apply plugin: 'com.vanniktech.android.javadoc'
+//apply plugin: "com.vanniktech.android.javadoc"
 
 android {
     compileSdkVersion 28
@@ -74,4 +74,10 @@ dependencies {
     implementation "androidx.recyclerview:recyclerview:$androidXVersion"
     // Logging interceptor
     implementation 'com.squareup.okhttp3:logging-interceptor:3.12.0'
+}
+
+
+task androidJavadoc(type: Javadoc) {
+    source = '/src/main/java'
+//    classpath += project.files(android.plugin.getRuntimeJarList().join(File.pathSeparator))
 }
