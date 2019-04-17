@@ -16,9 +16,6 @@ jobs:
             - run:
                 name: Download Dependencies
                 command:  ./gradlew androidDependencies
-            - run:
-                name: Test javadocs
-                command: javadoc -d /doc/
             - save_cache:
                 paths:
                     - ~/.gradle
@@ -29,10 +26,10 @@ jobs:
             - run:
                 name: Building JavaDoc
                 command: ./gradlew :app:createJavadocs
-            - store_artifacts:
-                name: Uploading JavaDoc
-                path: build/docs/javadoc
-                destination: javadoc
+            # - store_artifacts:
+            #     name: Uploading JavaDoc
+            #     path: build/docs/javadoc
+            #     destination: javadoc
             - store_artifacts: # for display in Artifacts: https://circleci.com/docs/2.0/artifacts/
                 path: app/build/reports
                 destination: reports
