@@ -1,27 +1,25 @@
-package root.ivatio.ivor;
+package root.ivatio.ivor.presenter;
 
-import android.opengl.Visibility;
 import android.view.View;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import root.ivatio.App;
-import root.ivatio.bd.answer.Answer;
-import root.ivatio.bd.key_word.KeyWord;
-import root.ivatio.bd.qustion.Question;
-import root.ivatio.util.ListsHolder;
-import root.ivatio.util.StringProcessor;
 import root.ivatio.Message;
 import root.ivatio.R;
 import root.ivatio.activity.MsgActivity;
+import root.ivatio.bd.answer.Answer;
+import root.ivatio.bd.key_word.KeyWord;
+import root.ivatio.bd.qustion.Question;
+import root.ivatio.ivor.Ivor;
+import root.ivatio.ivor.IvorViewAPI;
+import root.ivatio.util.ListsHolder;
+import root.ivatio.util.StringProcessor;
 
-public class IvorPresenter {
-    private Ivor model;
-    private IvorViewAPI viewAPI;
+public class IvorPresenter extends Presenter {
     public IvorPresenter(Ivor ivor, IvorViewAPI api) {
-        model = ivor;
-        viewAPI = api;
+        super(ivor, api);
     }
 
     public void setMenuModeStd() {
@@ -119,6 +117,7 @@ public class IvorPresenter {
 
     private void sendWithModeSTD(String request) {
         Message newMessage = model.answer(request);
+
         if (newMessage != null)
             viewAPI.appendMessage(newMessage);
         if (model.processingKeyWord() || model.processingQuestion()) {
@@ -126,6 +125,7 @@ public class IvorPresenter {
             viewAPI.switchButtonDelete(View.VISIBLE);
         }
     }
+
 
     private void sendWithModeUserSendAnswerForKW(String request) {
         model.appendNewAnswerForLastKW(new Answer(request));

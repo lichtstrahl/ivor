@@ -1,7 +1,7 @@
 package root.ivatio;
 
-import android.arch.persistence.room.Database;
-import android.arch.persistence.room.RoomDatabase;
+import androidx.room.Database;
+import androidx.room.RoomDatabase;
 
 import root.ivatio.bd.command.Command;
 import root.ivatio.bd.command.CommandDao;

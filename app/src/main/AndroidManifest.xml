@@ -30,9 +30,6 @@
             android:screenOrientation="portrait"
             android:theme="@style/MsgTheme" />
 
-        <service
-            android:name=".network.LoginService"
-            android:exported="false" />
     </application>
 
 </manifest>

@@ -1,10 +1,10 @@
 package root.ivatio;
 
 import android.app.Application;
-import android.arch.persistence.db.SupportSQLiteDatabase;
-import android.arch.persistence.room.Room;
-import android.arch.persistence.room.migration.Migration;
-import android.support.annotation.NonNull;
+import androidx.sqlite.db.SupportSQLiteDatabase;
+import androidx.room.Room;
+import androidx.room.migration.Migration;
+import androidx.annotation.NonNull;
 import android.util.Log;
 
 import com.facebook.stetho.Stetho;
@@ -15,6 +15,7 @@ import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import root.ivatio.network.api.LoadAPI;
+import root.ivatio.network.api.PythonServerAPI;
 import root.ivatio.network.api.UserAPI;
 import root.ivatio.util.LocalStorageAPI;
 
@@ -26,6 +27,7 @@ public class App extends Application {
     private static Retrofit retrofit;
     private static UserAPI userAPI;
     private static LoadAPI loadAPI;
+    private static PythonServerAPI serverAPI;
 
     private final Migration migration12 = new Migration(1, 2) {
         @Override
@@ -91,6 +93,7 @@ public class App extends Application {
                 .build();
         userAPI = retrofit.create(UserAPI.class);
         loadAPI = retrofit.create(LoadAPI.class);
+        serverAPI = retrofit.create(PythonServerAPI.class);
 
 
         Stetho.InitializerBuilder builder = Stetho.newInitializerBuilder(this);
@@ -99,6 +102,10 @@ public class App extends Application {
         Stetho.initialize(builder.build());
     }
 
+    /**
+     * @deprecated - запрещен к использованию, так как БД была вынесена насервер Heroku
+     * @return - экземпляр БД
+     */
     @Deprecated
     public static AppDatabase getDB() {
         return db;
@@ -110,6 +117,10 @@ public class App extends Application {
 
     public static UserAPI getUserAPI() {
         return userAPI;
+    }
+
+    public static PythonServerAPI getServerAPI() {
+        return serverAPI;
     }
 
     public static LoadAPI getLoadAPI() {

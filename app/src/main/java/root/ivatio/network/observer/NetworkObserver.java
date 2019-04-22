@@ -1,4 +1,4 @@
-package root.ivatio.network;
+package root.ivatio.network.observer;
 
 
 import javax.annotation.Nullable;

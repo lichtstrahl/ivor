@@ -1,6 +1,6 @@
 package root.ivatio.ivor.action;
 
-import android.support.v4.util.CircularArray;
+import androidx.collection.CircularArray;
 
 import java.util.Arrays;
 import java.util.LinkedList;
