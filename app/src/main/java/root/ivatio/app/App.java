@@ -1,4 +1,4 @@
-package root.ivatio;
+package root.ivatio.app;
 
 import android.app.Application;
 import androidx.sqlite.db.SupportSQLiteDatabase;
@@ -14,10 +14,12 @@ import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
+import root.ivatio.BuildConfig;
+import root.ivatio.bd.AppDatabase;
 import root.ivatio.network.api.LoadAPI;
 import root.ivatio.network.api.PythonServerAPI;
 import root.ivatio.network.api.UserAPI;
-import root.ivatio.util.LocalStorageAPI;
+import root.ivatio.bd.LocalStorageAPI;
 
 public class App extends Application {
     private static AppDatabase db;

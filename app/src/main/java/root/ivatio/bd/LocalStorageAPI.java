@@ -1,8 +1,8 @@
-package root.ivatio.util;
+package root.ivatio.bd;
 
 import java.util.List;
 
-import root.ivatio.App;
+import root.ivatio.app.App;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.command.Command;
 import root.ivatio.bd.communication.Communication;

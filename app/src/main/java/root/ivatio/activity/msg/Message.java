@@ -1,4 +1,4 @@
-package root.ivatio;
+package root.ivatio.activity.msg;
 
 import java.util.Calendar;
 import java.util.Date;
@@ -20,5 +20,13 @@ public class Message {
         this.author = user;
         this.content = content;
         this.time = Calendar.getInstance().getTime();
+    }
+
+    public static Message getUserMessage(User user, String content) {
+        return new Message(user, content);
+    }
+
+    public static Message getIvorMessage(String content) {
+        return new Message(null, content);
     }
 }

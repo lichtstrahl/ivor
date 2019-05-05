@@ -4,7 +4,7 @@ import androidx.annotation.Nullable;
 import io.reactivex.SingleObserver;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import root.ivatio.App;
+import root.ivatio.app.App;
 
 public class SingleNetworkObserver<T> implements SingleObserver<T> {
     @Nullable

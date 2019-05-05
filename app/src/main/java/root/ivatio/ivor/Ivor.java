@@ -17,8 +17,8 @@ import javax.annotation.Nullable;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import root.ivatio.App;
-import root.ivatio.Message;
+import root.ivatio.app.App;
+import root.ivatio.activity.msg.Message;
 import root.ivatio.R;
 import root.ivatio.bd.answer.Answer;
 import root.ivatio.bd.command.Command;
@@ -30,8 +30,7 @@ import root.ivatio.bd.users.User;
 import root.ivatio.ivor.action.Action;
 import root.ivatio.network.observer.NetworkObserver;
 import root.ivatio.network.dto.EmptyDTO;
-import root.ivatio.util.LocalStorageAPI;
-import root.ivatio.util.StringProcessor;
+import root.ivatio.bd.LocalStorageAPI;
 
 public class Ivor extends User {
     private static final String name = "Ivor";

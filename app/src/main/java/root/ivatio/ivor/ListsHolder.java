@@ -1,4 +1,4 @@
-package root.ivatio.util;
+package root.ivatio.ivor;
 
 import java.util.List;
 

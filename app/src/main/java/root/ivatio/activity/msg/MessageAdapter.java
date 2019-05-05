@@ -1,4 +1,4 @@
-package root.ivatio;
+package root.ivatio.activity.msg;
 
 import android.content.Context;
 
@@ -13,6 +13,7 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 
+import root.ivatio.R;
 import root.ivatio.ivor.Ivor;
 
 // Адаптер, который будет хранить сообщения

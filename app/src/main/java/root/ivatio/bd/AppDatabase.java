@@ -1,4 +1,4 @@
-package root.ivatio;
+package root.ivatio.bd;
 
 import androidx.room.Database;
 import androidx.room.RoomDatabase;

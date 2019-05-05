@@ -12,7 +12,7 @@ import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import root.ivatio.App;
+import root.ivatio.app.App;
 import root.ivatio.R;
 import root.ivatio.bd.users.User;
 import root.ivatio.network.dto.ServerAnswerDTO;

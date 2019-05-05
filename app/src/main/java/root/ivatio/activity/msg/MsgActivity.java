@@ -1,10 +1,8 @@
-package root.ivatio.activity;
+package root.ivatio.activity.msg;
 
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.Bundle;
-import android.telephony.SmsManager;
 import android.view.Menu;
 import android.view.View;
 import android.widget.EditText;
@@ -13,9 +11,6 @@ import android.widget.ProgressBar;
 import android.widget.Toast;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.List;
 
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -23,16 +18,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
-import root.ivatio.Message;
-import root.ivatio.MessageAdapter;
 import root.ivatio.R;
 import root.ivatio.bd.users.User;
 import root.ivatio.ivor.Ivor;
 import root.ivatio.ivor.IvorViewAPI;
 import root.ivatio.ivor.action.ActionCall;
-import root.ivatio.ivor.action.ActionSendEmail;
-import root.ivatio.ivor.action.ActionSendGPS;
-import root.ivatio.ivor.action.ActionSendSMS;
 import root.ivatio.ivor.presenter.IvorReactivePresenter;
 
 public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
@@ -81,19 +71,15 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
 
     @OnClick(R.id.buttonSend)
     public void sendClick() {
-        if (inputText.getText().toString().isEmpty())
-            return;
         final String request = inputText.getText().toString();
-        messages.append(new Message(user, request, getCurDate()));
-//        ivorPresenter.clickSend(curRole, inputText.getText().toString());
-        ivorPresenter.sendWithStdMode(request);
-        inputText.setText("");
-        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
+        if (!request.isEmpty()) {
+            ivorPresenter.sendWithStdMode(request);
+        }
     }
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
 //        ivorPresenter.clickDelete(curRole);
-        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
+        scrollListMessagesToBottom();
     }
 
     @OnClick(R.id.buttonYes)
@@ -114,13 +100,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         return true;
     }
 
-    public enum ROLE {
-        STD,
-        USER_SEND_ANSWER_FOR_KW,
-        USER_SEND_NEW_KW,
-        USER_SEND_ANSWER_FOR_Q,
-        USER_SEND_NEW_Q,
-    }
+
 
     /** Реализация интерфейса IvorViewAPI **/
     /***************************************/
@@ -141,12 +121,8 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         messages.append(msg);
     }
 
-    private Date getCurDate() {
-        return Calendar.getInstance().getTime();
-    }
-
     @Override
-    public void setRole(ROLE role) {
+    public void setRole(UserRoles role) {
     }
 
     @Override
@@ -164,5 +140,20 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @Override
     public void needEval() {
         Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
+    }
+
+    @Override
+    public void clearInputFild() {
+        inputText.setText("");
+    }
+
+    @Override
+    public void appendUserMessage(String input) {
+        messages.append(new Message(user, input));
+    }
+
+    @Override
+    public void scrollListMessagesToBottom() {
+        listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
     }
 }

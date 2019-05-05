@@ -6,7 +6,7 @@ import javax.annotation.Nullable;
 import io.reactivex.Observer;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import root.ivatio.App;
+import root.ivatio.app.App;
 
 public class NetworkObserver<T> implements Observer<T> {
     private Disposable disposable;

@@ -7,19 +7,17 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
-import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
-import root.ivatio.App;
+import root.ivatio.app.App;
 import root.ivatio.R;
+import root.ivatio.activity.msg.MsgActivity;
 import root.ivatio.bd.users.User;
 import root.ivatio.network.dto.ServerAnswerDTO;
-import root.ivatio.network.observer.NetworkObserver;
-import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.network.observer.SingleNetworkObserver;
 
 public class LoginActivity extends AppCompatActivity {
