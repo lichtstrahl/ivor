@@ -5,6 +5,7 @@ import androidx.room.PrimaryKey;
 
 import com.google.gson.annotations.SerializedName;
 
+import androidx.room.Query;
 import root.ivatio.network.dto.PostContentDTO;
 
 @Entity
@@ -26,5 +27,11 @@ public class Question {
     @Override
     public boolean equals(Object o) {
         return o instanceof Question && content.equals(((Question)o).content);
+    }
+
+    public static Question createQuestion(String content, long id) {
+        Question q = new Question(content);
+        q.id = id;
+        return q;
     }
 }

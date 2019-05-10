@@ -1,5 +1,7 @@
 package root.ivatio.ivor.presenter;
 
+import java.util.Locale;
+
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.schedulers.Schedulers;
 import root.ivatio.activity.msg.Message;
@@ -7,12 +9,13 @@ import root.ivatio.app.App;
 import root.ivatio.ivor.Ivor;
 import root.ivatio.ivor.IvorViewAPI;
 import root.ivatio.network.dto.AnswerDTO;
+import root.ivatio.network.dto.AnswerForQuestionDTO;
 import root.ivatio.network.dto.RequestDTO;
 import root.ivatio.network.dto.ServerAnswerDTO;
 import root.ivatio.network.observer.SingleNetworkObserver;
 
 public class IvorReactivePresenter extends Presenter {
-    private SingleNetworkObserver<ServerAnswerDTO<AnswerDTO>> requestObserver;
+    private SingleNetworkObserver<ServerAnswerDTO<AnswerForQuestionDTO>> requestObserver;
 
     public IvorReactivePresenter(Ivor ivor, IvorViewAPI api) {
         super(ivor, api);
@@ -28,9 +31,10 @@ public class IvorReactivePresenter extends Presenter {
                 .subscribe(requestObserver);
     }
 
-    private void successfulNetwork(ServerAnswerDTO<AnswerDTO> respone) {
-        final String answer = respone.getData().getAnswer();
-        App.logI("Response: " + respone.getData().getAnswer());
+    private void successfulNetwork(ServerAnswerDTO<AnswerForQuestionDTO> response) {
+        final String answer = response.getData().getAnswer();
+        App.logI("Response: " + response.getData().getAnswer());
+        model.saveQuestion(response.getData().getQuestionID());
         viewAPI.appendMessage(Message.getIvorMessage(answer));
         viewAPI.scrollListMessagesToBottom();
     }

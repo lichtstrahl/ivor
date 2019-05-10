@@ -5,6 +5,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 import root.ivatio.bd.users.User;
 import root.ivatio.network.dto.AnswerDTO;
+import root.ivatio.network.dto.AnswerForQuestionDTO;
 import root.ivatio.network.dto.EmptyDTO;
 import root.ivatio.network.dto.RequestDTO;
 import root.ivatio.network.dto.ServerAnswerDTO;
@@ -17,5 +18,5 @@ public interface PythonServerAPI {
     Single<ServerAnswerDTO> register(@Body User user);
 
     @POST("/api/request")
-    Single<ServerAnswerDTO<AnswerDTO>> request(@Body RequestDTO request);
+    Single<ServerAnswerDTO<AnswerForQuestionDTO>> request(@Body RequestDTO request);
 }
