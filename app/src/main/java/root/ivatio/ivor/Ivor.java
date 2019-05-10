@@ -158,6 +158,15 @@ public class Ivor extends User {
     }
 
     @Nullable
+    public Question getLastQuestion() {
+        if (memoryQuestions.isEmpty()) {
+            return null;
+        } else {
+            return memoryQuestions.get(memoryQuestions.size()-1);
+        }
+    }
+
+    @Nullable
     public Message answer(String request) {
         return send(processingMessage(request));
     }

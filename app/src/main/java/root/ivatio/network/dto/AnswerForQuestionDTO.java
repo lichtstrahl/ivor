@@ -6,13 +6,13 @@ public class AnswerForQuestionDTO {
     @SerializedName("answer")
     private String answer;
     @SerializedName("question_id")
-    private long questionID;
+    private Long questionID;
 
     public String getAnswer() {
         return answer;
     }
 
-    public long getQuestionID() {
+    public Long getQuestionID() {
         return questionID;
     }
 }

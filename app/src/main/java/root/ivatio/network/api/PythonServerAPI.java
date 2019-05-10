@@ -7,6 +7,7 @@ import root.ivatio.bd.users.User;
 import root.ivatio.network.dto.AnswerDTO;
 import root.ivatio.network.dto.AnswerForQuestionDTO;
 import root.ivatio.network.dto.EmptyDTO;
+import root.ivatio.network.dto.EvaluationDTO;
 import root.ivatio.network.dto.RequestDTO;
 import root.ivatio.network.dto.ServerAnswerDTO;
 
@@ -19,4 +20,7 @@ public interface PythonServerAPI {
 
     @POST("/api/request")
     Single<ServerAnswerDTO<AnswerForQuestionDTO>> request(@Body RequestDTO request);
+
+    @POST("/api/evaluation")
+    Single<ServerAnswerDTO<EmptyDTO>> evaluation(@Body EvaluationDTO eval);
 }

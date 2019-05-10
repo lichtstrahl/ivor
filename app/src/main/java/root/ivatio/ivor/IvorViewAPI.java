@@ -8,8 +8,8 @@ public interface IvorViewAPI {
     void setRole(UserRoles role);
     void switchButtonDelete(int state);
     void showMessage(int res);
-    void removeRating();
-    void appendRating();
+    void hideRating();
+    void showRating();
     void needEval();
     void appendUserMessage(String input);
     void clearInputFild();

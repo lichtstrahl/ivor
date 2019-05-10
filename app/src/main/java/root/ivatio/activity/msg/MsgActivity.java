@@ -57,7 +57,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         RecyclerView.LayoutManager lManager = new LinearLayoutManager(this);
         ((LinearLayoutManager) lManager).setStackFromEnd(true);
         listView.setLayoutManager(lManager);
-        removeRating();
+        hideRating();
 
         user = (User)getIntent().getSerializableExtra(INTENT_USER);
         setTitle(user.login + ", " + user.realName);
@@ -84,12 +84,12 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
 
     @OnClick(R.id.buttonYes)
     public void clickYes() {
-//        ivorPresenter.clickEval(1);
+        ivorPresenter.clickEval(1);
     }
 
     @OnClick(R.id.buttonNo)
     public void clickNo() {
-//        ivorPresenter.clickEval(-1);
+        ivorPresenter.clickEval(-1);
     }
 
     @Override
@@ -105,13 +105,13 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     /** Реализация интерфейса IvorViewAPI **/
     /***************************************/
     @Override
-    public void removeRating() {
+    public void hideRating() {
         buttonNo.setVisibility(View.GONE);
         buttonYes.setVisibility(View.GONE);
     }
 
     @Override
-    public void appendRating() {
+    public void showRating() {
         buttonNo.setVisibility(View.VISIBLE);
         buttonYes.setVisibility(View.VISIBLE);
     }
