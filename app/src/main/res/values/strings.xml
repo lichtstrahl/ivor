@@ -90,4 +90,7 @@
     <string name="errorPost">Ошибка при отправке данных на сервер</string>
     <string name="successfulPost">Данные были успешно отправлены на сервер</string>
     <string name="successfulUpdate">Данные на сервере были успешно обновлены</string>
+    <string name="setAddAnswerMode">Режим добавления ответов. Я жажду новых знаний!</string>
+    <string name="setStdMode">Режим обычного диалога. Ура! Мы так давно не разговаривали!</string>
+    <string name="modeAddAnswer">Добавить новые ответы</string>
 </resources>

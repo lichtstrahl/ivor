@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
@@ -30,27 +31,29 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     private User user;
     private IvorReactivePresenter ivorPresenter;
     @BindView(R.id.list)
-    RecyclerView listView;
-    MessageAdapter messages;
+    protected RecyclerView listView;
+    private MessageAdapter messages;
     @BindView(R.id.input)
-    EditText inputText;
+    protected EditText inputText;
     @BindView(R.id.progressLoad)
-    ProgressBar progressLoad;
+    protected ProgressBar progressLoad;
     @BindView(R.id.buttonNo)
-    ImageButton buttonNo;
+    protected ImageButton buttonNo;
     @BindView(R.id.buttonYes)
-    ImageButton buttonYes;
+    protected ImageButton buttonYes;
     @BindView(R.id.buttonDelete)
-    ImageButton buttonDelete;
+    protected ImageButton buttonDelete;
     @BindView(R.id.buttonSend)
-    ImageButton buttonSend;
+    protected ImageButton buttonSend;
+    private UserRoles currentRole;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_msg);
         ButterKnife.bind(this);
-        final Ivor ivor = new Ivor(getResources(), new ActionCall("", s->{}));
+        final Ivor ivor = new Ivor();
         ivorPresenter = new IvorReactivePresenter(ivor, this);
         messages = new MessageAdapter(this, new ArrayList<>());
         listView.setAdapter(messages);
@@ -60,6 +63,7 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
         hideRating();
 
         user = (User)getIntent().getSerializableExtra(INTENT_USER);
+        currentRole = UserRoles.STD;
         setTitle(user.login + ", " + user.realName);
     }
 
@@ -73,12 +77,11 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     public void sendClick() {
         final String request = inputText.getText().toString();
         if (!request.isEmpty()) {
-            ivorPresenter.sendWithStdMode(request);
+            ivorPresenter.sendClick(currentRole, request);
         }
     }
     @OnClick(R.id.buttonDelete)
     public void clickDelete() {
-//        ivorPresenter.clickDelete(curRole);
         scrollListMessagesToBottom();
     }
 
@@ -95,12 +98,27 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         super.onCreateOptionsMenu(menu);
-        if (user.isAdmin())
-            getMenuInflater().inflate(R.menu.msg_options_menu, menu);
+        getMenuInflater().inflate(R.menu.msg_options_menu, menu);
         return true;
     }
 
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
 
+        switch (item.getItemId()) {
+            case R.id.menuModeStd:
+                switchRole(UserRoles.STD);
+                appendMessage(Message.getIvorMessage(getString(R.string.setStdMode)));
+                break;
+
+            case R.id.menuModeAddAnswer:
+                switchRole(UserRoles.ADD_ANSWER);
+                appendMessage(Message.getIvorMessage(getString(R.string.setAddAnswerMode)));
+                break;
+            default:
+        }
+        return true;
+    }
 
     /** Реализация интерфейса IvorViewAPI **/
     /***************************************/
@@ -122,27 +140,6 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     }
 
     @Override
-    public void setRole(UserRoles role) {
-    }
-
-    @Override
-    public void switchButtonDelete(int visibility) {
-        if (visibility == View.VISIBLE && !user.isAdmin())
-            return;
-        buttonDelete.setVisibility(visibility);
-    }
-
-    @Override
-    public void showMessage(int res) {
-        Toast.makeText(this, res, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
-    public void needEval() {
-        Toast.makeText(this, R.string.needEval, Toast.LENGTH_SHORT).show();
-    }
-
-    @Override
     public void clearInputFild() {
         inputText.setText("");
     }
@@ -155,5 +152,13 @@ public class MsgActivity extends AppCompatActivity implements IvorViewAPI {
     @Override
     public void scrollListMessagesToBottom() {
         listView.smoothScrollToPosition(listView.getAdapter().getItemCount());
+    }
+
+    public void switchRole(UserRoles role) {
+        currentRole = role;
+        messages.clear();
+        clearInputFild();
+        hideRating();
+        scrollListMessagesToBottom();
     }
 }

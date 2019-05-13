@@ -15,6 +15,7 @@ import io.reactivex.schedulers.Schedulers;
 import root.ivatio.app.App;
 import root.ivatio.R;
 import root.ivatio.bd.users.User;
+import root.ivatio.bd.users.UserPost;
 import root.ivatio.network.dto.ServerAnswerDTO;
 import root.ivatio.network.observer.SingleNetworkObserver;
 
@@ -44,10 +45,14 @@ public class RegisterActivity extends AppCompatActivity {
         ButterKnife.bind(this);
 
         userPostObserver = new SingleNetworkObserver<>(
-                user -> {
+                answer -> {
                     progressRegister.setVisibility(View.GONE);
-                    Toast.makeText(this, R.string.userSuccessfulAppend, Toast.LENGTH_SHORT).show();
-                    finish();
+                    if (answer.getError() == 0) {
+                        Toast.makeText(this, R.string.userSuccessfulAppend, Toast.LENGTH_SHORT).show();
+                        finish();
+                    } else {
+                        Toast.makeText(this, answer.getMsg(), Toast.LENGTH_SHORT).show();
+                    }
                 },
                 error -> {
                     progressRegister.setVisibility(View.GONE);
@@ -89,7 +94,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .buildTimeEntry()
                     .build();
 
-            App.getServerAPI().register(newUser)
+            App.getServerAPI().register(UserPost.fromUser(newUser))
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userPostObserver);

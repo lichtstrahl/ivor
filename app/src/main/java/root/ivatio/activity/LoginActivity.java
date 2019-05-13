@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ProgressBar;
+import android.widget.Toast;
 
 import butterknife.BindView;
 import butterknife.ButterKnife;
@@ -21,6 +22,7 @@ import root.ivatio.network.dto.ServerAnswerDTO;
 import root.ivatio.network.observer.SingleNetworkObserver;
 
 public class LoginActivity extends AppCompatActivity {
+    private static final int OK = 0;
     private static final String ACTION_LOGIN = "root.ivatio.LOGIN";
     private static final String INTENT_STATUS = "args:Status";
     private static final String INTENT_ID = "args:id";
@@ -71,7 +73,11 @@ public class LoginActivity extends AppCompatActivity {
 
     private void networkSuccessful(ServerAnswerDTO<User> answer) {
         progressLogin.setVisibility(View.GONE);
-        MsgActivity.start(this, answer.getData());
+        if (answer.getError() == OK) {
+            MsgActivity.start(this, answer.getData());
+        } else {
+            Toast.makeText(this, answer.getMsg(), Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void networkError(Throwable t) {
