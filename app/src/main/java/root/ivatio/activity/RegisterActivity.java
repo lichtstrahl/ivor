@@ -15,7 +15,6 @@ import io.reactivex.schedulers.Schedulers;
 import root.ivatio.app.App;
 import root.ivatio.R;
 import root.ivatio.bd.users.User;
-import root.ivatio.bd.users.UserPost;
 import root.ivatio.network.dto.ServerAnswerDTO;
 import root.ivatio.network.observer.SingleNetworkObserver;
 
@@ -94,7 +93,7 @@ public class RegisterActivity extends AppCompatActivity {
                     .buildTimeEntry()
                     .build();
 
-            App.getServerAPI().register(UserPost.fromUser(newUser))
+            App.getServerAPI().register(newUser)
                     .subscribeOn(Schedulers.io())
                     .observeOn(AndroidSchedulers.mainThread())
                     .subscribe(userPostObserver);

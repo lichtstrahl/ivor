@@ -35,10 +35,10 @@ public class IvorReactivePresenter extends Presenter {
     public void clickEval(int eval) {
         Question q = model.getLastQuestion();
         if (q != null) {
-            App.getServerAPI().evaluation(new EvaluationDTO(q.id, eval))
-                    .subscribeOn(Schedulers.io())
-                    .observeOn(AndroidSchedulers.mainThread())
-                    .subscribe(SingleNetworkObserver.observerEmpty(this::successfulEvaluation, this::errorNetwork));
+//            App.getServerAPI().evaluation(new EvaluationDTO(q.id, eval))
+//                    .subscribeOn(Schedulers.io())
+//                    .observeOn(AndroidSchedulers.mainThread())
+//                    .subscribe(SingleNetworkObserver.observerEmpty(this::successfulEvaluation, this::errorNetwork));
         }
     }
 
@@ -47,19 +47,19 @@ public class IvorReactivePresenter extends Presenter {
     private void sendWithStdMode(String request) {
         viewAPI.appendUserMessage(request);
         viewAPI.clearInputFild();
-        App.getServerAPI().request(new ContentDTO(request))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(SingleNetworkObserver.observerRequest(this::successfulRequest, this::errorNetwork));
+//        App.getServerAPI().request(new ContentDTO(request))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(SingleNetworkObserver.observerRequest(this::successfulRequest, this::errorNetwork));
     }
 
     private void sendWithAddAnswerMode(String request) {
         viewAPI.appendUserMessage(request);
         viewAPI.clearInputFild();
-        App.getServerAPI().insertAnswer(new ContentDTO(request))
-                .subscribeOn(Schedulers.io())
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe(SingleNetworkObserver.observerEmpty(this::successfulInserAnswer, this::errorNetwork));
+//        App.getServerAPI().insertAnswer(new ContentDTO(request))
+//                .subscribeOn(Schedulers.io())
+//                .observeOn(AndroidSchedulers.mainThread())
+//                .subscribe(SingleNetworkObserver.observerEmpty(this::successfulInserAnswer, this::errorNetwork));
     }
 
     private void successfulRequest(ServerAnswerDTO<AnswerForQuestionDTO> response) {
