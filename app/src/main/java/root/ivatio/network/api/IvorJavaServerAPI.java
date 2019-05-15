@@ -5,6 +5,7 @@ import retrofit2.http.Body;
 import retrofit2.http.POST;
 import root.ivatio.bd.users.User;
 import root.ivatio.network.dto.EmptyDTO;
+import root.ivatio.network.dto.RequestDTO;
 import root.ivatio.network.dto.ServerAnswerDTO;
 
 public interface IvorJavaServerAPI {
@@ -13,4 +14,7 @@ public interface IvorJavaServerAPI {
 
     @POST("/api/register")
     Single<ServerAnswerDTO<EmptyDTO>> register(@Body User user);
+
+    @POST("/api/request")
+    Single<ServerAnswerDTO> request(@Body RequestDTO request);
 }
